@@ -9,6 +9,7 @@ import Preloader from '@/components/Preloader';
 import Footer from '@/components/Footer';
 import PrizesAndMerch from '@/components/PrizesAndMerch';
 import Judges from '@/components/Judges';
+import Schedule from '@/components/Schedule';
 import ScrollNavigation from '@/components/ScrollNavigation';
 import { motion } from 'framer-motion';
 import { ChevronDown, Sword, Ghost, Zap } from 'lucide-react';
@@ -58,21 +59,8 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* Content Sections (Transparent/Overlay) */}
-      <section id="schedule" className="relative min-h-screen flex items-center px-8 md:px-24 z-20">
-        <motion.div 
-          initial={{ opacity: 0, x: -50 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          transition={{ duration: 1 }}
-          className="max-w-xl bg-black/40 backdrop-blur-xl p-12 rounded-3xl border border-white/10"
-        >
-          <Sword className="text-red-600 w-12 h-12 mb-6" />
-          <h2 className="text-4xl font-bold mb-6 italic underline decoration-red-600">MASTER THE BLADE</h2>
-          <p className="text-neutral-400 text-lg leading-relaxed">
-            Experience visceral combat mechanics where every frame matters. Our 3D scroll-driven engine brings the ninja's agility to your fingertips.
-          </p>
-        </motion.div>
-      </section>
+      {/* Schedule Section */}
+      <Schedule />
 
 
 
@@ -82,7 +70,7 @@ export default function Home() {
       <Faq />
 
       {/* Footer-like Section */}
-      <section id="contact" className="relative h-screen flex flex-col items-center justify-center z-20 bg-gradient-to-t from-red-950/50 to-transparent">
+      <section id="contact" className="relative h-screen flex flex-col items-center justify-center z-20 bg-gradient-to-b from-transparent to-red-950/50">
         <h2 className="text-6xl font-black mb-8 italic">READY TO RISE?</h2>
         <button className="bg-white text-black px-12 py-5 rounded-full font-black text-xl hover:bg-neutral-200 transition-all">
           JOIN DISCORD

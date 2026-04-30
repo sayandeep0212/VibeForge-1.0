@@ -37,9 +37,9 @@ const PrizesAndMerch = () => {
   ];
 
   return (
-    <section id="prizes" className="py-32 relative overflow-hidden bg-black">
+    <section id="prizes" className="py-32 relative overflow-hidden bg-transparent">
       {/* Background Decor */}
-      <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_0%,rgba(220,38,38,0.1),transparent_50%)]" />
+      <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_0%,rgba(220,38,38,0.05),transparent_50%)]" />
       
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <div className="text-center mb-20">
