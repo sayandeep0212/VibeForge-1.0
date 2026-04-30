@@ -41,26 +41,26 @@ const Navbar = () => {
 
           <div className="flex items-center justify-between px-6 py-3">
             {/* Left: 3 Logos */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-4">
               <motion.div
-                whileHover={{ scale: 1.1, rotate: -10 }}
-                className="p-2 bg-red-600/20 rounded-lg border border-red-500/30"
+                whileHover={{ scale: 1.1 }}
+                className="w-10 h-10 sm:w-12 sm:h-12 relative flex items-center justify-center overflow-hidden rounded-lg bg-white/5 border border-white/10"
               >
-                <Sword className="w-5 h-5 text-red-500" />
+                <img src="https://gameliminals.vercel.app/assets/logo.png" alt="Logo 1" className="w-full h-full object-contain" />
               </motion.div>
               <motion.div
                 whileHover={{ scale: 1.1 }}
-                className="p-2 bg-white/5 rounded-lg border border-white/10"
+                className="w-10 h-10 sm:w-12 sm:h-12 relative flex items-center justify-center overflow-hidden rounded-lg bg-white/5 border border-white/10"
               >
-                <Zap className="w-5 h-5 text-white" />
+                <img src="https://gameliminals.vercel.app/assets/au_logo.jpg" alt="Logo 2" className="w-full h-full object-cover" />
               </motion.div>
               <motion.div
-                whileHover={{ scale: 1.1, rotate: 10 }}
-                className="p-2 bg-red-600/20 rounded-lg border border-red-500/30"
+                whileHover={{ scale: 1.1 }}
+                className="w-10 h-10 sm:w-12 sm:h-12 relative flex items-center justify-center overflow-hidden rounded-lg bg-white/5 border border-white/10"
               >
-                <Ghost className="w-5 h-5 text-red-500" />
+                <img src="https://gameliminals.vercel.app/assets/acm.jpeg" alt="Logo 3" className="w-full h-full object-cover" />
               </motion.div>
-              <div className="ml-2 hidden sm:block">
+              <div className="ml-2 hidden lg:block">
                 <span className="text-xl font-black tracking-tighter italic text-white">GAMELIMINALS</span>
               </div>
             </div>

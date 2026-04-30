@@ -81,6 +81,34 @@ export default function Preloader() {
           />
 
           <div className="relative z-10 flex flex-col items-center">
+            {/* Logos */}
+            <div className="flex items-center gap-6 mb-8">
+              <motion.img 
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.2 }}
+                src="https://gameliminals.vercel.app/assets/logo.png" 
+                alt="Logo 1" 
+                className="w-12 h-12 object-contain" 
+              />
+              <motion.img 
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.3 }}
+                src="https://gameliminals.vercel.app/assets/au_logo.jpg" 
+                alt="Logo 2" 
+                className="w-12 h-12 object-cover rounded-full" 
+              />
+              <motion.img 
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.4 }}
+                src="https://gameliminals.vercel.app/assets/acm.jpeg" 
+                alt="Logo 3" 
+                className="w-12 h-12 object-cover rounded-full" 
+              />
+            </div>
+
             {/* Presenter Text */}
             <motion.div
               initial={{ opacity: 0, letterSpacing: "0.2em" }}
@@ -88,7 +116,7 @@ export default function Preloader() {
               transition={{ duration: 2, ease: "easeOut" }}
               className="text-neutral-500 uppercase text-[10px] md:text-xs mb-6 font-medium tracking-[0.6em]"
             >
-              GameLiminals Presents
+              The Ninja Collective Presents
             </motion.div>
             
             {/* Main Title with Staggered Animation */}

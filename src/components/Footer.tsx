@@ -38,9 +38,9 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="relative w-full py-20 overflow-hidden mt-20">
+    <footer className="relative w-full py-20 overflow-hidden">
       {/* Glassy Background Overlay */}
-      <div className="absolute inset-0 bg-black/80 backdrop-blur-xl border-t border-white/10" />
+      <div className="absolute inset-0 bg-red-950/20 backdrop-blur-xl" />
       
       {/* 3D Background Elements */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80%] h-[1px] bg-gradient-to-r from-transparent via-red-600 to-transparent shadow-[0_0_20px_#dc2626]" />
@@ -50,15 +50,15 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-6 gap-12 mb-16">
           {/* Brand Section */}
           <div className="col-span-1 md:col-span-2">
-            <div className="flex items-center gap-4 mb-6">
-              <motion.div whileHover={{ scale: 1.1, rotate: -5 }} className="p-3 bg-red-600/20 rounded-xl border border-red-500/30 backdrop-blur-md">
-                <Sword className="w-6 h-6 text-red-500" />
+            <div className="flex items-center gap-3 mb-6">
+              <motion.div whileHover={{ scale: 1.1 }} className="w-12 h-12 relative flex items-center justify-center overflow-hidden rounded-xl bg-white/5 border border-white/10 backdrop-blur-md">
+                <img src="https://gameliminals.vercel.app/assets/logo.png" alt="Logo 1" className="w-full h-full object-contain p-1" />
               </motion.div>
-              <motion.div whileHover={{ scale: 1.1 }} className="p-3 bg-white/5 rounded-xl border border-white/10 backdrop-blur-md">
-                <Zap className="w-6 h-6 text-white" />
+              <motion.div whileHover={{ scale: 1.1 }} className="w-12 h-12 relative flex items-center justify-center overflow-hidden rounded-xl bg-white/5 border border-white/10 backdrop-blur-md">
+                <img src="https://gameliminals.vercel.app/assets/au_logo.jpg" alt="Logo 2" className="w-full h-full object-cover" />
               </motion.div>
-              <motion.div whileHover={{ scale: 1.1, rotate: 5 }} className="p-3 bg-red-600/20 rounded-xl border border-red-500/30 backdrop-blur-md">
-                <Ghost className="w-6 h-6 text-red-500" />
+              <motion.div whileHover={{ scale: 1.1 }} className="w-12 h-12 relative flex items-center justify-center overflow-hidden rounded-xl bg-white/5 border border-white/10 backdrop-blur-md">
+                <img src="https://gameliminals.vercel.app/assets/acm.jpeg" alt="Logo 3" className="w-full h-full object-cover" />
               </motion.div>
             </div>
             <h2 className="text-2xl font-black tracking-tighter text-white mb-4 italic leading-tight">

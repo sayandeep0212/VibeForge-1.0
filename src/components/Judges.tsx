@@ -81,7 +81,7 @@ const JudgeCard = ({ judge }: { judge: Judge }) => {
 
           <div className="mt-auto w-full px-8 pb-8 flex flex-col items-center">
             <div className="relative w-full overflow-hidden">
-              <div className="absolute inset-0 bg-[#020210] border border-white/10"
+              <div className="absolute inset-0 bg-[#05050a] border border-white/10"
                 style={{ clipPath: "polygon(5% 0, 95% 0, 100% 100%, 0 100%)" }}
               />
               <div className="absolute bottom-0 left-0 w-full h-[3px] bg-cyan-400 shadow-[0_0_15px_#22d3ee]" />
@@ -133,7 +133,7 @@ const Judges = () => {
   ];
 
   return (
-    <section id="judges" className="py-24 bg-black relative overflow-hidden">
+    <section id="judges" className="py-24 bg-transparent relative overflow-hidden">
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(220,38,38,0.05),transparent_70%)] pointer-events-none" />
       
       <div className="max-w-7xl mx-auto px-6 relative z-10">

@@ -173,7 +173,7 @@ export default function Team() {
   ];
 
   return (
-    <section id="team" className="relative py-24 bg-black overflow-hidden">
+    <section id="team" className="relative py-24 bg-black/40 backdrop-blur-3xl overflow-hidden border-y border-white/5">
       {/* Background Decorative Elements */}
       <div className="absolute top-0 left-0 w-full h-full">
         <div className="absolute top-1/4 left-0 w-[500px] h-[500px] bg-purple-600/5 rounded-full blur-[120px]" />

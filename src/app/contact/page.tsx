@@ -4,6 +4,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, Globe, Send, User } from 'lucide-react';
 import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 import ScrollBackground from '@/components/ScrollBackground';
 import ThreeOverlay from '@/components/ThreeOverlay';
 
@@ -145,6 +146,7 @@ const ContactPage = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </main>
   );
 };
