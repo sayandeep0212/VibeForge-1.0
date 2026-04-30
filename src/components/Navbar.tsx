@@ -22,9 +22,9 @@ const Navbar = () => {
 
   const navLinks = [
     { name: 'Home', href: '/' },
-    { name: 'Schedule', href: '/#schedule' },
+    { name: 'Schedule', href: '/schedule' },
     { name: 'Team', href: '/team' },
-    { name: 'Sponsors', href: '/#sponsors' },
+    { name: 'Sponsors', href: '/sponsors' },
     { name: 'Contact us', href: '/contact' },
   ];
 
@@ -71,19 +71,17 @@ const Navbar = () => {
                 <Link
                   key={link.name}
                   href={link.href}
-                  className={`text-sm font-medium tracking-widest uppercase transition-colors relative group ${
-                    pathname === link.href ? 'text-white' : 'text-neutral-400 hover:text-white'
-                  }`}
+                  className={`text-sm font-medium tracking-widest uppercase transition-colors relative group ${pathname === link.href ? 'text-white' : 'text-neutral-400 hover:text-white'
+                    }`}
                 >
                   {link.name}
-                  <span className={`absolute -bottom-1 left-0 h-0.5 bg-red-600 transition-all ${
-                    pathname === link.href ? 'w-full' : 'w-0 group-hover:w-full'
-                  }`} />
+                  <span className={`absolute -bottom-1 left-0 h-0.5 bg-red-600 transition-all ${pathname === link.href ? 'w-full' : 'w-0 group-hover:w-full'
+                    }`} />
                 </Link>
               ))}
-              <button className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-full font-bold text-xs tracking-widest transition-all hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(220,38,38,0.3)]">
-                REGISTER
-              </button>
+              <Link href="/signup" className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-full font-bold text-xs tracking-widest transition-all hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(220,38,38,0.3)]">
+                SIGN UP
+              </Link>
             </div>
 
             {/* Mobile: Hamburger Button */}
@@ -114,17 +112,20 @@ const Navbar = () => {
                   key={link.name}
                   href={link.href}
                   onClick={() => setIsOpen(false)}
-                  className={`text-lg font-bold tracking-[0.2em] uppercase transition-colors ${
-                    pathname === link.href ? 'text-red-500' : 'text-neutral-400 hover:text-red-500'
-                  }`}
+                  className={`text-lg font-bold tracking-[0.2em] uppercase transition-colors ${pathname === link.href ? 'text-red-500' : 'text-neutral-400 hover:text-red-500'
+                    }`}
                 >
                   {link.name}
                 </Link>
               ))}
               <hr className="border-white/10" />
-              <button className="bg-red-600 text-white py-4 rounded-xl font-bold tracking-widest">
-                LOGIN
-              </button>
+              <Link
+                href="/signup"
+                onClick={() => setIsOpen(false)}
+                className="bg-red-600 text-white text-center py-4 rounded-xl font-bold tracking-widest uppercase"
+              >
+                SIGN UP
+              </Link>
             </div>
           </motion.div>
         )}

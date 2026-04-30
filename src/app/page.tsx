@@ -3,13 +3,11 @@
 import ScrollBackground from '@/components/ScrollBackground';
 import ThreeOverlay from '@/components/ThreeOverlay';
 import Navbar from '@/components/Navbar';
-import Sponsors from '@/components/Sponsors';
 import Faq from '@/components/Faq';
 import Preloader from '@/components/Preloader';
 import Footer from '@/components/Footer';
 import PrizesAndMerch from '@/components/PrizesAndMerch';
 import Judges from '@/components/Judges';
-import Schedule from '@/components/Schedule';
 import ScrollNavigation from '@/components/ScrollNavigation';
 import { motion } from 'framer-motion';
 import { ChevronDown, Sword, Ghost, Zap } from 'lucide-react';
@@ -59,12 +57,6 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* Schedule Section */}
-      <Schedule />
-
-
-
-      <Sponsors />
       <PrizesAndMerch />
       <Judges />
       <Faq />

@@ -13,9 +13,9 @@ const Footer = () => {
       title: "Quick Links",
       links: [
         { name: "Home", href: "/" },
-        { name: "Schedule", href: "/#schedule" },
+        { name: "Schedule", href: "/schedule" },
         { name: "Team", href: "/team" },
-        { name: "Sponsors", href: "/#sponsors" },
+        { name: "Sponsors", href: "/sponsors" },
         { name: "Contact us", href: "/contact" },
       ]
     },
