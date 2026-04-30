@@ -140,6 +140,7 @@ const Footer = () => {
                 allowFullScreen={true} 
                 loading="lazy" 
                 referrerPolicy="no-referrer-when-downgrade"
+                sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation"
                 className="opacity-60 group-hover:opacity-100 transition-opacity"
               />
               <div className="absolute inset-0 pointer-events-none border border-white/20 rounded-xl" />
@@ -154,9 +155,14 @@ const Footer = () => {
 
         {/* Bottom Section */}
         <div className="flex flex-col md:row justify-between items-center gap-6">
-          <p className="text-neutral-500 text-[10px] uppercase tracking-[0.2em]">
-            &copy; {currentYear} GameLiminals • Established 2026
-          </p>
+          <div className="flex flex-col gap-2 items-center md:items-start">
+            <p className="text-neutral-500 text-[10px] uppercase tracking-[0.2em]">
+              &copy; {currentYear} GameLiminals • Established 2026
+            </p>
+            <p className="text-neutral-500 text-[10px] uppercase tracking-[0.2em]">
+              Website developed by <a href="https://www.linkedin.com/in/sayandeep0212/" target="_blank" rel="noopener noreferrer" className="text-red-500 hover:text-red-400 font-bold transition-colors">Sayandeep Pradhan</a>
+            </p>
+          </div>
           
           <div className="flex flex-wrap items-center gap-6">
             <a href="https://youtube.com" className="text-neutral-400 hover:text-red-600 transition-all hover:scale-110" title="YouTube">

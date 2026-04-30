@@ -31,13 +31,16 @@ export default function Home() {
           transition={{ duration: 1.2, ease: "easeOut" }}
           className="max-w-4xl"
         >
+          <p className="text-sm md:text-base text-red-500 font-bold tracking-[0.3em] uppercase mb-4 drop-shadow-[0_0_8px_rgba(239,68,68,0.8)]">
+            GAMELIMINAL'S PRESENTS
+          </p>
           <h1 className="text-7xl md:text-9xl font-black tracking-tighter mb-4 bg-gradient-to-b from-white to-neutral-500 bg-clip-text text-transparent">
             GAMEJAM
           </h1>
           <p className="text-xl md:text-2xl font-light tracking-[0.5em] text-red-500 uppercase mb-8">
-            The Ninja Awakening
+            48 hour game making competition
           </p>
-          
+
           <div className="flex gap-4 justify-center">
             <button className="bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-full font-bold tracking-widest transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(220,38,38,0.5)]">
               ENTER ARENA
@@ -48,7 +51,7 @@ export default function Home() {
           </div>
         </motion.div>
 
-        <motion.div 
+        <motion.div
           animate={{ y: [0, 10, 0] }}
           transition={{ duration: 2, repeat: Infinity }}
           className="absolute bottom-10"

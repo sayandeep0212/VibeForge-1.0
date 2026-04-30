@@ -8,7 +8,8 @@ const FRAME_FOLDER = '/frames';
 
 const ScrollBackground = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const [images, setImages] = useState<HTMLImageElement[]>([]);
+    // Use a ref for images instead of state to avoid re-renders and batching issues
+    const imagesRef = useRef<HTMLImageElement[]>(new Array(TOTAL_FRAMES));
     const [isFirstFrameLoaded, setIsFirstFrameLoaded] = useState(false);
     const { scrollYProgress } = useScroll();
     
@@ -20,18 +21,15 @@ const ScrollBackground = () => {
 
     const frameIndex = useTransform(smoothProgress, [0, 1], [1, TOTAL_FRAMES]);
 
-    // Preload strategy: Load first frame immediately, then others in chunks
+    // Preload strategy: Load first frame immediately, then others
     useEffect(() => {
-        const loadedImages: HTMLImageElement[] = new Array(TOTAL_FRAMES);
-        
         // Load first frame immediately
         const firstImg = new Image();
         firstImg.src = `${FRAME_FOLDER}/ezgif-frame-001.jpg`;
         firstImg.onload = () => {
-            loadedImages[0] = firstImg;
-            setImages([...loadedImages]);
+            imagesRef.current[0] = firstImg;
             setIsFirstFrameLoaded(true);
-            renderFrame(1, [firstImg]);
+            renderFrame(1);
         };
 
         // Load remaining frames in the background
@@ -44,25 +42,25 @@ const ScrollBackground = () => {
                 const frameNum = i.toString().padStart(3, '0');
                 img.src = `${FRAME_FOLDER}/ezgif-frame-${frameNum}.jpg`;
                 img.onload = () => {
-                    loadedImages[i - 1] = img;
-                    // Batch updates to state to avoid excessive re-renders
-                    if (i % 20 === 0 || i === TOTAL_FRAMES) {
-                        setImages([...loadedImages]);
-                    }
+                    imagesRef.current[i - 1] = img;
+                    // Force a render if we are currently at this frame or if it's the currently closest available
+                    renderFrame(frameIndex.get());
                 };
             }
         };
 
         loadRemaining();
-    }, []);
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-    const renderFrame = (index: number, currentImages: HTMLImageElement[]) => {
+    const renderFrame = (index: number) => {
         const canvas = canvasRef.current;
         if (!canvas) return;
         const ctx = canvas.getContext('2d', { alpha: false }); // Optimization: no alpha
         if (!ctx) return;
 
         const imgIndex = Math.floor(index) - 1;
+        const currentImages = imagesRef.current;
+        
         // Fallback logic: if requested image isn't loaded, find the closest available one
         let img = currentImages[imgIndex];
         if (!img) {
@@ -94,10 +92,10 @@ const ScrollBackground = () => {
     // Update frame on scroll
     useEffect(() => {
         const unsubscribe = frameIndex.on('change', (latest) => {
-            renderFrame(latest, images);
+            renderFrame(latest);
         });
         return () => unsubscribe();
-    }, [images, frameIndex]);
+    }, [frameIndex]);
 
     // Handle Resize
     useEffect(() => {
@@ -106,7 +104,7 @@ const ScrollBackground = () => {
             if (canvas) {
                 canvas.width = window.innerWidth;
                 canvas.height = window.innerHeight;
-                renderFrame(frameIndex.get(), images);
+                renderFrame(frameIndex.get());
             }
         };
 
@@ -114,7 +112,7 @@ const ScrollBackground = () => {
         handleResize();
 
         return () => window.removeEventListener('resize', handleResize);
-    }, [images]);
+    }, [frameIndex]);
 
     return (
         <div className="fixed inset-0 z-0 bg-black">

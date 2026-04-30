@@ -34,3 +34,11 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+
+/* Enhance red text visibility across the site */
+p.text-red-500, p.text-red-600, 
+span.text-red-500, span.text-red-600,
+div.text-red-500, div.text-red-600 {
+  text-shadow: 0 0 15px rgba(220, 38, 38, 0.8), 0 0 5px rgba(220, 38, 38, 0.4);
+  font-weight: bold;
+}
