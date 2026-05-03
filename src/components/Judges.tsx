@@ -26,35 +26,14 @@ const JudgeCard = ({ judge }: { judge: Judge }) => {
       {/* Glow Effect */}
       <div className="absolute inset-0 bg-magenta-500/10 blur-3xl group-hover:bg-magenta-500/20 transition-all duration-500" />
 
-      {/* Main Octagonal Card */}
+      {/* Main Rounded Card */}
       <div
-        className="relative h-full w-full bg-[#0a0a1a] shadow-[0_0_30px_rgba(255,0,255,0.1)] transition-all duration-500 group-hover:shadow-[0_0_50px_rgba(255,0,255,0.2)]"
-        style={{
-          clipPath: "polygon(15% 0, 85% 0, 100% 12%, 100% 88%, 85% 100%, 15% 100%, 0 88%, 0 12%)"
-        }}
+        className="relative h-full w-full bg-[#0a0a1a]/40 backdrop-blur-md rounded-[2.5rem] border border-white/10 shadow-[0_0_30px_rgba(255,0,255,0.1)] transition-all duration-500 group-hover:shadow-[0_0_50px_rgba(255,0,255,0.2)] overflow-hidden"
       >
-        {/* Outer Magenta Border */}
-        <div
-          className="absolute inset-0 bg-magenta-500/40"
-          style={{
-            clipPath: "polygon(15% 0, 85% 0, 100% 12%, 100% 88%, 85% 100%, 15% 100%, 0 88%, 0 12%)"
-          }}
-        >
-          <div
-            className="absolute inset-[2px] bg-[#0a0a1a]"
-            style={{
-              clipPath: "polygon(15% 0, 85% 0, 100% 12%, 100% 88%, 85% 100%, 15% 100%, 0 88%, 0 12%)"
-            }}
-          />
-        </div>
-
-        {/* Inner Cyan Border */}
-        <div
-          className="absolute inset-[10px] border border-cyan-400/30 opacity-60 group-hover:opacity-100 transition-opacity"
-          style={{
-            clipPath: "polygon(15% 0, 85% 0, 100% 12%, 100% 88%, 85% 100%, 15% 100%, 0 88%, 0 12%)"
-          }}
-        />
+        {/* Decorative Inner Glow */}
+        <div className="absolute inset-0 bg-gradient-to-br from-magenta-500/10 to-cyan-500/10 pointer-events-none" />
+        {/* Inner Border Accent */}
+        <div className="absolute inset-3 border border-white/5 rounded-[2rem] pointer-events-none" />
 
         {/* Decorative Corner Brackets */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[70%] h-[2px] bg-cyan-400 shadow-[0_0_10px_#22d3ee]" />
@@ -81,9 +60,7 @@ const JudgeCard = ({ judge }: { judge: Judge }) => {
 
           <div className="mt-auto w-full px-8 pb-8 flex flex-col items-center">
             <div className="relative w-full overflow-hidden">
-              <div className="absolute inset-0 bg-[#05050a] border border-white/10"
-                style={{ clipPath: "polygon(5% 0, 95% 0, 100% 100%, 0 100%)" }}
-              />
+              <div className="absolute inset-0 bg-[#05050a]/80 border border-white/10 rounded-xl" />
               <div className="absolute bottom-0 left-0 w-full h-[3px] bg-cyan-400 shadow-[0_0_15px_#22d3ee]" />
 
               <div className="relative py-3 px-4 text-center">

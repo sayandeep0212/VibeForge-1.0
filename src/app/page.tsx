@@ -64,13 +64,6 @@ export default function Home() {
       <Judges />
       <Faq />
 
-      {/* Footer-like Section */}
-      <section id="contact" className="relative h-screen flex flex-col items-center justify-center z-20 bg-gradient-to-b from-transparent to-red-950/50">
-        <h2 className="text-6xl font-black mb-8 italic">READY TO RISE?</h2>
-        <button className="bg-white text-black px-12 py-5 rounded-full font-black text-xl hover:bg-neutral-200 transition-all">
-          JOIN DISCORD
-        </button>
-      </section>
       <Footer />
       <ScrollNavigation />
     </main>

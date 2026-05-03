@@ -40,7 +40,7 @@ const Footer = () => {
   return (
     <footer className="relative w-full py-20 overflow-hidden">
       {/* Glassy Background Overlay */}
-      <div className="absolute inset-0 bg-red-950/20 backdrop-blur-xl" />
+      <div className="absolute inset-0 bg-red-950/5 backdrop-blur-md" />
       
       {/* 3D Background Elements */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80%] h-[1px] bg-gradient-to-r from-transparent via-red-600 to-transparent shadow-[0_0_20px_#dc2626]" />

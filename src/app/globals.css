@@ -42,3 +42,17 @@ div.text-red-500, div.text-red-600 {
   text-shadow: 0 0 15px rgba(220, 38, 38, 0.8), 0 0 5px rgba(220, 38, 38, 0.4);
   font-weight: bold;
 }
+
+/* Marquee Animation */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee 25s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}

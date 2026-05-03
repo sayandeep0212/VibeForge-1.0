@@ -120,7 +120,7 @@ const ScrollBackground = () => {
                 ref={canvasRef}
                 className={`w-full h-full object-cover transition-opacity duration-1000 ${isFirstFrameLoaded ? 'opacity-100' : 'opacity-0'}`}
             />
-            <div className="absolute inset-0 bg-black/40 pointer-events-none" />
+
         </div>
     );
 };

@@ -64,7 +64,7 @@ const PrizesAndMerch = () => {
               className={`relative group ${prize.featured ? 'md:scale-110 z-20 order-1 md:order-2' : idx === 0 ? 'order-2 md:order-1' : 'order-3'}`}
             >
               <div className={`absolute -inset-1 bg-gradient-to-b ${prize.color} rounded-3xl blur opacity-25 group-hover:opacity-50 transition duration-1000`} />
-              <div className="relative bg-neutral-900/80 backdrop-blur-xl rounded-3xl border border-white/10 p-8 h-full">
+              <div className="relative bg-neutral-900/40 backdrop-blur-lg rounded-3xl border border-white/10 p-8 h-full">
                 <div className="flex justify-center mb-8">
                   {prize.icon}
                 </div>

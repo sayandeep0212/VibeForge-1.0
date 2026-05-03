@@ -26,35 +26,14 @@ const MemberCard = ({ member }: { member: TeamMember }) => {
       {/* Glow Effect */}
       <div className="absolute inset-0 bg-magenta-500/10 blur-3xl group-hover:bg-magenta-500/20 transition-all duration-500" />
 
-      {/* Main Octagonal Card */}
+      {/* Main Rounded Card */}
       <div
-        className="relative h-full w-full bg-[#0a0a1a] shadow-[0_0_30px_rgba(255,0,255,0.1)] transition-all duration-500 group-hover:shadow-[0_0_50px_rgba(255,0,255,0.2)]"
-        style={{
-          clipPath: "polygon(15% 0, 85% 0, 100% 12%, 100% 88%, 85% 100%, 15% 100%, 0 88%, 0 12%)"
-        }}
+        className="relative h-full w-full bg-[#0a0a1a]/40 backdrop-blur-md rounded-[2.5rem] border border-white/10 shadow-[0_0_30px_rgba(255,0,255,0.1)] transition-all duration-500 group-hover:shadow-[0_0_50px_rgba(255,0,255,0.2)] overflow-hidden"
       >
-        {/* Outer Magenta Border (Simulated with background and inset) */}
-        <div
-          className="absolute inset-0 bg-magenta-500/40"
-          style={{
-            clipPath: "polygon(15% 0, 85% 0, 100% 12%, 100% 88%, 85% 100%, 15% 100%, 0 88%, 0 12%)"
-          }}
-        >
-          <div
-            className="absolute inset-[2px] bg-[#0a0a1a]"
-            style={{
-              clipPath: "polygon(15% 0, 85% 0, 100% 12%, 100% 88%, 85% 100%, 15% 100%, 0 88%, 0 12%)"
-            }}
-          />
-        </div>
-
-        {/* Inner Cyan Border */}
-        <div
-          className="absolute inset-[10px] border border-cyan-400/30 opacity-60 group-hover:opacity-100 transition-opacity"
-          style={{
-            clipPath: "polygon(15% 0, 85% 0, 100% 12%, 100% 88%, 85% 100%, 15% 100%, 0 88%, 0 12%)"
-          }}
-        />
+        {/* Decorative Inner Glow */}
+        <div className="absolute inset-0 bg-gradient-to-br from-magenta-500/10 to-cyan-500/10 pointer-events-none" />
+        {/* Inner Border Accent */}
+        <div className="absolute inset-3 border border-white/5 rounded-[2rem] pointer-events-none" />
 
         {/* Decorative Corner Brackets (Matching Image) */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[70%] h-[2px] bg-cyan-400 shadow-[0_0_10px_#22d3ee]" />
@@ -88,9 +67,7 @@ const MemberCard = ({ member }: { member: TeamMember }) => {
           {/* Name Plate (Exact Match) */}
           <div className="mt-auto w-full px-8 pb-8 flex flex-col items-center">
             <div className="relative w-full overflow-hidden">
-              <div className="absolute inset-0 bg-[#020210] border border-white/10"
-                style={{ clipPath: "polygon(5% 0, 95% 0, 100% 100%, 0 100%)" }}
-              />
+              <div className="absolute inset-0 bg-[#020210]/80 border border-white/10 rounded-xl" />
               {/* Bottom Cyan Glow Bar */}
               <div className="absolute bottom-0 left-0 w-full h-[3px] bg-cyan-400 shadow-[0_0_15px_#22d3ee]" />
 
@@ -173,7 +150,7 @@ export default function Team() {
   ];
 
   return (
-    <section id="team" className="relative py-24 bg-black/40 backdrop-blur-3xl overflow-hidden border-y border-white/5">
+    <section id="team" className="relative py-24 bg-black/10 backdrop-blur-xl overflow-hidden border-y border-white/5">
       {/* Background Decorative Elements */}
       <div className="absolute top-0 left-0 w-full h-full">
         <div className="absolute top-1/4 left-0 w-[500px] h-[500px] bg-purple-600/5 rounded-full blur-[120px]" />
@@ -214,10 +191,18 @@ export default function Team() {
             </h2>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 justify-items-center">
-            {management.map((member, i) => (
-              <MemberCard key={i} member={member} />
-            ))}
+          <div className="relative overflow-hidden">
+            <div className="flex gap-8 py-10 animate-marquee w-max">
+              {/* Duplicate the cards twice for seamless loop */}
+              {[...management, ...management].map((member, i) => (
+                <div 
+                  key={i} 
+                  className="flex-none w-[320px] transition-transform duration-300 hover:scale-105"
+                >
+                  <MemberCard member={member} />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
