@@ -42,7 +42,10 @@ export default function Home() {
             className="text-6xl md:text-8xl lg:text-9xl font-heading tracking-tighter mb-4 bg-gradient-to-b from-white to-neutral-500 bg-clip-text text-transparent leading-none pr-8 block"
             delay={10}
           />
-          <p className="text-xl md:text-2xl font-light tracking-[0.3em] text-yellow-300 uppercase mb-8">
+          <p 
+            className="text-xl md:text-2xl font-light tracking-[0.3em] text-yellow-300 uppercase mb-8"
+            style={{ fontFamily: "var(--font-orbitron), sans-serif" }}
+          >
             48 hour game making competition
           </p>
 

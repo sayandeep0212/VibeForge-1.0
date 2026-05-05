@@ -21,83 +21,76 @@ const MemberCard = ({ member }: { member: TeamMember }) => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       whileHover={{ scale: 1.05 }}
-      className="relative w-full max-w-[320px] aspect-[3/4] p-1 group"
+      className="relative w-full max-w-[320px] aspect-[3/4] group cursor-pointer"
     >
-      {/* Glow Effect */}
-      <div className="absolute inset-0 bg-magenta-500/10 blur-3xl group-hover:bg-magenta-500/20 transition-all duration-500" />
+      {/* Outer Glow */}
+      <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 to-magenta-500 rounded-xl blur opacity-0 group-hover:opacity-40 transition duration-500" />
 
-      {/* Main Rounded Card */}
-      <div
-        className="relative h-full w-full bg-neutral-900 border border-white/5 rounded-[2.5rem] shadow-[0_0_20px_rgba(0,0,0,0.5)] transition-all duration-500 group-hover:shadow-[0_0_40px_rgba(0,0,0,0.8)] overflow-hidden"
+      {/* Main Card Container with Clip Path */}
+      <div 
+        className="relative h-full w-full bg-neutral-900 overflow-hidden transition-all duration-500 shadow-2xl"
+        style={{ clipPath: 'polygon(15% 0, 100% 0, 100% 85%, 85% 100%, 0 100%, 0 15%)' }}
       >
-        {/* Decorative Inner Glow */}
-        <div className="absolute inset-0 bg-gradient-to-br from-magenta-500/10 to-cyan-500/10 pointer-events-none" />
-        {/* Inner Border Accent */}
-        <div className="absolute inset-3 border border-white/5 rounded-[2rem] pointer-events-none" />
+        {/* Full Card Image */}
+        <div className="absolute inset-0">
+          <img
+            src={member.image}
+            alt={member.name}
+            className="w-full h-full object-cover object-center group-hover:scale-105 transition-all duration-700"
+          />
+          {/* Gradient Overlay for Text Readability */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-90" />
+          <div className="absolute inset-0 bg-gradient-to-tr from-magenta-500/20 to-cyan-500/20 mix-blend-overlay group-hover:opacity-0 transition-opacity duration-500" />
+        </div>
 
-        {/* Decorative Corner Brackets (Matching Image) */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[70%] h-[2px] bg-cyan-400 shadow-[0_0_10px_#22d3ee]" />
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[70%] h-[2px] bg-magenta-500 shadow-[0_0_10px_#d946ef]" />
-        
-        {/* Side Borders - Strong Pink Neon (User Request) */}
-        <div className="absolute top-[12%] right-0 w-[2px] h-[76%] bg-magenta-500 shadow-[0_0_15px_#d946ef]" />
-        <div className="absolute top-[12%] left-0 w-[2px] h-[76%] bg-magenta-500 shadow-[0_0_15px_#d946ef]" />
+        {/* Inner Border SVG (Matches Clip Path) */}
+        <svg className="absolute inset-0 w-full h-full pointer-events-none z-10" preserveAspectRatio="none">
+          <polygon 
+            points="48,2 318,2 318,364 272,424 2,424 2,62" 
+            fill="none" 
+            stroke="url(#neon-grad)" 
+            strokeWidth="3" 
+            className="opacity-40 group-hover:opacity-100 transition-opacity duration-500"
+          />
+          <defs>
+            <linearGradient id="neon-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#22d3ee" />
+              <stop offset="50%" stopColor="#d946ef" />
+              <stop offset="100%" stopColor="#fde047" />
+            </linearGradient>
+          </defs>
+        </svg>
 
-        {/* Top Corners Details */}
-        <div className="absolute top-2 right-2 w-8 h-8 border-t-2 border-r-2 border-cyan-400 opacity-50 group-hover:opacity-100" />
-        <div className="absolute bottom-2 left-2 w-8 h-8 border-b-2 border-l-2 border-magenta-500 opacity-50 group-hover:opacity-100" />
+        {/* Top Right Tech Detail */}
+        <div className="absolute top-4 right-4 flex gap-1 z-20">
+          <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse" />
+          <div className="w-1.5 h-1.5 bg-magenta-500 rounded-full animate-pulse delay-75" />
+          <div className="w-1.5 h-1.5 bg-yellow-300 rounded-full animate-pulse delay-150" />
+        </div>
 
         {/* Content Container */}
-        <div className="absolute inset-0 flex flex-col items-center pt-8">
-          {/* Avatar Area */}
-          <div className="relative w-40 h-40">
-            {/* Circle Glow */}
-            <div className="absolute inset-0 bg-cyan-500/10 blur-xl rounded-full scale-125" />
-            <div className="relative w-full h-full rounded-full p-[2px] bg-gradient-to-tr from-cyan-400 to-magenta-500 shadow-2xl">
-              <div className="w-full h-full rounded-full bg-neutral-900 overflow-hidden">
-                <img
-                  src={member.image}
-                  alt={member.name}
-                  className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Name Plate (Exact Match) */}
-          <div className="mt-auto w-full px-8 pb-8 flex flex-col items-center">
-            <div className="relative w-full overflow-hidden">
-              <div className="absolute inset-0 bg-neutral-800 border border-white/5 rounded-xl" />
-              {/* Bottom Cyan Glow Bar */}
-              <div className="absolute bottom-0 left-0 w-full h-[3px] bg-yellow-300 shadow-[0_0_15px_#fde047]" />
-
-              <div className="relative py-3 px-4 text-center">
-                <h3 className="text-xl font-black font-sans tracking-widest text-white uppercase italic">
-                  {member.name}
-                </h3>
-              </div>
+        <div className="absolute inset-0 flex flex-col justify-end p-6 z-20">
+          <div className="w-full transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+            {/* Title Block with Left Border */}
+            <div className="border-l-4 border-yellow-400 pl-4 mb-2">
+              <h3 className="text-2xl font-black font-sans tracking-widest text-white uppercase italic drop-shadow-[0_2px_4px_rgba(0,0,0,1)]">
+                {member.name}
+              </h3>
+              <p className="mt-1 text-cyan-400 font-bold text-xs tracking-[0.2em] uppercase drop-shadow-[0_1px_2px_rgba(0,0,0,1)]">
+                {member.role}
+              </p>
             </div>
 
-            {/* Role Below Plate */}
-            <p className="mt-4 text-yellow-300 font-medium text-xs tracking-[0.2em] uppercase text-center max-w-[200px]">
-              {member.role}
-            </p>
-            {/* Social Icons (User Request) */}
-            <div className="relative z-10 flex gap-4 mt-4">
-              <a href={member.socials?.linkedin || "#"} className="p-2 bg-white/5 rounded-full border border-white/10 hover:border-cyan-400 hover:text-cyan-400 transition-all hover:scale-110">
-                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                  <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
-                </svg>
+            {/* Social Icons Container */}
+            <div className="flex gap-3 mt-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
+              <a href={member.socials?.linkedin || "#"} className="p-2 bg-black/60 backdrop-blur-md rounded border border-white/10 hover:border-cyan-400 hover:text-cyan-400 transition-all hover:-translate-y-1">
+                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
               </a>
-              <a href={member.socials?.facebook || "#"} className="p-2 bg-white/5 rounded-full border border-white/10 hover:border-magenta-500 hover:text-magenta-500 transition-all hover:scale-110">
-                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                  <path d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.312h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.325-1.325z"/>
-                </svg>
+              <a href={member.socials?.facebook || "#"} className="p-2 bg-black/60 backdrop-blur-md rounded border border-white/10 hover:border-magenta-500 hover:text-magenta-500 transition-all hover:-translate-y-1">
+                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.312h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.325-1.325z"/></svg>
               </a>
-              <a href={member.socials?.instagram || "#"} className="p-2 bg-white/5 rounded-full border border-white/10 hover:border-orange-500 hover:text-orange-500 transition-all hover:scale-110">
-                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.17.054 1.805.249 2.227.412.558.217.957.477 1.377.896.419.42.679.819.896 1.377.164.422.358 1.057.412 2.227.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.054 1.17-.249 1.805-.412 2.227-.217.558-.477.957-.896 1.377-.42.419-.819.679-1.377.896-.422.164-1.057.358-2.227.412-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.17-.054-1.805-.249-2.227-.412-.558-.217-.957-.477-1.377-.896-.419-.42-.679-.819-.896-1.377-.164-.422-.358-1.057-.412-2.227-.058-1.266-.07-1.646-.07-4.85s.012-3.584.07-4.85c.054-1.17.249-1.805.412-2.227.217-.558.477-.957.896-1.377.42-.419.819-.679 1.377-.896.422-.164 1.057-.358 2.227-.412 1.266-.058 1.646-.07 4.85-.07zm0-2.163c-3.259 0-3.667.014-4.947.072-1.28.058-2.152.26-2.917.557-.79.307-1.459.718-2.126 1.384-.666.667-1.077 1.335-1.384 2.126-.297.765-.499 1.637-.557 2.917-.058 1.28-.071 1.688-.071 4.947s.013 3.667.072 4.947c.058 1.28.26 2.152.557 2.917.307.79.718 1.459 1.384 2.126.667.666 1.335-1.077 2.126-1.384.765-.297 1.637-.499 2.917-.557 1.28-.058 1.688-.071 4.947-.071s3.667.013 4.947.072c1.28.058 2.152.26 2.917.557.79.307 1.459.718 2.126 1.384.666.667 1.077 1.335 1.384 2.126.297.765.499 1.637.557 2.917.058 1.28.071 1.688.071 4.947s-.013-3.667-.072-4.947c-.058-1.28-.26-2.152-.557-2.917-.307-.79-.718-1.459-1.384-2.126-.667-.666-1.335-1.077-2.126-1.384-.765-.297-1.637-.499-2.917-.557-1.28-.058-1.688-.071-4.947-.071zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.162 6.162 6.162 6.162-2.759 6.162-6.162-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.791-4-4s1.791-4 4-4 4 1.791 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-                </svg>
+              <a href={member.socials?.instagram || "#"} className="p-2 bg-black/60 backdrop-blur-md rounded border border-white/10 hover:border-yellow-400 hover:text-yellow-400 transition-all hover:-translate-y-1">
+                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.17.054 1.805.249 2.227.412.558.217.957.477 1.377.896.419.42.679.819.896 1.377.164.422.358 1.057.412 2.227.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.054 1.17-.249 1.805-.412 2.227-.217.558-.477.957-.896 1.377-.42.419-.819.679-1.377.896-.422.164-1.057.358-2.227.412-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.17-.054-1.805-.249-2.227-.412-.558-.217-.957-.477-1.377-.896-.419-.42-.679-.819-.896-1.377-.164-.422-.358-1.057-.412-2.227-.058-1.266-.07-1.646-.07-4.85s.012-3.584.07-4.85c.054-1.17.249-1.805.412-2.227.217-.558.477-.957.896-1.377.42-.419.819-.679 1.377-.896.422-.164 1.057-.358 2.227-.412 1.266-.058 1.646-.07 4.85-.07zm0-2.163c-3.259 0-3.667.014-4.947.072-1.28.058-2.152.26-2.917.557-.79.307-1.459.718-2.126 1.384-.666.667-1.077 1.335-1.384 2.126-.297.765-.499 1.637-.557 2.917-.058 1.28-.071 1.688-.071 4.947s.013 3.667.072 4.947c.058 1.28.26 2.152.557 2.917.307.79.718 1.459 1.384 2.126.667.666 1.335-1.077 2.126-1.384.765-.297 1.637-.499 2.917-.557 1.28-.058 1.688-.071 4.947-.071s3.667.013 4.947.072c1.28.058 2.152.26 2.917.557.79.307 1.459.718 2.126 1.384.666.667 1.077 1.335 1.384 2.126.297.765.499 1.637.557 2.917.058 1.28.071 1.688.071 4.947s-.013-3.667-.072-4.947c-.058-1.28-.26-2.152-.557-2.917-.307-.79-.718-1.459-1.384-2.126-.667-.666-1.335-1.077-2.126-1.384-.765-.297-1.637-.499-2.917-.557-1.28-.058-1.688-.071-4.947-.071zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.162 6.162 6.162 6.162-2.759 6.162-6.162-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.791-4-4s1.791-4 4-4 4 1.791 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
               </a>
             </div>
           </div>
@@ -118,11 +111,6 @@ export default function Team() {
       name: "Mr. Ayushman Bilas Thakur",
       role: "Faculty Co-Ordinator",
       image: "https://gameliminals.vercel.app/assets/Faculty_Co-ordinator.jpeg"
-    },
-    {
-      name: "Prof. Michael Wu",
-      role: "Head of Game Design",
-      image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Michael"
     }
   ];
 
@@ -150,11 +138,12 @@ export default function Team() {
   ];
 
   return (
-    <section id="team" className="relative py-24 bg-black overflow-hidden border-y border-white/5">
+    <section id="team" className="relative py-24 bg-transparent overflow-hidden">
       {/* Background Decorative Elements */}
-      <div className="absolute top-0 left-0 w-full h-full">
-        <div className="absolute top-1/4 left-0 w-[500px] h-[500px] bg-purple-600/5 rounded-full blur-[120px]" />
-        <div className="absolute bottom-1/4 right-0 w-[500px] h-[500px] bg-cyan-600/5 rounded-full blur-[120px]" />
+      <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+
+        <div className="absolute top-1/4 left-0 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[120px] mix-blend-screen" />
+        <div className="absolute bottom-1/4 right-0 w-[500px] h-[500px] bg-cyan-600/10 rounded-full blur-[120px] mix-blend-screen" />
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
@@ -171,7 +160,7 @@ export default function Team() {
             </h2>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 justify-items-center">
+          <div className="flex flex-wrap justify-center gap-12">
             {faculty.map((member, i) => (
               <MemberCard key={i} member={member} />
             ))}
@@ -191,7 +180,7 @@ export default function Team() {
             </h2>
           </motion.div>
 
-          <div className="relative overflow-hidden">
+          <div className="relative overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
             <div className="flex gap-8 py-10 animate-marquee w-max">
               {/* Duplicate the cards twice for seamless loop */}
               {[...management, ...management].map((member, i) => (
