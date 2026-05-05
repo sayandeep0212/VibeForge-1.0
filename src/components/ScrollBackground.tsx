@@ -3,8 +3,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useScroll, useTransform, useSpring } from 'framer-motion';
 
-const TOTAL_FRAMES = 240;
-const FRAME_FOLDER = '/frames';
+const TOTAL_FRAMES = 193;
+const FRAME_FOLDER = '/home-frames';
 
 const ScrollBackground = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);

@@ -13,10 +13,10 @@ const FaqItem = ({ question, answer }: { question: string, answer: string }) => 
         onClick={() => setIsOpen(!isOpen)}
         className="w-full py-8 flex items-center justify-between text-left group"
       >
-        <span className={`text-xl md:text-2xl font-bold transition-colors ${isOpen ? 'text-red-500' : 'text-neutral-400 group-hover:text-white'}`}>
+        <span className={`text-xl md:text-2xl font-bold tracking-tight transition-colors ${isOpen ? 'text-red-400' : 'text-neutral-400 group-hover:text-white'}`}>
           {question}
         </span>
-        <div className={`p-2 rounded-lg transition-all ${isOpen ? 'bg-red-600 text-white rotate-180' : 'bg-white/5 text-neutral-500'}`}>
+        <div className={`p-2 rounded-lg transition-all ${isOpen ? 'bg-red-400 text-white rotate-180' : 'bg-white/5 text-neutral-500'}`}>
           {isOpen ? <Minus className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
         </div>
       </button>
@@ -77,18 +77,18 @@ const Faq = () => {
   ];
 
   return (
-    <section id="faq" className="relative py-24 px-6 md:px-24 bg-gradient-to-b from-transparent to-red-950/5">
+    <section id="faq" className="relative py-24 px-6 md:px-24 bg-transparent">
       <div className="max-w-5xl mx-auto">
         <div className="flex items-center gap-4 mb-16">
-          <div className="p-3 bg-red-600 rounded-2xl">
-            <HelpCircle className="w-8 h-8 text-white" />
+          <div className="p-3 bg-yellow-300 rounded-2xl">
+            <HelpCircle className="w-8 h-8 text-black" />
           </div>
-          <h2 className="text-4xl md:text-6xl font-black italic tracking-tighter uppercase underline decoration-red-600 decoration-4 underline-offset-8">
-            MISSION <span className="text-red-500">DEBRIEF</span> (FAQ)
+          <h2 className="text-3xl md:text-5xl font-black italic tracking-tighter uppercase underline decoration-red-400 decoration-4 underline-offset-8 text-yellow-300">
+            MISSION <span className="text-white">DEBRIEF</span> (FAQ)
           </h2>
         </div>
 
-        <div className="bg-black/20 backdrop-blur-xl rounded-[2.5rem] border border-white/5 p-8 md:p-16 shadow-2xl">
+        <div className="bg-neutral-900 border border-white/5 p-8 md:p-16 shadow-2xl rounded-[2.5rem]">
           {faqs.map((faq, index) => (
             <FaqItem key={index} {...faq} />
           ))}

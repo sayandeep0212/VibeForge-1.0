@@ -37,7 +37,7 @@ const Navbar = () => {
         <div className={`relative overflow-hidden rounded-2xl border border-white/10 bg-black/20 backdrop-blur-xl transition-all duration-500 ${scrolled ? 'shadow-[0_8px_32px_0_rgba(0,0,0,0.8)]' : ''
           }`}>
           {/* Glassy Overlay Gradient */}
-          <div className="absolute inset-0 bg-gradient-to-r from-red-500/5 to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-r from-yellow-300/5 to-transparent pointer-events-none" />
 
           <div className="flex items-center justify-between px-6 py-3">
             {/* Left: 3 Logos */}
@@ -61,7 +61,7 @@ const Navbar = () => {
                 <img src="https://gameliminals.vercel.app/assets/acm.jpeg" alt="Logo 3" className="w-full h-full object-cover" />
               </motion.div>
               <div className="ml-2 hidden lg:block">
-                <span className="text-xl font-black tracking-tighter italic text-white">GAMELIMINALS</span>
+                <span className="text-xl font-heading tracking-tighter italic text-white">GAMELIMINALS</span>
               </div>
             </div>
 
@@ -75,11 +75,11 @@ const Navbar = () => {
                     }`}
                 >
                   {link.name}
-                  <span className={`absolute -bottom-1 left-0 h-0.5 bg-red-600 transition-all ${pathname === link.href ? 'w-full' : 'w-0 group-hover:w-full'
+                  <span className={`absolute -bottom-1 left-0 h-0.5 bg-yellow-300 transition-all ${pathname === link.href ? 'w-full' : 'w-0 group-hover:w-full'
                     }`} />
                 </Link>
               ))}
-              <Link href="/signup" className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-full font-bold text-xs tracking-widest transition-all hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(220,38,38,0.3)]">
+              <Link href="/signup" className="bg-yellow-300 hover:bg-gradient-to-r hover:from-yellow-300 hover:to-red-400 text-black px-6 py-2 rounded-full font-bold text-xs tracking-widest transition-all hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(253,224,71,0.3)]">
                 SIGN UP
               </Link>
             </div>
@@ -112,7 +112,7 @@ const Navbar = () => {
                   key={link.name}
                   href={link.href}
                   onClick={() => setIsOpen(false)}
-                  className={`text-lg font-bold tracking-[0.2em] uppercase transition-colors ${pathname === link.href ? 'text-red-500' : 'text-neutral-400 hover:text-red-500'
+                  className={`text-lg font-bold tracking-[0.2em] uppercase transition-colors ${pathname === link.href ? 'text-yellow-300' : 'text-neutral-400 hover:text-yellow-300'
                     }`}
                 >
                   {link.name}
@@ -122,7 +122,7 @@ const Navbar = () => {
               <Link
                 href="/signup"
                 onClick={() => setIsOpen(false)}
-                className="bg-red-600 text-white text-center py-4 rounded-xl font-bold tracking-widest uppercase"
+                className="bg-yellow-300 hover:bg-gradient-to-r hover:from-yellow-300 hover:to-red-400 text-black text-center py-4 rounded-xl font-bold tracking-widest uppercase"
               >
                 SIGN UP
               </Link>

@@ -40,10 +40,10 @@ const Footer = () => {
   return (
     <footer className="relative w-full py-20 overflow-hidden">
       {/* Glassy Background Overlay */}
-      <div className="absolute inset-0 bg-red-950/5 backdrop-blur-md" />
+      <div className="absolute inset-0 bg-black/80 backdrop-blur-md" />
       
       {/* 3D Background Elements */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80%] h-[1px] bg-gradient-to-r from-transparent via-red-600 to-transparent shadow-[0_0_20px_#dc2626]" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80%] h-[1px] bg-gradient-to-r from-transparent via-yellow-300 to-transparent shadow-[0_0_20px_#fde047]" />
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-40 bg-red-600/10 blur-[120px] rounded-full" />
       
       <div className="max-w-7xl mx-auto px-6 relative z-10">
@@ -61,8 +61,8 @@ const Footer = () => {
                 <img src="https://gameliminals.vercel.app/assets/acm.jpeg" alt="Logo 3" className="w-full h-full object-cover" />
               </motion.div>
             </div>
-            <h2 className="text-2xl font-black tracking-tighter text-white mb-4 italic leading-tight">
-              GAMELIMINALS<br/><span className="text-red-600">GAMEJAM 2K26</span>
+            <h2 className="text-xl md:text-2xl font-black tracking-tighter text-white mb-4 italic leading-tight">
+              GAMELIMINALS<br/><span className="text-red-400">GAMEJAM <span className="font-sans">2</span>K<span className="font-sans">26</span></span>
             </h2>
             <p className="text-neutral-400 max-w-xs leading-relaxed text-sm">
               Pushing the boundaries of game development at Adamas University. Join the ultimate quest of creativity and innovation.
@@ -150,7 +150,7 @@ const Footer = () => {
 
         {/* Divider with Neon Accent */}
         <div className="relative h-[1px] w-full bg-white/10 mb-10">
-          <div className="absolute top-0 left-0 w-20 h-full bg-red-600 shadow-[0_0_15px_#dc2626]" />
+          <div className="absolute top-0 left-0 w-20 h-full bg-yellow-300 shadow-[0_0_15px_#fde047]" />
         </div>
 
         {/* Bottom Section */}

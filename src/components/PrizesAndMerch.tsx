@@ -46,9 +46,9 @@ const PrizesAndMerch = () => {
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            className="text-6xl md:text-8xl font-black italic tracking-tighter text-white mb-4"
+            className="text-5xl md:text-7xl font-heading italic tracking-tighter text-yellow-300 mb-4"
           >
-            PRIZE <span className="text-red-600">POOL</span>
+            PRIZE <span className="text-white">POOL</span>
           </motion.h2>
           <p className="text-neutral-400 text-lg uppercase tracking-widest font-bold">Total Pool worth ₹1,00,000+</p>
         </div>
@@ -68,8 +68,8 @@ const PrizesAndMerch = () => {
                 <div className="flex justify-center mb-8">
                   {prize.icon}
                 </div>
-                <h3 className="text-center text-neutral-400 font-black text-sm tracking-[0.3em] mb-2">{prize.rank}</h3>
-                <p className={`text-center text-4xl md:text-5xl font-black bg-gradient-to-r ${prize.color} bg-clip-text text-transparent mb-8`}>
+                <h3 className="text-center text-neutral-400 font-black font-sans text-sm tracking-[0.3em] mb-2">{prize.rank}</h3>
+                <p className={`text-center text-4xl md:text-5xl font-black font-sans bg-gradient-to-r ${prize.color} bg-clip-text text-transparent mb-8`}>
                   {prize.amount}
                 </p>
                 <ul className="space-y-4 mb-8">
@@ -90,9 +90,9 @@ const PrizesAndMerch = () => {
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            className="text-5xl md:text-7xl font-black italic tracking-tighter text-white mb-4"
+            className="text-4xl md:text-6xl font-heading italic tracking-tighter text-yellow-300 mb-4"
           >
-            LIMITED <span className="text-red-600">EDITION</span> SWAGS
+            LIMITED <span className="text-white">EDITION</span> SWAGS
           </motion.h2>
           <p className="text-neutral-400 text-lg uppercase tracking-widest font-bold">Official GameLiminals Merchandise</p>
         </div>
@@ -116,11 +116,11 @@ const PrizesAndMerch = () => {
                 
                 <div className="absolute bottom-0 left-0 w-full p-8">
                   <h3 className="text-2xl font-black italic text-white mb-1 uppercase">{item.name}</h3>
-                  <p className="text-red-500 font-bold mb-4">{item.price}</p>
+                  <p className="text-yellow-300 font-bold mb-4">{item.price}</p>
                   <motion.button 
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="w-full py-3 bg-white text-black font-black uppercase text-xs tracking-widest rounded-xl hover:bg-red-600 hover:text-white transition-all flex items-center justify-center gap-2"
+                    className="w-full py-3 bg-white text-black font-black uppercase text-xs tracking-widest rounded-xl hover:bg-gradient-to-r hover:from-yellow-300 hover:to-red-400 hover:text-black transition-all flex items-center justify-center gap-2"
                   >
                     <ShoppingBag className="w-4 h-4" />
                     BUY MERCH

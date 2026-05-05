@@ -28,7 +28,7 @@ const JudgeCard = ({ judge }: { judge: Judge }) => {
 
       {/* Main Rounded Card */}
       <div
-        className="relative h-full w-full bg-[#0a0a1a]/40 backdrop-blur-md rounded-[2.5rem] border border-white/10 shadow-[0_0_30px_rgba(255,0,255,0.1)] transition-all duration-500 group-hover:shadow-[0_0_50px_rgba(255,0,255,0.2)] overflow-hidden"
+        className="relative h-full w-full bg-neutral-900 border border-white/5 rounded-[2.5rem] shadow-[0_0_20px_rgba(0,0,0,0.5)] transition-all duration-500 group-hover:shadow-[0_0_40px_rgba(0,0,0,0.8)] overflow-hidden"
       >
         {/* Decorative Inner Glow */}
         <div className="absolute inset-0 bg-gradient-to-br from-magenta-500/10 to-cyan-500/10 pointer-events-none" />
@@ -60,17 +60,17 @@ const JudgeCard = ({ judge }: { judge: Judge }) => {
 
           <div className="mt-auto w-full px-8 pb-8 flex flex-col items-center">
             <div className="relative w-full overflow-hidden">
-              <div className="absolute inset-0 bg-[#05050a]/80 border border-white/10 rounded-xl" />
-              <div className="absolute bottom-0 left-0 w-full h-[3px] bg-cyan-400 shadow-[0_0_15px_#22d3ee]" />
+              <div className="absolute inset-0 bg-neutral-800 border border-white/5 rounded-xl" />
+              <div className="absolute bottom-0 left-0 w-full h-[3px] bg-yellow-300 shadow-[0_0_15px_#fde047]" />
 
               <div className="relative py-3 px-4 text-center">
-                <h3 className="text-xl font-black tracking-widest text-white uppercase italic leading-none">
+                <h3 className="text-lg font-black font-sans tracking-widest text-white uppercase leading-none">
                   {judge.name}
                 </h3>
               </div>
             </div>
 
-            <p className="mt-4 text-neutral-300 font-medium text-xs tracking-[0.2em] uppercase text-center">
+            <p className="mt-4 text-yellow-300 font-medium text-xs tracking-[0.2em] uppercase text-center">
               {judge.role}
             </p>
             
@@ -118,11 +118,11 @@ const Judges = () => {
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            className="text-6xl md:text-8xl font-black italic tracking-tighter text-white mb-4"
+            className="text-5xl md:text-7xl font-heading italic tracking-tighter text-yellow-300 mb-4"
           >
-            THE <span className="text-red-600">JUDGES</span>
+            THE <span className="text-red-400">JUDGES</span>
           </motion.h2>
-          <div className="h-1 w-24 bg-red-600 mx-auto" />
+          <div className="h-1 w-24 bg-red-400 mx-auto" />
           <p className="mt-6 text-neutral-400 max-w-2xl mx-auto text-lg font-medium tracking-wide">
             Industry experts and veterans set to evaluate the next generation of game developers.
           </p>

@@ -6,7 +6,7 @@
 }
 
 body {
-  background: var(--background);
+  background-color: #000000;
   color: var(--foreground);
   overflow-x: hidden;
 }
@@ -14,6 +14,17 @@ body {
 @layer base {
   html {
     scroll-behavior: smooth;
+  }
+
+  h1, h2, h3, h4, h5, h6, .font-heading {
+    font-family: var(--font-casual-passion), sans-serif;
+    font-weight: normal;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  .font-sans {
+    font-family: var(--font-geist-sans), sans-serif !important;
   }
 }
 

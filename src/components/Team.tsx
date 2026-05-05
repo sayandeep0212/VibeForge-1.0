@@ -28,7 +28,7 @@ const MemberCard = ({ member }: { member: TeamMember }) => {
 
       {/* Main Rounded Card */}
       <div
-        className="relative h-full w-full bg-[#0a0a1a]/40 backdrop-blur-md rounded-[2.5rem] border border-white/10 shadow-[0_0_30px_rgba(255,0,255,0.1)] transition-all duration-500 group-hover:shadow-[0_0_50px_rgba(255,0,255,0.2)] overflow-hidden"
+        className="relative h-full w-full bg-neutral-900 border border-white/5 rounded-[2.5rem] shadow-[0_0_20px_rgba(0,0,0,0.5)] transition-all duration-500 group-hover:shadow-[0_0_40px_rgba(0,0,0,0.8)] overflow-hidden"
       >
         {/* Decorative Inner Glow */}
         <div className="absolute inset-0 bg-gradient-to-br from-magenta-500/10 to-cyan-500/10 pointer-events-none" />
@@ -67,19 +67,19 @@ const MemberCard = ({ member }: { member: TeamMember }) => {
           {/* Name Plate (Exact Match) */}
           <div className="mt-auto w-full px-8 pb-8 flex flex-col items-center">
             <div className="relative w-full overflow-hidden">
-              <div className="absolute inset-0 bg-[#020210]/80 border border-white/10 rounded-xl" />
+              <div className="absolute inset-0 bg-neutral-800 border border-white/5 rounded-xl" />
               {/* Bottom Cyan Glow Bar */}
-              <div className="absolute bottom-0 left-0 w-full h-[3px] bg-cyan-400 shadow-[0_0_15px_#22d3ee]" />
+              <div className="absolute bottom-0 left-0 w-full h-[3px] bg-yellow-300 shadow-[0_0_15px_#fde047]" />
 
               <div className="relative py-3 px-4 text-center">
-                <h3 className="text-xl font-black tracking-widest text-white uppercase italic">
+                <h3 className="text-xl font-black font-sans tracking-widest text-white uppercase italic">
                   {member.name}
                 </h3>
               </div>
             </div>
 
             {/* Role Below Plate */}
-            <p className="mt-4 text-neutral-300 font-medium text-xs tracking-[0.2em] uppercase text-center max-w-[200px]">
+            <p className="mt-4 text-yellow-300 font-medium text-xs tracking-[0.2em] uppercase text-center max-w-[200px]">
               {member.role}
             </p>
             {/* Social Icons (User Request) */}
@@ -150,7 +150,7 @@ export default function Team() {
   ];
 
   return (
-    <section id="team" className="relative py-24 bg-black/10 backdrop-blur-xl overflow-hidden border-y border-white/5">
+    <section id="team" className="relative py-24 bg-black overflow-hidden border-y border-white/5">
       {/* Background Decorative Elements */}
       <div className="absolute top-0 left-0 w-full h-full">
         <div className="absolute top-1/4 left-0 w-[500px] h-[500px] bg-purple-600/5 rounded-full blur-[120px]" />
@@ -166,8 +166,8 @@ export default function Team() {
             className="flex items-center gap-4 mb-12"
           >
             <div className="h-10 w-2 bg-gradient-to-b from-purple-600 to-cyan-400 rounded-full" />
-            <h2 className="text-4xl md:text-5xl font-black italic text-white uppercase tracking-tighter">
-              Faculty <span className="text-red-600">Advisors</span>
+            <h2 className="text-3xl md:text-5xl font-heading italic text-yellow-300 uppercase tracking-tighter">
+              Faculty <span className="text-white">Advisors</span>
             </h2>
           </motion.div>
 
@@ -186,8 +186,8 @@ export default function Team() {
             className="flex items-center gap-4 mb-12"
           >
             <div className="h-10 w-2 bg-gradient-to-b from-red-600 to-orange-500 rounded-full" />
-            <h2 className="text-4xl md:text-5xl font-black italic text-white uppercase tracking-tighter">
-              Core <span className="text-red-600">Management</span>
+            <h2 className="text-3xl md:text-5xl font-heading italic text-yellow-300 uppercase tracking-tighter">
+              Core <span className="text-white">Management</span>
             </h2>
           </motion.div>
 

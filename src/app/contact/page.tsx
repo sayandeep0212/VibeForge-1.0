@@ -5,19 +5,22 @@ import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, Globe, Send, User } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import ScrollBackground from '@/components/ScrollBackground';
-import ThreeOverlay from '@/components/ThreeOverlay';
 
 const ContactPage = () => {
   return (
-    <main className="relative min-h-screen bg-black text-white selection:bg-red-500 selection:text-white overflow-hidden">
+    <main className="relative min-h-screen bg-black text-white selection:bg-yellow-300 selection:text-black overflow-hidden">
       {/* Navigation */}
       <Navbar />
 
-      {/* Background Layers */}
-      <ScrollBackground />
-      <ThreeOverlay />
-
+      {/* Background Image */}
+      <div className="absolute inset-0 z-0">
+        <img 
+          src="/backgrounds/contactbg.png" 
+          alt="Contact Background" 
+          className="w-full h-full object-cover opacity-80 brightness-75"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black" />
+      </div>
       <div className="relative z-20 pt-32 pb-20 px-6 md:px-24">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
@@ -26,8 +29,8 @@ const ContactPage = () => {
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-20"
           >
-            <h1 className="text-6xl md:text-8xl font-black tracking-tighter mb-4 italic">
-              CONTACT <span className="text-red-600 text-shadow-glow">US</span>
+            <h1 className="text-6xl md:text-8xl font-black tracking-tighter mb-4 italic text-yellow-300">
+              CONTACT <span className="text-red-400 text-shadow-glow">US</span>
             </h1>
             <p className="text-xl text-neutral-400 tracking-[0.5em] uppercase">The Ninja Network</p>
           </motion.div>
@@ -43,8 +46,8 @@ const ContactPage = () => {
               {/* Coordinators Section */}
               <div className="space-y-8">
                 <div>
-                  <h2 className="text-2xl font-bold text-red-500 uppercase tracking-widest mb-6 flex items-center gap-3">
-                    <User className="w-6 h-6" /> Student Coordinators
+                  <h2 className="text-2xl font-bold uppercase tracking-widest mb-6 flex items-center gap-3">
+                    <User className="w-6 h-6 text-red-400" /> <span className="text-yellow-300">Student</span> <span className="text-white">Coordinators</span>
                   </h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="bg-white/5 backdrop-blur-md p-4 rounded-xl border border-white/10">
@@ -59,8 +62,8 @@ const ContactPage = () => {
                 </div>
 
                 <div>
-                  <h2 className="text-2xl font-bold text-red-500 uppercase tracking-widest mb-6 flex items-center gap-3">
-                    <User className="w-6 h-6" /> Event Coordinators
+                  <h2 className="text-2xl font-bold uppercase tracking-widest mb-6 flex items-center gap-3">
+                    <User className="w-6 h-6 text-red-400" /> <span className="text-yellow-300">Event</span> <span className="text-white">Coordinators</span>
                   </h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="bg-white/5 backdrop-blur-md p-4 rounded-xl border border-white/10">
@@ -78,7 +81,7 @@ const ContactPage = () => {
               {/* Quick Info */}
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
-                  <div className="p-3 bg-red-600 rounded-lg"><MapPin className="w-5 h-5 text-white" /></div>
+                  <div className="p-3 bg-red-400 rounded-lg"><MapPin className="w-5 h-5 text-white" /></div>
                   <div>
                     <p className="font-bold uppercase tracking-wider">Venue Location</p>
                     <p className="text-neutral-400">Adamas University, Barasat, West Bengal, India</p>
@@ -86,7 +89,7 @@ const ContactPage = () => {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="p-3 bg-red-600 rounded-lg"><Mail className="w-5 h-5 text-white" /></div>
+                  <div className="p-3 bg-red-400 rounded-lg"><Mail className="w-5 h-5 text-white" /></div>
                   <div>
                     <p className="font-bold uppercase tracking-wider">Official Email</p>
                     <p className="text-neutral-400">ADAMASGAMINGCLUB@GMAIL.COM</p>
@@ -94,10 +97,10 @@ const ContactPage = () => {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="p-3 bg-red-600 rounded-lg"><Globe className="w-5 h-5 text-white" /></div>
+                  <div className="p-3 bg-red-400 rounded-lg"><Globe className="w-5 h-5 text-white" /></div>
                   <div>
                     <p className="font-bold uppercase tracking-wider">Main Club Website</p>
-                    <a href="https://gameliminals.vercel.app" target="_blank" className="text-red-500 hover:underline">gameliminals.vercel.app</a>
+                    <a href="https://gameliminals.vercel.app" target="_blank" className="text-yellow-300 hover:underline">gameliminals.vercel.app</a>
                   </div>
                 </div>
               </div>
@@ -120,7 +123,7 @@ const ContactPage = () => {
                     <input 
                       type="email" 
                       placeholder="ninja@shadow.com"
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-red-600 transition-all"
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-yellow-300 transition-all"
                     />
                   </div>
 
@@ -129,14 +132,14 @@ const ContactPage = () => {
                     <textarea 
                       rows={5}
                       placeholder="How can we help you on your quest?"
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-red-600 transition-all resize-none"
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-yellow-300 transition-all resize-none"
                     />
                   </div>
 
                   <motion.button 
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="w-full bg-red-600 hover:bg-red-700 text-white py-5 rounded-2xl font-black text-lg tracking-widest shadow-[0_0_30px_rgba(220,38,38,0.3)] flex items-center justify-center gap-3 transition-all"
+                    className="w-full bg-yellow-300 hover:bg-gradient-to-r hover:from-yellow-300 hover:to-red-400 text-black py-5 rounded-2xl font-black text-lg tracking-widest shadow-[0_0_30px_rgba(253,224,71,0.3)] flex items-center justify-center gap-3 transition-all"
                   >
                     SEND MESSAGE <Send className="w-5 h-5" />
                   </motion.button>

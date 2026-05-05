@@ -33,7 +33,7 @@ const ThreeOverlay = () => {
 
         const particlesMaterial = new THREE.PointsMaterial({
             size: 0.02,
-            color: '#ff3e3e', // Red accent
+            color: '#fbbf24', // Yellow accent house
             transparent: true,
             opacity: 0.6,
             blending: THREE.AdditiveBlending

@@ -77,7 +77,7 @@ export default function Preloader() {
               opacity: [0.05, 0.15, 0.05],
             }}
             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-red-900/10 rounded-full blur-[150px] pointer-events-none"
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-red-400/5 rounded-full blur-[150px] pointer-events-none"
           />
 
           <div className="relative z-10 flex flex-col items-center">
@@ -119,22 +119,20 @@ export default function Preloader() {
               The Ninja Collective Presents
             </motion.div>
             
-            {/* Main Title with Staggered Animation */}
             <motion.div
-              style={{ display: "flex", overflow: "hidden" }}
               variants={container}
               initial="hidden"
               animate="visible"
-              className="text-5xl md:text-8xl font-black italic tracking-tighter"
+              className="text-5xl md:text-8xl font-heading italic tracking-tighter flex px-4"
             >
               {letters.map((letter, index) => (
                 <motion.span
                   variants={child}
                   key={index}
-                  className={letter === " " ? "mr-4" : "text-white inline-block"}
+                  className={`${letter === " " ? "mr-4" : "inline-block"} ${/\d/.test(letter) ? 'font-sans font-black' : ''}`}
                   style={{
-                    color: index >= 8 ? "#dc2626" : "white", // Color "2K26" red
-                    textShadow: index >= 8 ? "0 0 20px rgba(220,38,38,0.5)" : "none"
+                    color: index >= 8 ? "#dc2626" : "#fde047", // Yellow for GAMEJAM, Deep Red for 2K26 house
+                    textShadow: index >= 8 ? "0 0 25px rgba(220,38,38,0.6)" : "0 0 25px rgba(253,224,71,0.3)"
                   }}
                 >
                   {letter}
@@ -142,13 +140,7 @@ export default function Preloader() {
               ))}
             </motion.div>
 
-            {/* Bottom Accent Line */}
-            <motion.div
-              initial={{ width: 0, opacity: 0 }}
-              animate={{ width: "100%", opacity: 1 }}
-              transition={{ delay: 1.5, duration: 1.5, ease: "circOut" }}
-              className="h-[1px] bg-gradient-to-r from-transparent via-red-600 to-transparent mt-8 w-64 md:w-96"
-            />
+
 
             {/* Progress/Loading Bar */}
             <div className="absolute -bottom-24 w-48 h-[2px] bg-neutral-900 overflow-hidden">
@@ -161,7 +153,7 @@ export default function Preloader() {
                   ease: "easeInOut",
                   repeatDelay: 0.5
                 }}
-                className="w-1/2 h-full bg-red-600 blur-[1px]"
+                className="w-1/2 h-full bg-red-600 shadow-[0_0_15px_#dc2626]"
               />
             </div>
           </div>
