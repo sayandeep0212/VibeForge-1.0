@@ -39,7 +39,8 @@ export default function AdminScannerPage() {
   const [error, setError] = useState('');
   const [searching, setSearching] = useState(false);
   const [checkInLoading, setCheckInLoading] = useState(false);
-  const scannerRef = useRef<Html5QrcodeScanner | null>(null);
+  const [isCameraActive, setIsCameraActive] = useState(false);
+  const scannerRef = useRef<any>(null);
 
   useEffect(() => {
     fetch('/api/admin/session')
@@ -52,35 +53,44 @@ export default function AdminScannerPage() {
         setAdminName(data.user.name);
         setLoading(false);
       });
-  }, [router]);
-
-  useEffect(() => {
-    if (loading) return;
-
-    // Initialize scanner only after loading is false and DOM is ready
-    const timer = setTimeout(() => {
-      const readerElement = document.getElementById('reader');
-      if (!readerElement) return;
-
-      const scanner = new Html5QrcodeScanner(
-        "reader",
-        { fps: 10, qrbox: { width: 250, height: 250 } },
-        /* verbose= */ false
-      );
-
-      scanner.render(onScanSuccess, onScanFailure);
-      scannerRef.current = scanner;
-    }, 100);
 
     return () => {
-      clearTimeout(timer);
       if (scannerRef.current) {
-        scannerRef.current.clear().catch(error => {
-          console.error("Failed to clear scanner", error);
-        });
+        scannerRef.current.stop().catch(() => {});
       }
     };
-  }, [loading]);
+  }, [router]);
+
+  const startCamera = async () => {
+    try {
+      import('html5-qrcode').then(({ Html5Qrcode }) => {
+        const scanner = new Html5Qrcode("reader");
+        scannerRef.current = scanner;
+        
+        scanner.start(
+          { facingMode: "environment" },
+          { fps: 10, qrbox: { width: 250, height: 250 } },
+          onScanSuccess,
+          onScanFailure
+        );
+        setIsCameraActive(true);
+      });
+    } catch (err) {
+      console.error("Failed to start camera", err);
+      setError("Could not access camera. Please ensure you have given permission.");
+    }
+  };
+
+  const stopCamera = async () => {
+    if (scannerRef.current) {
+      try {
+        await scannerRef.current.stop();
+        setIsCameraActive(false);
+      } catch (err) {
+        console.error("Failed to stop camera", err);
+      }
+    }
+  };
 
   async function onScanSuccess(decodedText: string) {
     if (searching) return;
@@ -165,7 +175,34 @@ export default function AdminScannerPage() {
                 <Camera className="w-5 h-5 text-yellow-300" />
                 Live Camera Scan
               </h2>
-              <div id="reader" className="overflow-hidden rounded-2xl border border-white/10 bg-black/60" />
+              
+              <div className="relative aspect-video rounded-2xl border border-white/10 bg-black/60 overflow-hidden group">
+                <div id="reader" className="w-full h-full" />
+                
+                {!isCameraActive && (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm transition-all group-hover:bg-black/20">
+                    <button 
+                      onClick={startCamera}
+                      className="bg-yellow-300 hover:bg-yellow-400 text-black px-8 py-3 rounded-2xl font-black uppercase tracking-widest text-sm shadow-[0_0_30px_rgba(253,224,71,0.2)] transition-all active:scale-95"
+                    >
+                      START CAMERA
+                    </button>
+                    <p className="text-neutral-500 text-[10px] uppercase tracking-widest mt-4">
+                      Browser permission required
+                    </p>
+                  </div>
+                )}
+
+                {isCameraActive && (
+                  <button 
+                    onClick={stopCamera}
+                    className="absolute top-4 right-4 bg-red-500/20 hover:bg-red-500/40 text-red-400 p-2 rounded-xl backdrop-blur-md border border-red-500/20 transition-all"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+              
               <p className="text-neutral-500 text-[10px] uppercase tracking-widest mt-4 text-center">
                 Point camera at the pass QR code
               </p>
