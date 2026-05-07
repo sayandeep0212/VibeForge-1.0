@@ -64,12 +64,12 @@ export default function About() {
 
               <div className="space-y-6">
                 <p className="text-lg text-neutral-300 font-medium">
-                  <span className="text-red-500 font-black">VIBEFORGE 1.0</span> is the ultimate 48-hour survival challenge. 
+                  <span className="text-red-500 font-black">VIBEFORGE 1.0</span> is the ultimate 24hrs Vibe coding Game JAM challenge. 
                 </p>
                 
                 <ul className="space-y-4">
                   {[
-                    "48 Hours of pure, non-stop development.",
+                    "24 Hours of pure, non-stop development.",
                     "Secret themes revealed at the zero hour.",
                     "Expert mentorship from industry veterans.",
                     "Epic prizes and community glory."

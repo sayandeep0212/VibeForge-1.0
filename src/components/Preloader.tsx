@@ -117,7 +117,7 @@ export default function Preloader() {
               className="text-xl md:text-2xl font-light tracking-[0.3em] text-yellow-300 uppercase mb-8"
               style={{ fontFamily: "var(--font-orbitron), sans-serif" }}
             >
-              24 Hrs Vibe Coding Game making Competition
+              24hrs Vibe coding Game JAM
             </p>
             
             <motion.div

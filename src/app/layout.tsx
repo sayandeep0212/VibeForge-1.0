@@ -27,11 +27,11 @@ const casualPassion = localFont({
 
 export const metadata: Metadata = {
   title: "VibeForge 1.0 | The Ninja Awakening",
-  description: "Join the ultimate 48-hour game development challenge. Awaken your inner ninja, master the blade of creativity, and build the next generation of games. Hosted by GameLiminals Adamas University.",
+  description: "Join the ultimate 24hrs Vibe coding Game JAM. Awaken your inner ninja, master the blade of creativity, and build the next generation of games. Hosted by GameLiminals Adamas University.",
   keywords: ["VibeForge", "GameJam", "Adamas University", "Game Development", "Coding Competition", "Ninja", "Gaming Club"],
   openGraph: {
     title: "VibeForge 1.0 | The Ninja Awakening",
-    description: "The ultimate 48-hour game development arena.",
+    description: "The ultimate 24hrs Vibe coding Game JAM arena.",
     images: ["/assets/logo.png"],
   }
 };
