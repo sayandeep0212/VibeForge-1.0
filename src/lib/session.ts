@@ -4,6 +4,8 @@ export interface AdminSession {
   id: string;
   email: string;
   name: string;
+  phone?: string;
+  photoURL?: string;
   isLoggedIn: boolean;
 }
 

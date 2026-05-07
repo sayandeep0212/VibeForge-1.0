@@ -49,6 +49,8 @@ export async function POST(req: Request) {
       id: adminId,
       email: adminUser.email,
       name: adminUser.name,
+      phone: adminUser.phone || '',
+      photoURL: adminUser.photoURL || '',
       isLoggedIn: true,
     };
     await session.save();

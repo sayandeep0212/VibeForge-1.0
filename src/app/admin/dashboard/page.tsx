@@ -12,6 +12,8 @@ interface AdminSession {
   id: string;
   email: string;
   name: string;
+  phone?: string;
+  photoURL?: string;
 }
 
 export default function AdminDashboardPage() {
@@ -46,7 +48,6 @@ export default function AdminDashboardPage() {
         }
         
         setAdminSession(data.user);
-        fetchStats();
       } catch (err) {
         console.error('Session check error:', err);
         if (mounted) router.push('/admin');
@@ -54,74 +55,68 @@ export default function AdminDashboardPage() {
     };
 
     checkSession();
+
+    // Real-time listeners
+    const db = getDb();
+    const usersRef = ref(db, 'users');
+    const regsRef = ref(db, 'registrations');
+    const inqRef = ref(db, 'inquiries');
+
+    import('firebase/database').then(({ onValue }) => {
+      const unsubUsers = onValue(usersRef, (snapshot) => {
+        if (!mounted) return;
+        const users = snapshot.val() || {};
+        const totalUsersCount = Object.keys(users).length;
+        let adamasStudents = 0;
+        let otherStudents = 0;
+        let shortlistedUsers = 0;
+
+        Object.values(users).forEach((u: any) => {
+          if (u.isAdamas) adamasStudents++;
+          else otherStudents++;
+          if (u.shortlisted) shortlistedUsers++;
+        });
+
+        setStats(prev => ({ ...prev, totalUsers: totalUsersCount, adamasStudents, otherStudents, shortlistedUsers }));
+      });
+
+      const unsubRegs = onValue(regsRef, (snapshot) => {
+        if (!mounted) return;
+        const regs = snapshot.val() || {};
+        const totalRegistrations = Object.keys(regs).length;
+        let pendingApprovals = 0;
+        let approvedTeams = 0;
+        let shortlistedTeams = 0;
+
+        Object.values(regs).forEach((r: any) => {
+          if (r.status === 'pending_approval') pendingApprovals++;
+          if (r.status === 'approved') approvedTeams++;
+          if (r.shortlisted) shortlistedTeams++;
+        });
+
+        setStats(prev => ({ ...prev, totalRegistrations, pendingApprovals, approvedTeams, shortlistedTeams }));
+        setLoading(false);
+      });
+
+      const unsubInqs = onValue(inqRef, (snapshot) => {
+        if (!mounted) return;
+        const inqs = snapshot.val() || {};
+        let newInquiries = 0;
+        Object.values(inqs).forEach((i: any) => {
+          if (i.status === 'new') newInquiries++;
+        });
+        setStats(prev => ({ ...prev, newInquiries }));
+      });
+
+      return () => {
+        unsubUsers();
+        unsubRegs();
+        unsubInqs();
+      };
+    });
+
     return () => { mounted = false; };
   }, [router]);
-
-  const fetchStats = async () => {
-    try {
-      // Fetch users
-      const usersSnap = await get(ref(getDb(), 'users'));
-      let totalUsers = 0;
-      let adamasStudents = 0;
-      let otherStudents = 0;
-      let shortlistedUsers = 0;
-
-      if (usersSnap.exists()) {
-        const users = usersSnap.val();
-        totalUsers = Object.keys(users).length;
-        Object.values(users).forEach((u) => {
-          const user = u as { isAdamas?: boolean, shortlisted?: boolean };
-          if (user.isAdamas) adamasStudents++;
-          else otherStudents++;
-          if (user.shortlisted) shortlistedUsers++;
-        });
-      }
-
-      // Fetch registrations
-      const regsSnap = await get(ref(getDb(), 'registrations'));
-      let totalRegistrations = 0;
-      let pendingApprovals = 0;
-      let approvedTeams = 0;
-      let shortlistedTeams = 0;
-
-      if (regsSnap.exists()) {
-        const regs = regsSnap.val();
-        totalRegistrations = Object.keys(regs).length;
-        Object.values(regs).forEach((r) => {
-          const reg = r as { status: string, shortlisted?: boolean };
-          if (reg.status === 'pending_approval') pendingApprovals++;
-          if (reg.status === 'approved') approvedTeams++;
-          if (reg.shortlisted) shortlistedTeams++;
-        });
-      }
-
-      // Fetch inquiries
-      const inqSnap = await get(ref(getDb(), 'inquiries'));
-      let newInquiries = 0;
-      if (inqSnap.exists()) {
-        const inqs = inqSnap.val();
-        Object.values(inqs).forEach((i) => {
-          if ((i as any).status === 'new') newInquiries++;
-        });
-      }
-
-      setStats({
-        totalUsers,
-        totalRegistrations,
-        pendingApprovals,
-        approvedTeams,
-        adamasStudents,
-        otherStudents,
-        shortlistedUsers,
-        shortlistedTeams,
-        newInquiries,
-      });
-    } catch (err) {
-      console.error('Error fetching stats:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleLogout = () => {
     router.push('/admin');

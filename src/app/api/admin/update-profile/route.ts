@@ -29,6 +29,8 @@ export async function PATCH(req: Request) {
 
     // Update session
     session.user.name = name;
+    session.user.phone = phone;
+    session.user.photoURL = photoURL;
     await session.save();
 
     return NextResponse.json({ success: true, user: session.user });
