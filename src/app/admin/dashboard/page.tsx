@@ -92,6 +92,7 @@ export default function AdminDashboardPage() {
     { label: 'Other Colleges', value: stats.otherStudents, icon: Building2, color: 'text-orange-400', bg: 'bg-orange-500/10', border: 'border-orange-500/20' },
     { label: 'Shortlisted Users', value: stats.shortlistedUsers, icon: Users, color: 'text-yellow-300', bg: 'bg-yellow-300/10', border: 'border-yellow-300/20' },
     { label: 'Shortlisted Teams', value: stats.shortlistedTeams, icon: ClipboardList, color: 'text-yellow-300', bg: 'bg-yellow-300/10', border: 'border-yellow-300/20' },
+    { label: 'Checked In', value: stats.checkedInTeams || 0, icon: CheckCircle, color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' },
     { label: 'New Inquiries', value: stats.newInquiries, icon: MessageSquare, color: 'text-pink-400', bg: 'bg-pink-500/10', border: 'border-pink-500/20' },
   ];
 

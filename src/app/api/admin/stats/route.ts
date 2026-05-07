@@ -39,11 +39,13 @@ export async function GET() {
     let pendingApprovals = 0;
     let approvedTeams = 0;
     let shortlistedTeams = 0;
+    let checkedInTeams = 0;
 
     Object.values(regs).forEach((r: any) => {
       if (r.status === 'pending_approval') pendingApprovals++;
       if (r.status === 'approved') approvedTeams++;
       if (r.shortlisted) shortlistedTeams++;
+      if (r.checkedIn) checkedInTeams++;
     });
 
     // Calculate Inquiry Stats
@@ -61,6 +63,7 @@ export async function GET() {
       otherStudents,
       shortlistedUsers,
       shortlistedTeams,
+      checkedInTeams,
       newInquiries,
     });
   } catch (error) {

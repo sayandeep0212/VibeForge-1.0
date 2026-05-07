@@ -387,19 +387,15 @@ function DashboardContent() {
                 )}
               </div>
 
-              {/* Event Pass - Only show if approved */}
-              {currentRegistration?.status === 'approved' && currentRegistration.passId && (
+              {/* Event Pass - Only show to Leader if approved */}
+              {isLeader && currentRegistration?.status === 'approved' && currentRegistration.passId && (
                 <EventPass
                   passId={currentRegistration.passId}
                   bookingId={currentRegistration.bookingId}
                   teamName={currentRegistration.teamName}
                   type={currentRegistration.type}
                   members={currentRegistration.members}
-                  leaderName={
-                    currentRegistration.members?.find(
-                      (m) => m.firebaseId === currentRegistration.leaderId
-                    )?.name || ''
-                  }
+                  leaderName={userProfile?.name || ''}
                 />
               )}
             </motion.div>

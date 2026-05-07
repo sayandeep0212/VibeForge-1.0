@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
-  LayoutDashboard, Users, ClipboardList, Settings, LogOut, Shield, MessageSquare, Image as ImageIcon
+  LayoutDashboard, Users, ClipboardList, Settings, LogOut, Shield, MessageSquare, Image as ImageIcon, Scan
 } from 'lucide-react';
 
 interface AdminLayoutProps {
@@ -18,6 +18,7 @@ export default function AdminLayout({ children, onLogout, adminName }: AdminLayo
 
   const navItems = [
     { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
+    { name: 'Scanner', href: '/admin/scanner', icon: Scan },
     { name: 'Participants', href: '/admin/participants', icon: Users },
     { name: 'Registrations', href: '/admin/registrations', icon: ClipboardList },
     { name: 'Inquiries', href: '/admin/inquiries', icon: MessageSquare },
