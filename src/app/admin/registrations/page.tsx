@@ -51,7 +51,7 @@ export default function RegistrationsPage() {
   const [registrations, setRegistrations] = useState<Record<string, Registration>>({});
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'pending_approval' | 'approved' | 'rejected'>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'pending_approval' | 'approved' | 'rejected' | 'shortlisted'>('all');
   const [typeFilter, setTypeFilter] = useState<'all' | 'individual' | 'team'>('all');
 
   useEffect(() => {
@@ -66,7 +66,7 @@ export default function RegistrationsPage() {
 
   const fetchRegistrations = async () => {
     try {
-      const snapshot = await get(ref(db, 'registrations'));
+      const snapshot = await get(ref(db!, 'registrations'));
       if (snapshot.exists()) {
         setRegistrations(snapshot.val());
       }
@@ -88,19 +88,19 @@ export default function RegistrationsPage() {
         reg.payment?.razorpayId?.toLowerCase().includes(query) ||
         reg.payment?.receipt?.toLowerCase().includes(query);
 
-      const matchesStatus = statusFilter === 'all' || reg.status === statusFilter;
+      const matchesStatus = statusFilter === 'all' || statusFilter === 'shortlisted' || reg.status === statusFilter;
       const matchesType = typeFilter === 'all' || reg.type === typeFilter;
       const matchesShortlist = 
         statusFilter !== 'shortlisted' || reg.shortlisted === true;
 
-      return matchesSearch && matchesStatus && matchesType && (statusFilter !== 'shortlisted' || reg.shortlisted);
+      return matchesSearch && matchesStatus && matchesType && matchesShortlist;
     });
   }, [registrations, searchQuery, statusFilter, typeFilter]);
 
   const toggleShortlist = async (regId: string) => {
     const current = registrations[regId]?.shortlisted || false;
     try {
-      await update(ref(db, `registrations/${regId}`), { shortlisted: !current });
+      await update(ref(db!, `registrations/${regId}`), { shortlisted: !current });
       setRegistrations(prev => ({
         ...prev,
         [regId]: { ...prev[regId], shortlisted: !current }
@@ -113,7 +113,7 @@ export default function RegistrationsPage() {
   const handleApprove = async (regId: string) => {
     const passId = `PASS-${nanoid(6).toUpperCase()}`;
     try {
-      await update(ref(db, `registrations/${regId}`), {
+      await update(ref(db!, `registrations/${regId}`), {
         status: 'approved',
         passId,
       });
@@ -128,7 +128,7 @@ export default function RegistrationsPage() {
 
   const handleReject = async (regId: string) => {
     try {
-      await update(ref(db, `registrations/${regId}`), {
+      await update(ref(db!, `registrations/${regId}`), {
         status: 'rejected',
         passId: '',
       });

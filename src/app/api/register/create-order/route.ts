@@ -1,11 +1,21 @@
 import { NextResponse } from 'next/server';
 import Razorpay from 'razorpay';
 import { checkRateLimit, apiLimiter } from '@/lib/rate-limit';
+import { z } from 'zod';
 
-const razorpay = new Razorpay({
-  key_id: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
-  key_secret: process.env.RAZORPAY_KEY_SECRET!,
-});
+export const dynamic = 'force-dynamic';
+
+let razorpay: Razorpay | null = null;
+
+function getRazorpay() {
+  if (!razorpay) {
+    razorpay = new Razorpay({
+      key_id: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
+      key_secret: process.env.RAZORPAY_KEY_SECRET!,
+    });
+  }
+  return razorpay;
+}
 
 export async function POST(req: Request) {
   const ip = req.headers.get('x-forwarded-for') || 'anonymous';
@@ -24,10 +34,15 @@ export async function POST(req: Request) {
       receipt: `RCPT-${Math.random().toString(36).substring(2, 10).toUpperCase()}`,
     };
 
-    const order = await razorpay.orders.create(options);
+    const rzp = getRazorpay();
+    const order = await rzp.orders.create(options);
     return NextResponse.json(order);
   } catch (error) {
     console.error('Error creating order:', error);
+    if (error instanceof z.ZodError) {
+      console.log('Validation errors:', error.issues);
+      return NextResponse.json({ error: 'Validation failed', details: error.issues }, { status: 400 });
+    }
     return NextResponse.json({ error: 'Failed to create payment order' }, { status: 500 });
   }
 }

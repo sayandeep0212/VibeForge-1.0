@@ -7,14 +7,14 @@ export interface AdminSession {
   isLoggedIn: boolean;
 }
 
+import { SessionOptions, getIronSession, IronSessionData } from "iron-session";
+import { cookies } from "next/headers";
+
 declare module "iron-session" {
   interface IronSessionData {
     user?: AdminSession;
   }
 }
-
-import { SessionOptions, getIronSession } from "iron-session";
-import { cookies } from "next/headers";
 
 export const sessionOptions: SessionOptions = {
   password: process.env.SESSION_SECRET || "complex_password_at_least_32_characters_long",

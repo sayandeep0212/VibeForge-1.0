@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
-import { getIronSession } from 'iron-session';
-import { cookies } from 'next/headers';
-import { sessionOptions } from '@/lib/session';
+import { getSession } from '@/lib/session';
 import { adminDb } from '@/lib/firebase-admin';
 import bcrypt from 'bcryptjs';
 import { checkRateLimit, authLimiter } from '@/lib/rate-limit';
+
+export const dynamic = 'force-dynamic';
 
 export async function POST(req: Request) {
   const ip = req.headers.get('x-forwarded-for') || 'anonymous';
@@ -44,7 +44,7 @@ export async function POST(req: Request) {
     }
 
     // Create session
-    const session = await getIronSession(await cookies(), sessionOptions);
+    const session = await getSession();
     session.user = {
       id: adminId,
       email: adminUser.email,

@@ -26,16 +26,19 @@ export default function AdminSeed() {
 
     setLoading(true);
     try {
-      // Check if any admin exists
-      const adminsSnap = await get(ref(db, 'admins'));
-      if (adminsSnap.exists()) {
-        setStatus('Admins already exist. Use the admin panel to add more.');
-        setLoading(false);
-        return;
+      const adminRef = ref(db!, 'admins');
+      const snapshot = await get(adminRef);
+      if (snapshot.exists()) {
+        const admins = snapshot.val();
+        if (Object.values(admins).some((a: any) => a.email === email.toLowerCase().trim())) {
+          setStatus('Admin with this email already exists.');
+          setLoading(false);
+          return;
+        }
       }
 
       const hashedPassword = await bcrypt.hash(password, 10);
-      const newRef = push(ref(db, 'admins'));
+      const newRef = push(ref(db!, 'admins'));
       await set(newRef, {
         email: email.toLowerCase().trim(),
         password: hashedPassword,

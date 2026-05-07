@@ -25,6 +25,7 @@ interface UserProfile {
   program: string;
   phone: string;
   profileComplete: boolean;
+  shortlisted?: boolean;
   createdAt: number;
 }
 
@@ -48,9 +49,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   const fetchUserProfile = useCallback(async (firebaseUser: User) => {
-    if (!db) return;
     try {
-      const userRef = ref(db, `users/${firebaseUser.uid}`);
+      const userRef = ref(db!, `users/${firebaseUser.uid}`);
       const snapshot = await get(userRef);
       if (snapshot.exists()) {
         setUserProfile(snapshot.val() as UserProfile);

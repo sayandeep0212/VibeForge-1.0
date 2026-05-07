@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
-import { getIronSession } from 'iron-session';
-import { cookies } from 'next/headers';
-import { sessionOptions } from '@/lib/session';
+import { getSession } from '@/lib/session';
 import { adminDb } from '@/lib/firebase-admin';
 import bcrypt from 'bcryptjs';
 import { checkRateLimit, authLimiter } from '@/lib/rate-limit';
+
+export const dynamic = 'force-dynamic';
 
 export async function PATCH(req: Request) {
   const ip = req.headers.get('x-forwarded-for') || 'anonymous';
@@ -14,7 +14,7 @@ export async function PATCH(req: Request) {
     return NextResponse.json({ error: `Too many requests. Try again in ${limit.retryAfter}s.` }, { status: 429 });
   }
 
-  const session = await getIronSession(await cookies(), sessionOptions);
+  const session = await getSession();
   if (!session.user?.isLoggedIn) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }

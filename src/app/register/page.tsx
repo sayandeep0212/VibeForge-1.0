@@ -72,7 +72,7 @@ function RegisterContent() {
     try {
       // Check if leader
       const leaderQuery = query(
-        ref(db, 'registrations'),
+        ref(db!, 'registrations'),
         orderByChild('leaderId'),
         equalTo(user.uid)
       );
@@ -84,7 +84,7 @@ function RegisterContent() {
       }
 
       // Check if member
-      const allRegsSnap = await get(ref(db, 'registrations'));
+      const allRegsSnap = await get(ref(db!, 'registrations'));
       if (allRegsSnap.exists()) {
         const allRegs = allRegsSnap.val();
         for (const regId in allRegs) {
@@ -115,7 +115,7 @@ function RegisterContent() {
 
     try {
       // Search for user by public UID
-      const usersRef = query(ref(db, 'users'), orderByChild('uid'), equalTo(uid.trim()));
+      const usersRef = query(ref(db!, 'users'), orderByChild('uid'), equalTo(uid.trim()));
       const snapshot = await get(usersRef);
 
       if (!snapshot.exists()) {
@@ -158,7 +158,7 @@ function RegisterContent() {
       }
 
       // Check if already registered in any team
-      const allRegsSnap = await get(ref(db, 'registrations'));
+      const allRegsSnap = await get(ref(db!, 'registrations'));
       if (allRegsSnap.exists()) {
         const allRegs = allRegsSnap.val();
         for (const regId in allRegs) {

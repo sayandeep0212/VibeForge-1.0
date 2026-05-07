@@ -4,6 +4,8 @@ import { adminDb } from '@/lib/firebase-admin';
 import { z } from 'zod';
 import { checkRateLimit, apiLimiter } from '@/lib/rate-limit';
 
+export const dynamic = 'force-dynamic';
+
 const registrationSchema = z.object({
   razorpay_payment_id: z.string(),
   razorpay_order_id: z.string(),
@@ -70,7 +72,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ success: true, registrationId: newRegRef.key });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Invalid registration data', details: error.errors }, { status: 400 });
+      console.log('Validation errors:', error.issues);
+      return NextResponse.json({ error: 'Validation failed', details: error.issues }, { status: 400 });
     }
     console.error('Error verifying registration:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

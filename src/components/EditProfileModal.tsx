@@ -97,7 +97,7 @@ export default function EditProfileModal({
         updates.registrationNumber = registrationNumber.trim();
       }
 
-      await update(ref(db, `users/${firebaseUid}`), updates);
+      await update(ref(db!, `users/${firebaseUid}`), updates);
       onSuccess();
       onClose();
     } catch (err: any) {

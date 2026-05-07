@@ -19,6 +19,20 @@ import EventPass from '@/components/EventPass';
 import EditProfileModal from '@/components/EditProfileModal';
 import { Settings as SettingsIcon } from 'lucide-react';
 
+interface UserProfile {
+  uid: string;
+  name: string;
+  email: string;
+  photoURL: string;
+  college: string;
+  isAdamas: boolean;
+  registrationNumber?: string;
+  year: string;
+  program: string;
+  phone: string;
+  shortlisted?: boolean;
+}
+
 interface Registration {
   teamName: string;
   type: 'individual' | 'team';
@@ -52,7 +66,7 @@ export default function DashboardPage() {
 }
 
 function DashboardContent() {
-  const { user, userProfile, signOutUser } = useAuth();
+  const { user, userProfile, signOutUser, refreshProfile } = useAuth();
   const router = useRouter();
   const [copied, setCopied] = useState(false);
   const [registration, setRegistration] = useState<Registration | null>(null);
@@ -72,7 +86,7 @@ function DashboardContent() {
     try {
       // Check if user is a leader of any registration
       const leaderQuery = query(
-        ref(db, 'registrations'),
+        ref(db!, 'registrations'),
         orderByChild('leaderId'),
         equalTo(user.uid)
       );
@@ -87,7 +101,7 @@ function DashboardContent() {
       }
 
       // Check if user is a member of any team
-      const allRegsSnapshot = await get(ref(db, 'registrations'));
+      const allRegsSnapshot = await get(ref(db!, 'registrations'));
       if (allRegsSnapshot.exists()) {
         const allRegs = allRegsSnapshot.val();
         for (const regId in allRegs) {
