@@ -3,8 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Users, ClipboardList, CheckCircle, Clock, Building2, MessageSquare } from 'lucide-react';
-import { ref, get } from 'firebase/database';
-import { getDb } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import AdminLayout from '@/components/AdminLayout';
 
@@ -48,74 +46,35 @@ export default function AdminDashboardPage() {
         }
         
         setAdminSession(data.user);
+        fetchStats();
       } catch (err) {
         console.error('Session check error:', err);
         if (mounted) router.push('/admin');
       }
     };
 
+    const fetchStats = async () => {
+      try {
+        const res = await fetch('/api/admin/stats');
+        const data = await res.json();
+        if (mounted && !data.error) {
+          setStats(data);
+          setLoading(false);
+        }
+      } catch (err) {
+        console.error('Error fetching stats:', err);
+      }
+    };
+
     checkSession();
 
-    // Real-time listeners
-    const db = getDb();
-    const usersRef = ref(db, 'users');
-    const regsRef = ref(db, 'registrations');
-    const inqRef = ref(db, 'inquiries');
+    // Auto refresh every 30 seconds
+    const interval = setInterval(fetchStats, 30000);
 
-    import('firebase/database').then(({ onValue }) => {
-      const unsubUsers = onValue(usersRef, (snapshot) => {
-        if (!mounted) return;
-        const users = snapshot.val() || {};
-        const totalUsersCount = Object.keys(users).length;
-        let adamasStudents = 0;
-        let otherStudents = 0;
-        let shortlistedUsers = 0;
-
-        Object.values(users).forEach((u: any) => {
-          if (u.isAdamas) adamasStudents++;
-          else otherStudents++;
-          if (u.shortlisted) shortlistedUsers++;
-        });
-
-        setStats(prev => ({ ...prev, totalUsers: totalUsersCount, adamasStudents, otherStudents, shortlistedUsers }));
-      });
-
-      const unsubRegs = onValue(regsRef, (snapshot) => {
-        if (!mounted) return;
-        const regs = snapshot.val() || {};
-        const totalRegistrations = Object.keys(regs).length;
-        let pendingApprovals = 0;
-        let approvedTeams = 0;
-        let shortlistedTeams = 0;
-
-        Object.values(regs).forEach((r: any) => {
-          if (r.status === 'pending_approval') pendingApprovals++;
-          if (r.status === 'approved') approvedTeams++;
-          if (r.shortlisted) shortlistedTeams++;
-        });
-
-        setStats(prev => ({ ...prev, totalRegistrations, pendingApprovals, approvedTeams, shortlistedTeams }));
-        setLoading(false);
-      });
-
-      const unsubInqs = onValue(inqRef, (snapshot) => {
-        if (!mounted) return;
-        const inqs = snapshot.val() || {};
-        let newInquiries = 0;
-        Object.values(inqs).forEach((i: any) => {
-          if (i.status === 'new') newInquiries++;
-        });
-        setStats(prev => ({ ...prev, newInquiries }));
-      });
-
-      return () => {
-        unsubUsers();
-        unsubRegs();
-        unsubInqs();
-      };
-    });
-
-    return () => { mounted = false; };
+    return () => { 
+      mounted = false;
+      clearInterval(interval);
+    };
   }, [router]);
 
   const handleLogout = () => {
