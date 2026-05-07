@@ -125,7 +125,7 @@ const Judges = () => {
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            className="text-5xl md:text-7xl font-heading italic tracking-tighter text-yellow-300 mb-4"
+            className="text-5xl md:text-7xl font-heading italic tracking-wider text-yellow-300 mb-4"
           >
             THE <span className="text-red-400">JUDGES</span>
           </motion.h2>

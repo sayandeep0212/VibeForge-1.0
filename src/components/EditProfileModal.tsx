@@ -80,22 +80,13 @@ export default function EditProfileModal({
         finalPhotoURL = await uploadToImgBB(photoFile);
       }
 
-      const collegeName = college === 'Adamas University' ? 'Adamas University' : otherCollege;
-
+      // Users can only update name, phone, and photo
       const updates: any = {
         name: name.trim(),
         phone: phone.trim(),
-        college: collegeName,
-        isAdamas: college === 'Adamas University',
-        year,
-        program: program.trim(),
         photoURL: finalPhotoURL,
         updatedAt: Date.now(),
       };
-
-      if (college === 'Adamas University') {
-        updates.registrationNumber = registrationNumber.trim();
-      }
 
       await update(ref(db!, `users/${firebaseUid}`), updates);
       onSuccess();
@@ -203,88 +194,43 @@ export default function EditProfileModal({
               />
             </div>
 
-            {/* College */}
+            {/* College - READ ONLY */}
             <div className="relative group col-span-2">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-neutral-500">
                 <Building2 className="w-4 h-4" />
               </div>
-              <select
-                required
-                value={college}
-                onChange={(e) => setCollege(e.target.value)}
-                className="w-full bg-black/50 border border-white/10 text-white rounded-xl py-3 pl-12 pr-4 focus:outline-none focus:border-yellow-300/50 transition-all text-sm appearance-none"
-              >
-                <option value="Adamas University">Adamas University</option>
-                <option value="Other">Other</option>
-              </select>
+              <input
+                type="text"
+                readOnly
+                value={profile.college}
+                className="w-full bg-black/30 border border-white/5 text-neutral-500 rounded-xl py-3 pl-12 pr-4 text-sm cursor-not-allowed"
+              />
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-neutral-600 uppercase tracking-wider">Locked</span>
             </div>
 
-            {college === 'Other' && (
-              <div className="relative group col-span-2">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-neutral-500">
-                  <Building2 className="w-4 h-4" />
-                </div>
-                <input
-                  type="text"
-                  required
-                  value={otherCollege}
-                  onChange={(e) => setOtherCollege(e.target.value)}
-                  placeholder="College Name"
-                  className="w-full bg-black/50 border border-white/10 text-white rounded-xl py-3 pl-12 pr-4 focus:outline-none focus:border-yellow-300/50 transition-all text-sm"
-                />
-              </div>
-            )}
-
-            {college === 'Adamas University' && (
-              <div className="relative group col-span-2">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-neutral-500">
-                  <Hash className="w-4 h-4" />
-                </div>
-                <input
-                  type="text"
-                  required
-                  value={registrationNumber}
-                  onChange={(e) => {
-                    if (e.target.value.startsWith(adamasRegPrefix)) {
-                      setRegistrationNumber(e.target.value);
-                    }
-                  }}
-                  placeholder="Registration Number"
-                  className="w-full bg-black/50 border border-white/10 text-white rounded-xl py-3 pl-12 pr-4 focus:outline-none focus:border-yellow-300/50 transition-all text-sm font-mono"
-                />
-              </div>
-            )}
-
-            {/* Year */}
+            {/* Year - READ ONLY */}
             <div className="relative group">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-neutral-500">
                 <GraduationCap className="w-4 h-4" />
               </div>
-              <select
-                required
-                value={year}
-                onChange={(e) => setYear(e.target.value)}
-                className="w-full bg-black/50 border border-white/10 text-white rounded-xl py-3 pl-12 pr-4 focus:outline-none focus:border-yellow-300/50 transition-all text-sm appearance-none"
-              >
-                <option value="1st Year">1st Year</option>
-                <option value="2nd Year">2nd Year</option>
-                <option value="3rd Year">3rd Year</option>
-                <option value="4th Year">4th Year</option>
-              </select>
+              <input
+                type="text"
+                readOnly
+                value={profile.year}
+                className="w-full bg-black/30 border border-white/5 text-neutral-500 rounded-xl py-3 pl-12 pr-4 text-sm cursor-not-allowed"
+              />
             </div>
 
-            {/* Program */}
+            {/* Program - READ ONLY */}
             <div className="relative group">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-neutral-500">
                 <BookOpen className="w-4 h-4" />
               </div>
               <input
                 type="text"
-                required
-                value={program}
-                onChange={(e) => setProgram(e.target.value)}
-                placeholder="Program"
-                className="w-full bg-black/50 border border-white/10 text-white rounded-xl py-3 pl-12 pr-4 focus:outline-none focus:border-yellow-300/50 transition-all text-sm"
+                readOnly
+                value={profile.program}
+                className="w-full bg-black/30 border border-white/5 text-neutral-500 rounded-xl py-3 pl-12 pr-4 text-sm cursor-not-allowed"
               />
             </div>
           </div>

@@ -7,29 +7,17 @@ import { Clock, Calendar, MapPin, Zap } from 'lucide-react';
 const Schedule = () => {
   const days = [
     {
-      date: "DAY 1 - KICKOFF",
+      date: "THE ARENA - SINGLE DAY SPRINT",
       events: [
-        { time: "10:00 AM", title: "CHECK-IN", desc: "Arrival and badge pickup at the arena.", icon: <MapPin className="w-4 h-4" /> },
-        { time: "11:30 AM", title: "OPENING CEREMONY", desc: "Introduction and rules overview.", icon: <Zap className="w-4 h-4 text-yellow-500" /> },
-        { time: "12:00 PM", title: "THEME REVEAL", desc: "The secret theme is announced!", icon: <Zap className="w-4 h-4 text-yellow-400" /> },
-        { time: "01:00 PM", title: "JAM STARTS", desc: "Start building your masterpiece.", icon: <Clock className="w-4 h-4 text-cyan-400" /> }
-      ]
-    },
-    {
-      date: "DAY 2 - INTENSITY",
-      events: [
-        { time: "10:00 AM", title: "PROGRESS CHECK", desc: "Mentors review project status.", icon: <Zap className="w-4 h-4" /> },
-        { time: "01:00 PM", title: "LUNCH BREAK", desc: "Fuel up for the second half.", icon: <Zap className="w-4 h-4" /> },
-        { time: "08:00 PM", title: "MIDNIGHT SPRINT", desc: "Late night development session.", icon: <Zap className="w-4 h-4 text-purple-500" /> }
-      ]
-    },
-    {
-      date: "DAY 3 - ASCENSION",
-      events: [
-        { time: "10:00 AM", title: "FINAL POLISH", desc: "Bug fixing and optimization.", icon: <Zap className="w-4 h-4" /> },
-        { time: "01:00 PM", title: "SUBMISSION", desc: "Upload projects to the platform.", icon: <Clock className="w-4 h-4 text-yellow-400" /> },
-        { time: "03:00 PM", title: "SHOWCASE", desc: "Teams present their games.", icon: <Zap className="w-4 h-4" /> },
-        { time: "05:00 PM", title: "AWARDS", desc: "Winners announcement and closing.", icon: <TrophyIcon /> }
+        { time: "08:00 AM - 10:00 AM", title: "REPORTING & BREAKFAST", desc: "Arrival, ID distribution, signature, and morning fuel.", icon: <MapPin className="w-4 h-4" /> },
+        { time: "10:00 AM - 11:00 AM", title: "OPENING CEREMONY", desc: "Felicitation ceremony & problem statement declaration.", icon: <Zap className="w-4 h-4 text-yellow-500" /> },
+        { time: "11:00 AM - 04:00 PM", title: "BUILD & CODE", desc: "5 Hours of non-stop development and deployment.", icon: <Clock className="w-4 h-4 text-cyan-400" /> },
+        { time: "01:30 PM - 02:00 PM", title: "LUNCH BREAK", desc: "Mid-day energy refill for all participants.", icon: <Zap className="w-4 h-4 text-orange-400" /> },
+        { time: "04:00 PM - 05:15 PM", title: "JUDGES WATCHING", desc: "Project review and evaluation by the jury.", icon: <Zap className="w-4 h-4 text-red-400" /> },
+        { time: "05:15 PM - 05:30 PM", title: "JUDGES DECISION", desc: "Final deliberation and result compilation.", icon: <Zap className="w-4 h-4 text-yellow-400" /> },
+        { time: "05:30 PM - 06:00 PM", title: "PRIZE DISTRIBUTION", desc: "Crowning the champions of VibeForge 1.0.", icon: <TrophyIcon /> },
+        { time: "06:30 PM", title: "HALL VACATING", desc: "Wrapping up and vacating the event hall.", icon: <Zap className="w-4 h-4" /> },
+        { time: "07:30 PM", title: "MISSION COMPLETE", desc: "Official end of VibeForge 1.0 operations.", icon: <Zap className="w-4 h-4 text-green-400" /> }
       ]
     }
   ];
@@ -39,14 +27,14 @@ const Schedule = () => {
       <div className="max-w-7xl mx-auto px-6 relative z-10">
 
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="max-w-4xl mx-auto">
           {days.map((day, dIdx) => (
             <motion.div
               key={day.date}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: dIdx * 0.1 }}
-              className="relative group"
+              className="relative group w-full"
             >
               <div className="absolute -inset-2 bg-gradient-to-b from-white/5 to-transparent rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition duration-500" />
               <div className="relative bg-neutral-900 border border-white/5 rounded-3xl p-8 h-full overflow-hidden">

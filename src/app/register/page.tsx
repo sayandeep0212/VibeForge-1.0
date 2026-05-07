@@ -29,6 +29,7 @@ interface MemberInfo {
   name: string;
   email: string;
   college: string;
+  isAdamas: boolean;
   photoURL: string;
   valid: boolean;
   error?: string;
@@ -46,6 +47,8 @@ function RegisterContent() {
   const { user, userProfile } = useAuth();
   const router = useRouter();
 
+  const MAX_TEAMS = 150;
+
   const [participationType, setParticipationType] = useState<'individual' | 'team' | ''>('');
   const [teamName, setTeamName] = useState('');
   const [memberUIDs, setMemberUIDs] = useState<string[]>(['']);
@@ -58,12 +61,40 @@ function RegisterContent() {
   const [isMemberOfTeam, setIsMemberOfTeam] = useState(false);
   const [checkingStatus, setCheckingStatus] = useState(true);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const [registrationsFull, setRegistrationsFull] = useState(false);
+  const [totalTeams, setTotalTeams] = useState(0);
+  const [registrationClosed, setRegistrationClosed] = useState(false);
+  const [closedReason, setClosedReason] = useState('');
 
-  // Check if user is already registered
+  // Check if user is already registered + check admin settings
   useEffect(() => {
     checkRegistrationStatus();
+    checkAdminSettings();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
+
+  const checkAdminSettings = async () => {
+    try {
+      const snap = await get(ref(db!, 'eventSettings/registration'));
+      if (snap.exists()) {
+        const settings = snap.val();
+        // Admin manually closed
+        if (settings.isOpen === false) {
+          setRegistrationClosed(true);
+          setClosedReason('Registration has been closed by the organizers.');
+          return;
+        }
+        // Deadline passed
+        if (settings.deadline && Date.now() > settings.deadline) {
+          setRegistrationClosed(true);
+          setClosedReason('Registration deadline has passed.');
+          return;
+        }
+      }
+    } catch (err) {
+      console.error('Error checking admin settings:', err);
+    }
+  };
 
   const checkRegistrationStatus = async () => {
     if (!user) return;
@@ -87,6 +118,14 @@ function RegisterContent() {
       const allRegsSnap = await get(ref(db!, 'registrations'));
       if (allRegsSnap.exists()) {
         const allRegs = allRegsSnap.val();
+        const regCount = Object.keys(allRegs).length;
+        setTotalTeams(regCount);
+
+        // Check 150 team limit
+        if (regCount >= MAX_TEAMS) {
+          setRegistrationsFull(true);
+        }
+
         for (const regId in allRegs) {
           const reg = allRegs[regId];
           if (reg.members?.some((m: { firebaseId: string }) => m.firebaseId === user.uid)) {
@@ -121,7 +160,7 @@ function RegisterContent() {
       if (!snapshot.exists()) {
         const newInfos = [...memberInfos];
         newInfos[index] = {
-          firebaseId: '', uid: uid.trim(), name: '', email: '', college: '', photoURL: '',
+          firebaseId: '', uid: uid.trim(), name: '', email: '', college: '', isAdamas: false, photoURL: '',
           valid: false, error: 'No user found with this UID'
         };
         setMemberInfos(newInfos);
@@ -137,8 +176,20 @@ function RegisterContent() {
         const newInfos = [...memberInfos];
         newInfos[index] = {
           firebaseId, uid: uid.trim(), name: userInfo.name, email: userInfo.email,
-          college: userInfo.college, photoURL: userInfo.photoURL,
+          college: userInfo.college, isAdamas: userInfo.isAdamas || false, photoURL: userInfo.photoURL,
           valid: false, error: 'You cannot add yourself as a member'
+        };
+        setMemberInfos(newInfos);
+        return;
+      }
+
+      // UNIVERSITY RULE: Adamas leaders can only add Adamas members
+      if (userProfile?.isAdamas && !userInfo.isAdamas) {
+        const newInfos = [...memberInfos];
+        newInfos[index] = {
+          firebaseId, uid: uid.trim(), name: userInfo.name, email: userInfo.email,
+          college: userInfo.college, isAdamas: userInfo.isAdamas || false, photoURL: userInfo.photoURL,
+          valid: false, error: 'Adamas Leaders can only add fellow Adamas students'
         };
         setMemberInfos(newInfos);
         return;
@@ -150,7 +201,7 @@ function RegisterContent() {
         const newInfos = [...memberInfos];
         newInfos[index] = {
           firebaseId, uid: uid.trim(), name: userInfo.name, email: userInfo.email,
-          college: userInfo.college, photoURL: userInfo.photoURL,
+          college: userInfo.college, isAdamas: userInfo.isAdamas || false, photoURL: userInfo.photoURL,
           valid: false, error: 'This member is already added'
         };
         setMemberInfos(newInfos);
@@ -167,7 +218,7 @@ function RegisterContent() {
             const newInfos = [...memberInfos];
             newInfos[index] = {
               firebaseId, uid: uid.trim(), name: userInfo.name, email: userInfo.email,
-              college: userInfo.college, photoURL: userInfo.photoURL,
+              college: userInfo.college, isAdamas: userInfo.isAdamas || false, photoURL: userInfo.photoURL,
               valid: false, error: 'This user is already registered in another team'
             };
             setMemberInfos(newInfos);
@@ -180,7 +231,7 @@ function RegisterContent() {
       const newInfos = [...memberInfos];
       newInfos[index] = {
         firebaseId, uid: uid.trim(), name: userInfo.name, email: userInfo.email,
-        college: userInfo.college, photoURL: userInfo.photoURL,
+        college: userInfo.college, isAdamas: userInfo.isAdamas || false, photoURL: userInfo.photoURL,
         valid: true
       };
       setMemberInfos(newInfos);
@@ -188,7 +239,7 @@ function RegisterContent() {
       console.error('Error validating member:', err);
       const newInfos = [...memberInfos];
       newInfos[index] = {
-        firebaseId: '', uid: uid.trim(), name: '', email: '', college: '', photoURL: '',
+        firebaseId: '', uid: uid.trim(), name: '', email: '', college: '', isAdamas: false, photoURL: '',
         valid: false, error: 'Error validating UID'
       };
       setMemberInfos(newInfos);
@@ -272,7 +323,9 @@ function RegisterContent() {
         return;
       }
 
-      const amount = 100; // Amount in INR
+      // Pricing: Adamas Team = 150 (Total), Non-Adamas Team = 250 (Total)
+      const amount = userProfile?.isAdamas ? 150 : 250;
+
       const receipt = `RCPT-${nanoid(8).toUpperCase()}`;
 
       // 1. Create order on server
@@ -470,8 +523,57 @@ function RegisterContent() {
               </motion.div>
             )}
 
+            {/* Registrations Full - 150 team cap */}
+            {registrationsFull && !alreadyRegistered && !paymentSuccess && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="bg-red-500/10 border border-red-500/30 rounded-3xl p-8 text-center"
+              >
+                <XCircle className="w-16 h-16 text-red-400 mx-auto mb-4" />
+                <h2 className="text-xl font-bold text-white mb-2">REGISTRATIONS FULL</h2>
+                <p className="text-neutral-400 text-sm mb-2">
+                  All <span className="text-white font-bold">{MAX_TEAMS}</span> team slots have been filled.
+                  Registration is now closed.
+                </p>
+                <p className="text-neutral-500 text-xs mb-4">
+                  {totalTeams} / {MAX_TEAMS} teams registered
+                </p>
+                <button
+                  onClick={() => router.push('/')}
+                  className="px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-xl font-bold transition-all"
+                >
+                  Back to Home
+                </button>
+              </motion.div>
+            )}
+
+            {/* Registration Closed by Admin or Deadline */}
+            {registrationClosed && !registrationsFull && !alreadyRegistered && !paymentSuccess && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="bg-red-500/10 border border-red-500/30 rounded-3xl p-8 text-center"
+              >
+                <XCircle className="w-16 h-16 text-red-400 mx-auto mb-4" />
+                <h2 className="text-xl font-bold text-white mb-2">REGISTRATION CLOSED</h2>
+                <p className="text-neutral-400 text-sm mb-4">
+                  {closedReason}
+                </p>
+                <p className="text-neutral-500 text-xs mb-4">
+                  If you&apos;ve already registered, visit your Dashboard to view your pass.
+                </p>
+                <button
+                  onClick={() => router.push('/dashboard')}
+                  className="px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-xl font-bold transition-all"
+                >
+                  Go to Dashboard
+                </button>
+              </motion.div>
+            )}
+
             {/* Registration Form */}
-            {!alreadyRegistered && !paymentSuccess && (
+            {!alreadyRegistered && !paymentSuccess && !registrationsFull && !registrationClosed && (
               <div className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl p-6 md:p-8 relative overflow-hidden">
                 {/* Warning Banner */}
                 <div className="mb-6 p-4 bg-yellow-300/5 border border-yellow-300/20 rounded-xl flex items-start gap-3">
@@ -676,6 +778,27 @@ function RegisterContent() {
                         </div>
                       )}
 
+                      {/* Pricing Summary */}
+                      <div className="p-4 bg-white/5 rounded-2xl border border-white/10 space-y-2">
+                        <div className="flex justify-between items-center text-sm">
+                          <span className="text-neutral-400">Team Type</span>
+                          <span className="text-white">{userProfile?.isAdamas ? 'Adamas University' : 'External Team'}</span>
+                        </div>
+                        <div className="pt-2 border-t border-white/10 flex justify-between items-center">
+                          <span className="text-yellow-300 font-bold uppercase tracking-widest text-xs">Flat Registration Fee</span>
+                          <span className="text-2xl font-black text-white">₹{userProfile?.isAdamas ? 150 : 250}</span>
+                        </div>
+                      </div>
+
+                      {userProfile?.isAdamas && participationType === 'team' && (
+                        <div className="p-3 bg-cyan-500/10 border border-cyan-500/20 rounded-xl flex items-start gap-2">
+                          <Info className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+                          <p className="text-[10px] text-cyan-300 leading-relaxed font-orbitron">
+                            Adamas Team Special: Flat ₹150 for the entire team (all members must be from Adamas).
+                          </p>
+                        </div>
+                      )}
+
                       {/* Payment Button */}
                       <button
                         onClick={handlePayment}
@@ -690,7 +813,7 @@ function RegisterContent() {
                         ) : (
                           <>
                             <CreditCard className="w-5 h-5" />
-                            PAY & REGISTER
+                            PAY ₹{userProfile?.isAdamas ? 150 : 250} & REGISTER
                           </>
                         )}
                       </button>

@@ -33,10 +33,19 @@ export default function EventPass({
   const handleDownload = async () => {
     if (!passRef.current) return;
     try {
-      const canvas = await html2canvas(passRef.current, {
+      // Temporarily override CSS computed styles that use lab() color function
+      const el = passRef.current;
+      el.style.colorScheme = 'dark';
+      
+      const canvas = await html2canvas(el, {
         scale: 2,
         useCORS: true,
-        backgroundColor: null,
+        backgroundColor: '#000000',
+        logging: false,
+        ignoreElements: (element) => {
+          // Skip elements that might have unsupported color functions
+          return element.tagName === 'STYLE';
+        },
       });
       const link = document.createElement('a');
       link.download = `VibeForge_Pass_${teamName.replace(/\s+/g, '_')}.png`;
@@ -44,6 +53,7 @@ export default function EventPass({
       link.click();
     } catch (err) {
       console.error('Error generating pass image:', err);
+      alert('Failed to download pass. Please try using a screenshot instead.');
     }
   };
 

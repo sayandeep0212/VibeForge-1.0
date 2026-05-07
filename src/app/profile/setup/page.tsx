@@ -99,6 +99,12 @@ export default function ProfileSetupPage() {
       return;
     }
 
+    // Block typing "Adamas" in Other college field
+    if (college === 'Other' && otherCollege.trim().toLowerCase().includes('adamas')) {
+      setError('If you are from Adamas University, please select "Adamas University" from the dropdown instead of typing it.');
+      return;
+    }
+
     if (!year) {
       setError('Please select your year.');
       return;
@@ -119,6 +125,26 @@ export default function ProfileSetupPage() {
     console.log('Starting profile submission...');
 
     try {
+      // Check for duplicate phone number
+      const allUsersSnap = await get(ref(db!, 'users'));
+      if (allUsersSnap.exists()) {
+        const allUsers = allUsersSnap.val();
+        for (const uid in allUsers) {
+          if (uid === user.uid) continue; // skip self
+          const u = allUsers[uid];
+          if (u.phone && u.phone === phone.trim()) {
+            setError('This phone number is already registered by another student.');
+            setLoading(false);
+            return;
+          }
+          if (college === 'Adamas University' && registrationNumber.trim() && u.registrationNumber && u.registrationNumber === registrationNumber.trim()) {
+            setError('This Adamas registration number is already registered by another student.');
+            setLoading(false);
+            return;
+          }
+        }
+      }
+
       // Upload profile picture if a new file was selected
       let finalPhotoURL = photoURL;
       if (photoFile) {

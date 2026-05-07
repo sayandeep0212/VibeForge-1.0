@@ -11,17 +11,10 @@ export function middleware(request: NextRequest) {
   response.headers.set('X-Frame-Options', 'SAMEORIGIN');
   response.headers.set('X-Content-Type-Options', 'nosniff');
   response.headers.set('Referrer-Policy', 'origin-when-cross-origin');
-  
-  // Production-ready CSP
-  response.headers.set('Content-Security-Policy', 
-    "default-src 'self'; " +
-    "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://checkout.razorpay.com https://*.firebaseapp.com https://apis.google.com; " +
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
-    "img-src 'self' data: https:; " +
-    "font-src 'self' https://fonts.gstatic.com; " +
-    "frame-src 'self' https://checkout.razorpay.com https://www.google.com https://*.firebaseapp.com; " +
-    "connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app https://*.googleapis.com https://api.imgbb.com wss://*.firebaseio.com wss://*.firebasedatabase.app;"
-  );
+
+  // NOTE: CSP removed temporarily — it was blocking Firebase Auth, Google APIs,
+  // and other critical third-party scripts, causing the app to hang on loading.
+  // TODO: Re-add a properly tested CSP before production deployment.
 
   return response;
 }

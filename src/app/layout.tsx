@@ -26,14 +26,27 @@ const casualPassion = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "VibeForge 1.0 | The Ninja Awakening",
-  description: "Join the ultimate 24hrs Vibe coding Game JAM. Awaken your inner ninja, master the blade of creativity, and build the next generation of games. Hosted by GameLiminals Adamas University.",
-  keywords: ["VibeForge", "GameJam", "Adamas University", "Game Development", "Coding Competition", "Ninja", "Gaming Club"],
+  title: "VibeForge 1.0 | 5-Hour Intercollege Hackathon by GameLiminals",
+  description: "Compete in VibeForge 1.0, a 5-hour intercollege vibe coding hackathon presented by GameLiminals. Join Adamas University's premier student-led game development club for an epic coding showdown.",
+  keywords: ["VibeForge 1.0", "GameLiminals", "Adamas University", "Adamas University clubs", "Adamas game dev club", "game development club Kolkata", "game development club West Bengal", "student-led game dev club India", "intercollege hackathon", "vibe coding hackathon", "game jam", "game development workshops", "coding seminar"],
+  authors: [{ name: "GameLiminals" }],
   openGraph: {
-    title: "VibeForge 1.0 | The Ninja Awakening",
-    description: "The ultimate 24hrs Vibe coding Game JAM arena.",
-    images: ["/assets/logo.png"],
-  }
+    title: "VibeForge 1.0 | Intercollege Vibe Coding Hackathon",
+    description: "Ready to code? Join VibeForge 1.0, a 5-hour intercollege hackathon hosted by GameLiminals, the first student-led game development club at Adamas University.",
+    url: "https://www.yourwebsite.com/vibeforge",
+    type: "website",
+    images: ["https://www.yourwebsite.com/images/vibeforge-banner.jpg"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "VibeForge 1.0 | Intercollege Vibe Coding Hackathon",
+    description: "Ready to code? Join VibeForge 1.0, a 5-hour intercollege hackathon hosted by GameLiminals, the first student-led game development club at Adamas University.",
+    images: ["https://www.yourwebsite.com/images/vibeforge-banner.jpg"],
+  },
+  icons: {
+    icon: "/Logos/logo.png",
+    apple: "/Logos/logo.png",
+  },
 };
 
 export default function RootLayout({
@@ -44,6 +57,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} ${casualPassion.variable} ${orbitron.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-sans">

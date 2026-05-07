@@ -99,10 +99,10 @@ export default function Preloader() {
                 whileHover={{ scale: 1.1 }}
                 className="w-10 h-10 sm:w-12 sm:h-12 relative flex items-center justify-center overflow-hidden rounded-lg bg-white/5 border border-white/10"
               >
-                <img src="/Logos/acm.jpeg" alt="Logo 3" className="w-full h-full object-cover" />
+                <img src="/Logos/cycoders.png" alt="Logo 3" className="w-full h-full object-cover" />
               </motion.div>
             </div>
-
+ 
             {/* Presenter Text */}
             <motion.div
               initial={{ opacity: 0, letterSpacing: "0.2em" }}
@@ -110,14 +110,14 @@ export default function Preloader() {
               transition={{ duration: 2, ease: "easeOut" }}
               className="text-neutral-500 uppercase text-[10px] md:text-xs mb-6 font-medium tracking-[0.6em]"
             >
-              The Ninja Collective Presents
+              GameLiminals Presents
             </motion.div>
 
             <p 
               className="text-xl md:text-2xl font-light tracking-[0.3em] text-yellow-300 uppercase mb-8"
               style={{ fontFamily: "var(--font-orbitron), sans-serif" }}
             >
-              24hrs Vibe coding Game JAM
+              5Hrs Vibe Coding Hackathon
             </p>
             
             <motion.div
@@ -159,8 +159,6 @@ export default function Preloader() {
             </div>
           </div>
 
-          {/* Grain/Noise Overlay for Texture */}
-          <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
         </motion.div>
       )}
     </AnimatePresence>

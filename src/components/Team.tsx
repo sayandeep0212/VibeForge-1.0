@@ -159,8 +159,8 @@ export default function Team() {
             className="flex items-center gap-4 mb-12"
           >
             <div className="h-10 w-2 bg-gradient-to-b from-purple-600 to-cyan-400 rounded-full" />
-            <h2 className="text-3xl md:text-5xl font-heading italic text-yellow-300 uppercase tracking-tighter">
-              Faculty <span className="text-white">Advisors</span>
+            <h2 className="text-3xl md:text-5xl font-heading italic text-yellow-300 uppercase tracking-wider">
+              The <span className="text-white">Spectator</span>
             </h2>
           </motion.div>
 
@@ -179,7 +179,7 @@ export default function Team() {
             className="flex items-center gap-4 mb-12"
           >
             <div className="h-10 w-2 bg-gradient-to-b from-red-600 to-orange-500 rounded-full" />
-            <h2 className="text-3xl md:text-5xl font-heading italic text-yellow-300 uppercase tracking-tighter">
+            <h2 className="text-3xl md:text-5xl font-heading italic text-yellow-300 uppercase tracking-wider">
               Core <span className="text-white">Management</span>
             </h2>
           </motion.div>

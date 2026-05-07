@@ -25,7 +25,7 @@ const SponsorCard = ({ image, name, brandingType }: Sponsor) => (
         <img src={image} alt={name} className="w-16 h-16 object-contain" />
       </div>
       <div className="text-center">
-        <h3 className="text-xl font-bold text-white group-hover:text-yellow-400 transition-colors tracking-tighter uppercase">{name}</h3>
+        <h3 className="text-xl font-bold text-white group-hover:text-yellow-400 transition-colors tracking-wider uppercase">{name}</h3>
         <p className="text-xs font-medium text-yellow-300 tracking-[0.3em] uppercase mt-2">{brandingType}</p>
       </div>
     </div>
@@ -67,7 +67,7 @@ const Sponsors = () => {
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            className="text-5xl md:text-7xl font-black italic tracking-tighter mb-4 text-yellow-300"
+            className="text-5xl md:text-7xl font-black italic tracking-wider mb-4 text-yellow-300"
           >
             OUR <span className="text-white">ALLIES</span>
           </motion.h2>
@@ -85,7 +85,7 @@ const Sponsors = () => {
             <h3 className="text-3xl font-bold mb-4 italic uppercase">WANT TO EMPOWER THE FUTURE?</h3>
             <p className="text-neutral-400">Join the elite rank of organizations shaping the next generation of ninja developers. Partner with VIBEFORGE 1.0.</p>
           </div>
-          <Link href="/contact">
+          <a href="mailto:adamasgamingclub@gmail.com?subject=Become a Sponsor for VibeForge 1.0">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -93,7 +93,7 @@ const Sponsors = () => {
             >
               BECOME A SPONSOR
             </motion.button>
-          </Link>
+          </a>
         </div>
       </div>
     </section>

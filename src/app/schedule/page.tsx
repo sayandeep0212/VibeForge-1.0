@@ -32,8 +32,8 @@ export default function SchedulePage() {
               THE <span className="text-white">SCHEDULE</span>
             </h1>
             <div className="h-1 w-24 bg-red-400 mx-auto" />
-            <p className="mt-6 text-neutral-400 max-w-2xl mx-auto text-lg font-medium tracking-wide">
-              48 Hours of non-stop creativity. Plan your quest, track your milestones, and master the blade of game development.
+            <p className="mt-6 text-neutral-400 max-w-2xl mx-auto text-lg font-medium tracking-wide font-orbitron">
+              A high-octane 5-hour sprint of creativity and code. From reporting to the final prize distribution, here is your mission timeline for VibeForge 1.0.
             </p>
           </motion.div>
 

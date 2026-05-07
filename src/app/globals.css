@@ -20,11 +20,16 @@ body {
     font-family: var(--font-casual-passion), sans-serif;
     font-weight: normal;
     line-height: 1.1;
-    letter-spacing: -0.02em;
+    letter-spacing: normal;
+    text-shadow: 0 0 20px rgba(0,0,0,0.5);
   }
 
   .font-sans {
     font-family: var(--font-geist-sans), sans-serif !important;
+  }
+
+  .font-orbitron {
+    font-family: var(--font-orbitron), sans-serif !important;
   }
 }
 

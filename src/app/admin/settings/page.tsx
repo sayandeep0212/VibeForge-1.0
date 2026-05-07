@@ -4,11 +4,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import {
   User as UserIcon, Mail, Phone, Lock, Camera, UserPlus,
-  AlertCircle, CheckCircle, Loader2, Shield
+  AlertCircle, CheckCircle, Loader2, Shield, CalendarClock, ToggleLeft, ToggleRight
 } from 'lucide-react';
 import { uploadToImgBB } from '@/lib/imgbb';
 import { useRouter } from 'next/navigation';
 import AdminLayout from '@/components/AdminLayout';
+import { ref, get, set } from 'firebase/database';
+import { getDb } from '@/lib/firebase';
 
 interface AdminSession {
   id: string;
@@ -48,6 +50,12 @@ export default function AdminSettingsPage() {
   const [addAdminSuccess, setAddAdminSuccess] = useState(false);
   const [addAdminError, setAddAdminError] = useState('');
 
+  // Registration control states
+  const [regOpen, setRegOpen] = useState(true);
+  const [regDeadline, setRegDeadline] = useState('');
+  const [regSaving, setRegSaving] = useState(false);
+  const [regSuccess, setRegSuccess] = useState(false);
+
   useEffect(() => {
     fetch('/api/admin/session')
       .then(res => res.json())
@@ -64,7 +72,43 @@ export default function AdminSettingsPage() {
       .catch(() => {
         router.push('/admin');
       });
+    // Fetch registration settings
+    fetchRegSettings();
   }, [router]);
+
+  const fetchRegSettings = async () => {
+    try {
+      const snap = await get(ref(getDb(), 'eventSettings/registration'));
+      if (snap.exists()) {
+        const data = snap.val();
+        setRegOpen(data.isOpen ?? true);
+        if (data.deadline) {
+          const d = new Date(data.deadline);
+          setRegDeadline(d.toISOString().slice(0, 16));
+        }
+      }
+    } catch (err) {
+      console.error('Error fetching reg settings:', err);
+    }
+  };
+
+  const saveRegSettings = async () => {
+    setRegSaving(true);
+    try {
+      await set(ref(getDb(), 'eventSettings/registration'), {
+        isOpen: regOpen,
+        deadline: regDeadline ? new Date(regDeadline).getTime() : null,
+        updatedAt: Date.now(),
+      });
+      setRegSuccess(true);
+      setTimeout(() => setRegSuccess(false), 3000);
+    } catch (err) {
+      console.error('Error saving reg settings:', err);
+      alert('Failed to save registration settings.');
+    } finally {
+      setRegSaving(false);
+    }
+  };
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -207,7 +251,79 @@ export default function AdminSettingsPage() {
         <h1 className="text-2xl font-black italic tracking-tighter text-white mb-1">
           ADMIN <span className="text-yellow-300">SETTINGS</span>
         </h1>
-        <p className="text-neutral-500 text-sm mb-8">Manage your profile, password, and admin access</p>
+        <p className="text-neutral-500 text-sm mb-8">Manage registration controls, profile, password, and admin access</p>
+
+        {/* Registration Control */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-black/40 border border-white/5 rounded-2xl p-6 mb-6"
+        >
+          <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <CalendarClock className="w-5 h-5 text-yellow-300" />
+            Registration Control
+          </h2>
+
+          {regSuccess && (
+            <div className="mb-4 p-3 bg-green-500/10 border border-green-500/30 rounded-xl flex items-center gap-2 text-green-400 text-sm">
+              <CheckCircle className="w-4 h-4" /> Settings saved!
+            </div>
+          )}
+
+          <div className="space-y-4">
+            {/* Toggle */}
+            <div className="flex items-center justify-between p-4 bg-white/[0.02] rounded-xl border border-white/5">
+              <div>
+                <p className="text-white font-medium text-sm">Registration Status</p>
+                <p className="text-neutral-500 text-xs mt-0.5">
+                  {regOpen ? 'New teams can register' : 'Registration is closed for all new users'}
+                </p>
+              </div>
+              <button onClick={() => setRegOpen(!regOpen)} className="transition-all">
+                {regOpen ? (
+                  <ToggleRight className="w-10 h-10 text-green-400" />
+                ) : (
+                  <ToggleLeft className="w-10 h-10 text-red-400" />
+                )}
+              </button>
+            </div>
+
+            {/* Status Badge */}
+            <div className={`p-3 rounded-xl text-center text-sm font-bold uppercase tracking-wider ${
+              regOpen ? 'bg-green-500/10 border border-green-500/20 text-green-400' : 'bg-red-500/10 border border-red-500/20 text-red-400'
+            }`}>
+              {regOpen ? '🟢 REGISTRATION OPEN' : '🔴 REGISTRATION CLOSED'}
+            </div>
+
+            {/* Deadline */}
+            <div>
+              <label className="text-neutral-500 text-xs uppercase tracking-wider block mb-1">Auto-Close Deadline (Date & Time)</label>
+              <input
+                type="datetime-local"
+                value={regDeadline}
+                onChange={(e) => setRegDeadline(e.target.value)}
+                className="w-full bg-black/50 border border-white/10 text-white rounded-xl py-2.5 px-4 focus:outline-none focus:border-yellow-300/50 text-sm"
+              />
+              <p className="text-neutral-600 text-[10px] mt-1">
+                Registration will automatically close after this date & time. Leave empty for no auto-close.
+              </p>
+            </div>
+
+            {regDeadline && (
+              <div className="p-3 bg-yellow-300/5 border border-yellow-300/20 rounded-xl text-yellow-300 text-xs">
+                ⏰ Auto-closes: {new Date(regDeadline).toLocaleString('en-IN', { dateStyle: 'full', timeStyle: 'short' })}
+              </div>
+            )}
+          </div>
+
+          <button
+            onClick={saveRegSettings}
+            disabled={regSaving}
+            className="mt-4 px-6 py-2.5 bg-yellow-300 hover:bg-yellow-400 text-black rounded-xl font-bold text-sm transition-all disabled:opacity-50 flex items-center gap-2"
+          >
+            {regSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Save Registration Settings'}
+          </button>
+        </motion.div>
 
         {/* Profile Section */}
         <motion.div

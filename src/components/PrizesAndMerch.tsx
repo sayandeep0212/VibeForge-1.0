@@ -2,31 +2,39 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Trophy, Gift, ShoppingBag, Star, Crown } from 'lucide-react';
+import { Trophy, Gift, ShoppingBag, Star, Crown, Zap } from 'lucide-react';
 
 const PrizesAndMerch = () => {
   const prizes = [
     {
-      rank: "1ST RUNNER UP",
-      amount: "₹25,000",
-      color: "from-yellow-400 to-amber-600",
-      icon: <Crown className="w-12 h-12 text-yellow-500" />,
-      benefits: ["Cash Prize", "Internship Opportunity", "Hardware Kit", "Winners Trophy"]
+      rank: "2ND RUNNER UP",
+      amount: "TROPHY",
+      color: "from-orange-400 to-red-600",
+      icon: <Star className="w-12 h-12 text-orange-500" />,
+      benefits: ["Official 3rd Place Trophy", "Certificate of Achievement", "GameLiminals Swag Bag", "Exclusive Community Access"]
     },
     {
       rank: "WINNER",
-      amount: "₹50,000",
+      amount: "TROPHY",
       color: "from-cyan-400 to-blue-600",
       icon: <Trophy className="w-16 h-16 text-cyan-400" />,
       featured: true,
-      benefits: ["Mega Cash Prize", "Sponsor Special Gift", "Full Hardware Kit", "Golden Trophy", "Certificate of Excellence"]
+      benefits: ["Official 1st Place Trophy", "Certificate of Excellence", "Mega Swag Kit", "Direct Entry to Next Level", "Hall of Fame Feature"]
     },
     {
-      rank: "2ND RUNNER UP",
-      amount: "₹15,000",
-      color: "from-orange-400 to-red-600",
-      icon: <Star className="w-12 h-12 text-orange-500" />,
-      benefits: ["Cash Prize", "Swag Bag", "Certificate", "Bronze Trophy"]
+      rank: "1ST RUNNER UP",
+      amount: "TROPHY",
+      color: "from-yellow-400 to-amber-600",
+      icon: <Crown className="w-12 h-12 text-yellow-500" />,
+      benefits: ["Official 2nd Place Trophy", "Certificate of Merit", "Pro Swag Bag", "Hardware Kit Extras"]
+    },
+    {
+      rank: "UI/UX EXCELLENCE",
+      amount: "CERTIFICATE",
+      color: "from-purple-400 to-magenta-600",
+      icon: <Zap className="w-12 h-12 text-purple-400" />,
+      fullWidth: true,
+      benefits: ["Special Excellence Certificate", "UI/UX Mastery Badge", "Creative Design Feature"]
     }
   ];
 
@@ -46,22 +54,22 @@ const PrizesAndMerch = () => {
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            className="text-5xl md:text-7xl font-heading italic tracking-tighter text-yellow-300 mb-4"
+            className="text-5xl md:text-7xl font-heading italic tracking-wider text-yellow-300 mb-4"
           >
             PRIZE <span className="text-white">POOL</span>
           </motion.h2>
-          <p className="text-neutral-400 text-lg uppercase tracking-widest font-bold">Total Pool worth ₹1,00,000+</p>
+          <p className="text-neutral-400 text-lg uppercase tracking-widest font-bold">Grand Trophies & Recognition</p>
         </div>
 
         {/* Prizes Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-40 items-end">
+        <div className="flex flex-wrap justify-center gap-8 mb-40 items-end">
           {prizes.map((prize, idx) => (
             <motion.div
               key={prize.rank}
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.2 }}
-              className={`relative group ${prize.featured ? 'md:scale-110 z-20 order-1 md:order-2' : idx === 0 ? 'order-2 md:order-1' : 'order-3'}`}
+              className={`relative group w-full md:w-[calc(33.33%-2rem)] min-w-[300px] ${prize.featured ? 'md:scale-110 z-20' : ''} ${prize.fullWidth ? 'md:w-full max-w-2xl' : ''}`}
             >
               <div className={`absolute -inset-1 bg-gradient-to-b ${prize.color} rounded-3xl blur opacity-25 group-hover:opacity-50 transition duration-1000`} />
               <div className="relative bg-neutral-900/40 backdrop-blur-lg rounded-3xl border border-white/10 p-8 h-full">
@@ -90,7 +98,7 @@ const PrizesAndMerch = () => {
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            className="text-4xl md:text-6xl font-heading italic tracking-tighter text-yellow-300 mb-4"
+            className="text-4xl md:text-6xl font-heading italic tracking-wider text-yellow-300 mb-4"
           >
             LIMITED <span className="text-white">EDITION</span> SWAGS
           </motion.h2>

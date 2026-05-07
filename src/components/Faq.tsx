@@ -30,7 +30,7 @@ const FaqItem = ({ question, answer }: { question: string, answer: string }) => 
             transition={{ duration: 0.3, ease: 'easeInOut' }}
             className="overflow-hidden"
           >
-            <div className="pb-8 text-neutral-500 leading-relaxed text-lg max-w-4xl">
+            <div className="pb-8 text-neutral-500 leading-relaxed text-lg max-w-4xl font-orbitron">
               {answer}
             </div>
           </motion.div>
@@ -44,35 +44,35 @@ const Faq = () => {
   const faqs = [
     {
       question: "Who can participate in VIBEFORGE 1.0?",
-      answer: "VIBEFORGE is open to all students, professional developers, and creative designers worldwide. Whether you're a first-time hacker or a seasoned pro, the only requirement is a passion for building cool things!"
+      answer: "VIBEFORGE 1.0 is open to all students passionate about tech, design, development, AI, gaming, or innovation. Both beginners and experienced participants from any college or university are welcome to join."
     },
     {
       question: "What is the team size?",
-      answer: "Teams should consist of 2 to 4 members. We believe this size promotes the best collaboration and ensures everyone has a meaningful role in the project."
+      answer: "Participants can join individually or as a team of up to 4 members. Solo participation is also allowed!"
     },
     {
       question: "Is there any registration fee?",
-      answer: "None at all! Registration and participation in VIBEFORGE 1.0 are completely free. We provide the platform, the mentorship, and the prizes—you just provide the code."
+      answer: "The registration is a flat fee per team: ₹150 for Adamas University Teams and ₹250 for External Teams. The leader pays this amount for the entire team."
     },
     {
       question: "What if I don't have a team or an idea?",
-      answer: "No problem! We'll have dedicated networking sessions and 'team-building' channels on our Discord. We also host brainstorming workshops to help spark your creativity before the hacking begins."
+      answer: "No problem — you can still participate! Team formation and brainstorming sessions will be conducted at the start of the event. You can easily find partners and build something amazing together."
     },
     {
       question: "What are the prize categories?",
-      answer: "We have multiple tracks including Top 3 Overall Winners, Best Women's Team, Best Beginner Team, and several sponsor-specific categories like 'Best Use of AI' or 'Web3 Innovator'."
+      answer: "1st, 2nd, and 3rd place winners receive official Trophies & Certificates. Additionally, the project with the 'Best UI/UX Design' will receive a special Certificate of Excellence."
     },
     {
       question: "Do I need to bring my own laptop?",
-      answer: "Yes, you'll need your own laptop and charger. We'll provide high-speed internet, power strips, and plenty of snacks to keep you going throughout the night."
+      answer: "Yes. Participants are requested to bring their own laptops and any necessary accessories (chargers, mice, etc.) for development."
     },
     {
       question: "Will there be mentorship available?",
-      answer: "Absolutely! We have a curated roster of industry experts from leading tech companies who will be available both online and on-site to help you debug and refine your ideas."
+      answer: "Yes, experienced mentors will be available throughout the 5-hour build phase to guide you, help with technical hurdles, and refine your project."
     },
     {
       question: "What happens after the hackathon ends?",
-      answer: "Beyond the prizes, every participant receives a digital certificate. Top teams may get internship opportunities, and everyone gets access to our exclusive alumni community."
+      answer: "Beyond the prizes, top projects may get special recognition, showcase opportunities in our community, and future support from the GameLiminals network."
     }
   ];
 
@@ -83,7 +83,7 @@ const Faq = () => {
           <div className="p-3 bg-yellow-300 rounded-2xl">
             <HelpCircle className="w-8 h-8 text-black" />
           </div>
-          <h2 className="text-3xl md:text-5xl font-black italic tracking-tighter uppercase underline decoration-red-400 decoration-4 underline-offset-8 text-yellow-300">
+          <h2 className="text-3xl md:text-5xl font-black italic tracking-wider uppercase underline decoration-red-400 decoration-4 underline-offset-8 text-yellow-300">
             MISSION <span className="text-white">DEBRIEF</span> (FAQ)
           </h2>
         </div>

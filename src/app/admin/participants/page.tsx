@@ -4,7 +4,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import {
   Search, Download, Star, StarOff, User as UserIcon,
-  Building2
+  Building2, Edit3, X, Save, Loader2
 } from 'lucide-react';
 import { ref, get, update } from 'firebase/database';
 import { getDb } from '@/lib/firebase';
@@ -34,6 +34,16 @@ interface AdminSession {
   name: string;
 }
 
+interface EditForm {
+  name: string;
+  phone: string;
+  college: string;
+  isAdamas: boolean;
+  registrationNumber: string;
+  year: string;
+  program: string;
+}
+
 export default function ParticipantsPage() {
   const router = useRouter();
   const [adminSession, setAdminSession] = useState<AdminSession | null>(null);
@@ -43,21 +53,22 @@ export default function ParticipantsPage() {
   const [collegeFilter, setCollegeFilter] = useState<'all' | 'adamas' | 'other'>('all');
   const [shortlistFilter, setShortlistFilter] = useState<'all' | 'shortlisted' | 'not_shortlisted'>('all');
 
+  // Edit modal state
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState<EditForm>({
+    name: '', phone: '', college: '', isAdamas: false,
+    registrationNumber: '', year: '', program: '',
+  });
+  const [editSaving, setEditSaving] = useState(false);
+
   useEffect(() => {
     let mounted = true;
-
     const checkSession = async () => {
       try {
         const res = await fetch('/api/admin/session');
         const data = await res.json();
-
         if (!mounted) return;
-
-        if (!data.isLoggedIn) {
-          router.push('/admin');
-          return;
-        }
-
+        if (!data.isLoggedIn) { router.push('/admin'); return; }
         setAdminSession(data.user);
         fetchUsers();
       } catch (err) {
@@ -65,11 +76,8 @@ export default function ParticipantsPage() {
         if (mounted) router.push('/admin');
       }
     };
-
     checkSession();
-    return () => {
-      mounted = false;
-    };
+    return () => { mounted = false; };
   }, [router]);
 
   const fetchUsers = async () => {
@@ -85,7 +93,6 @@ export default function ParticipantsPage() {
 
   const filteredUsers = useMemo(() => {
     return Object.entries(users).filter(([, user]) => {
-      // Search filter
       const query = searchQuery.toLowerCase();
       const matchesSearch = !query ||
         (user.name?.toLowerCase() || '').includes(query) ||
@@ -93,19 +100,14 @@ export default function ParticipantsPage() {
         (user.uid?.toLowerCase() || '').includes(query) ||
         (user.college?.toLowerCase() || '').includes(query) ||
         (user.phone || '').includes(query);
-
-      // College filter
       const matchesCollege =
         collegeFilter === 'all' ||
         (collegeFilter === 'adamas' && user.isAdamas) ||
         (collegeFilter === 'other' && !user.isAdamas);
-
-      // Shortlist filter
       const matchesShortlist =
         shortlistFilter === 'all' ||
         (shortlistFilter === 'shortlisted' && user.shortlisted) ||
         (shortlistFilter === 'not_shortlisted' && !user.shortlisted);
-
       return matchesSearch && matchesCollege && matchesShortlist;
     });
   }, [users, searchQuery, collegeFilter, shortlistFilter]);
@@ -120,6 +122,59 @@ export default function ParticipantsPage() {
       }));
     } catch (err) {
       console.error('Error toggling shortlist:', err);
+    }
+  };
+
+  // Admin Edit Functions
+  const startEdit = (firebaseId: string) => {
+    const user = users[firebaseId];
+    setEditingId(firebaseId);
+    setEditForm({
+      name: user.name,
+      phone: user.phone,
+      college: user.isAdamas ? 'Adamas University' : user.college,
+      isAdamas: user.isAdamas,
+      registrationNumber: user.registrationNumber || '',
+      year: user.year,
+      program: user.program,
+    });
+  };
+
+  const handleCollegeChange = (value: string) => {
+    if (value === 'Adamas University') {
+      setEditForm(prev => ({ ...prev, college: 'Adamas University', isAdamas: true }));
+    } else {
+      setEditForm(prev => ({ ...prev, isAdamas: false, college: '', registrationNumber: '' }));
+    }
+  };
+
+  const saveEdit = async () => {
+    if (!editingId) return;
+    setEditSaving(true);
+    try {
+      const updates: any = {
+        name: editForm.name.trim(),
+        phone: editForm.phone.trim(),
+        college: editForm.isAdamas ? 'Adamas University' : editForm.college.trim(),
+        isAdamas: editForm.isAdamas,
+        year: editForm.year,
+        program: editForm.program.trim(),
+        updatedAt: Date.now(),
+      };
+      if (editForm.isAdamas) {
+        updates.registrationNumber = editForm.registrationNumber.trim();
+      }
+      await update(ref(getDb(), `users/${editingId}`), updates);
+      setUsers(prev => ({
+        ...prev,
+        [editingId!]: { ...prev[editingId!], ...updates }
+      }));
+      setEditingId(null);
+    } catch (err) {
+      console.error('Error saving edit:', err);
+      alert('Failed to save changes.');
+    } finally {
+      setEditSaving(false);
     }
   };
 
@@ -142,26 +197,18 @@ export default function ParticipantsPage() {
       const blob = new Blob([JSON.stringify(exportUsers, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
-      a.href = url;
-      a.download = `participants_${Date.now()}.json`;
-      a.click();
+      a.href = url; a.download = `participants_${Date.now()}.json`; a.click();
       URL.revokeObjectURL(url);
-    } else if (format === 'csv' || format === 'excel') {
+    } else {
       const ws = XLSX.utils.json_to_sheet(exportUsers);
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, 'Participants');
-
-      if (format === 'csv') {
-        XLSX.writeFile(wb, `participants_${Date.now()}.csv`, { bookType: 'csv' });
-      } else {
-        XLSX.writeFile(wb, `participants_${Date.now()}.xlsx`);
-      }
+      XLSX.writeFile(wb, `participants_${Date.now()}.${format === 'csv' ? 'csv' : 'xlsx'}`,
+        format === 'csv' ? { bookType: 'csv' } : undefined);
     }
   };
 
-  const handleLogout = () => {
-    router.push('/admin');
-  };
+  const handleLogout = () => { router.push('/admin'); };
 
   if (!adminSession) return null;
 
@@ -177,25 +224,14 @@ export default function ParticipantsPage() {
               {filteredUsers.length} of {Object.keys(users).length} profiles
             </p>
           </div>
-
-          {/* Export Buttons */}
           <div className="flex items-center gap-2">
-            <button
-              onClick={() => exportData('csv')}
-              className="flex items-center gap-1 px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/10 text-neutral-400 hover:text-white rounded-lg transition-all text-xs font-medium"
-            >
+            <button onClick={() => exportData('csv')} className="flex items-center gap-1 px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/10 text-neutral-400 hover:text-white rounded-lg transition-all text-xs font-medium">
               <Download className="w-3 h-3" /> CSV
             </button>
-            <button
-              onClick={() => exportData('excel')}
-              className="flex items-center gap-1 px-3 py-2 bg-green-500/10 hover:bg-green-500/20 border border-green-500/20 text-green-400 rounded-lg transition-all text-xs font-medium"
-            >
+            <button onClick={() => exportData('excel')} className="flex items-center gap-1 px-3 py-2 bg-green-500/10 hover:bg-green-500/20 border border-green-500/20 text-green-400 rounded-lg transition-all text-xs font-medium">
               <Download className="w-3 h-3" /> Excel
             </button>
-            <button
-              onClick={() => exportData('json')}
-              className="flex items-center gap-1 px-3 py-2 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 text-blue-400 rounded-lg transition-all text-xs font-medium"
-            >
+            <button onClick={() => exportData('json')} className="flex items-center gap-1 px-3 py-2 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 text-blue-400 rounded-lg transition-all text-xs font-medium">
               <Download className="w-3 h-3" /> JSON
             </button>
           </div>
@@ -205,35 +241,110 @@ export default function ParticipantsPage() {
         <div className="flex flex-col md:flex-row gap-3 mb-6">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+            <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by name, email, UID, college, phone..."
-              className="w-full bg-black/50 border border-white/10 text-white rounded-xl py-2.5 pl-10 pr-4 focus:outline-none focus:border-yellow-300/50 text-sm placeholder:text-neutral-600"
-            />
+              className="w-full bg-black/50 border border-white/10 text-white rounded-xl py-2.5 pl-10 pr-4 focus:outline-none focus:border-yellow-300/50 text-sm placeholder:text-neutral-600" />
           </div>
           <div className="flex gap-2">
-            <select
-              value={collegeFilter}
-              onChange={(e) => setCollegeFilter(e.target.value as 'all' | 'adamas' | 'other')}
-              className="bg-black/50 border border-white/10 text-white rounded-xl py-2.5 px-4 text-sm appearance-none cursor-pointer focus:outline-none focus:border-yellow-300/50"
-            >
+            <select value={collegeFilter} onChange={(e) => setCollegeFilter(e.target.value as 'all' | 'adamas' | 'other')}
+              className="bg-black/50 border border-white/10 text-white rounded-xl py-2.5 px-4 text-sm cursor-pointer focus:outline-none focus:border-yellow-300/50">
               <option value="all" className="bg-black">All Colleges</option>
               <option value="adamas" className="bg-black">Adamas University</option>
               <option value="other" className="bg-black">Other Colleges</option>
             </select>
-            <select
-              value={shortlistFilter}
-              onChange={(e) => setShortlistFilter(e.target.value as 'all' | 'shortlisted' | 'not_shortlisted')}
-              className="bg-black/50 border border-white/10 text-white rounded-xl py-2.5 px-4 text-sm appearance-none cursor-pointer focus:outline-none focus:border-yellow-300/50"
-            >
+            <select value={shortlistFilter} onChange={(e) => setShortlistFilter(e.target.value as 'all' | 'shortlisted' | 'not_shortlisted')}
+              className="bg-black/50 border border-white/10 text-white rounded-xl py-2.5 px-4 text-sm cursor-pointer focus:outline-none focus:border-yellow-300/50">
               <option value="all" className="bg-black">All Status</option>
               <option value="shortlisted" className="bg-black">Shortlisted</option>
               <option value="not_shortlisted" className="bg-black">Not Shortlisted</option>
             </select>
           </div>
         </div>
+
+        {/* Edit Modal */}
+        {editingId && (
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setEditingId(null)}>
+            <div className="bg-neutral-900 border border-white/10 rounded-2xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-white font-bold text-lg">Edit Participant</h3>
+                <button onClick={() => setEditingId(null)} className="text-neutral-500 hover:text-white"><X className="w-5 h-5" /></button>
+              </div>
+              <div className="space-y-4">
+                {/* Name */}
+                <div>
+                  <label className="text-neutral-500 text-xs uppercase tracking-wider block mb-1">Full Name</label>
+                  <input type="text" value={editForm.name} onChange={e => setEditForm(p => ({ ...p, name: e.target.value }))}
+                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-300/50" />
+                </div>
+
+                {/* Phone */}
+                <div>
+                  <label className="text-neutral-500 text-xs uppercase tracking-wider block mb-1">Phone Number</label>
+                  <input type="text" value={editForm.phone} onChange={e => setEditForm(p => ({ ...p, phone: e.target.value }))}
+                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-300/50" />
+                </div>
+
+                {/* College Type */}
+                <div>
+                  <label className="text-neutral-500 text-xs uppercase tracking-wider block mb-1">College Type</label>
+                  <select value={editForm.isAdamas ? 'Adamas University' : 'Other'}
+                    onChange={e => handleCollegeChange(e.target.value)}
+                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-300/50">
+                    <option value="Adamas University" className="bg-black">Adamas University</option>
+                    <option value="Other" className="bg-black">Other College</option>
+                  </select>
+                </div>
+
+                {/* Conditional: Adamas Reg Number OR Other College Name */}
+                {editForm.isAdamas ? (
+                  <div>
+                    <label className="text-neutral-500 text-xs uppercase tracking-wider block mb-1">
+                      Adamas Registration Number <span className="text-red-400">*</span>
+                    </label>
+                    <input type="text" value={editForm.registrationNumber}
+                      onChange={e => setEditForm(p => ({ ...p, registrationNumber: e.target.value }))}
+                      placeholder="e.g. AU/2024/1234"
+                      className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm font-mono focus:outline-none focus:border-yellow-300/50" />
+                  </div>
+                ) : (
+                  <div>
+                    <label className="text-neutral-500 text-xs uppercase tracking-wider block mb-1">
+                      College Name <span className="text-red-400">*</span>
+                    </label>
+                    <input type="text" value={editForm.college}
+                      onChange={e => setEditForm(p => ({ ...p, college: e.target.value }))}
+                      placeholder="Enter college name"
+                      className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-300/50" />
+                  </div>
+                )}
+
+                {/* Year */}
+                <div>
+                  <label className="text-neutral-500 text-xs uppercase tracking-wider block mb-1">Year</label>
+                  <select value={editForm.year} onChange={e => setEditForm(p => ({ ...p, year: e.target.value }))}
+                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-300/50">
+                    <option value="1st Year" className="bg-black">1st Year</option>
+                    <option value="2nd Year" className="bg-black">2nd Year</option>
+                    <option value="3rd Year" className="bg-black">3rd Year</option>
+                    <option value="4th Year" className="bg-black">4th Year</option>
+                  </select>
+                </div>
+
+                {/* Program */}
+                <div>
+                  <label className="text-neutral-500 text-xs uppercase tracking-wider block mb-1">Program</label>
+                  <input type="text" value={editForm.program} onChange={e => setEditForm(p => ({ ...p, program: e.target.value }))}
+                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-300/50" />
+                </div>
+
+                <button onClick={saveEdit} disabled={editSaving || (!editForm.isAdamas && !editForm.college.trim()) || (editForm.isAdamas && !editForm.registrationNumber.trim())}
+                  className="w-full bg-yellow-300 hover:bg-yellow-400 text-black py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+                  {editSaving ? <><Loader2 className="w-4 h-4 animate-spin" /> Saving...</> : <><Save className="w-4 h-4" /> Save Changes</>}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Table */}
         {loading ? (
@@ -254,6 +365,7 @@ export default function ParticipantsPage() {
                     <th className="text-left p-4 text-neutral-500 font-medium text-xs uppercase tracking-wider">Program</th>
                     <th className="text-left p-4 text-neutral-500 font-medium text-xs uppercase tracking-wider">Phone</th>
                     <th className="text-left p-4 text-neutral-500 font-medium text-xs uppercase tracking-wider">Reg. No.</th>
+                    <th className="text-left p-4 text-neutral-500 font-medium text-xs uppercase tracking-wider">Edit</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -296,13 +408,19 @@ export default function ParticipantsPage() {
                       <td className="p-4">
                         <div className="flex items-center gap-1">
                           <Building2 className="w-3 h-3 text-neutral-600" />
-                          <span className="text-neutral-300 text-xs">{user.college}</span>
+                          <span className={`text-xs ${user.isAdamas ? 'text-purple-400' : 'text-neutral-300'}`}>{user.college}</span>
                         </div>
                       </td>
                       <td className="p-4 text-neutral-300 text-xs">{user.year}</td>
                       <td className="p-4 text-neutral-300 text-xs">{user.program}</td>
                       <td className="p-4 text-neutral-300 text-xs">{user.phone}</td>
                       <td className="p-4 text-neutral-300 text-xs font-mono">{user.registrationNumber || '—'}</td>
+                      <td className="p-4">
+                        <button onClick={() => startEdit(firebaseId)}
+                          className="p-1.5 bg-white/5 hover:bg-white/10 text-neutral-500 hover:text-yellow-300 rounded-lg transition-all" title="Edit">
+                          <Edit3 className="w-3.5 h-3.5" />
+                        </button>
+                      </td>
                     </motion.tr>
                   ))}
                 </tbody>
