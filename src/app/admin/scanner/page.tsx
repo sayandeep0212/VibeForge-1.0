@@ -52,25 +52,35 @@ export default function AdminScannerPage() {
         setAdminName(data.user.name);
         setLoading(false);
       });
+  }, [router]);
 
-    // Initialize scanner
-    const scanner = new Html5QrcodeScanner(
-      "reader",
-      { fps: 10, qrbox: { width: 250, height: 250 } },
-      /* verbose= */ false
-    );
+  useEffect(() => {
+    if (loading) return;
 
-    scanner.render(onScanSuccess, onScanFailure);
-    scannerRef.current = scanner;
+    // Initialize scanner only after loading is false and DOM is ready
+    const timer = setTimeout(() => {
+      const readerElement = document.getElementById('reader');
+      if (!readerElement) return;
+
+      const scanner = new Html5QrcodeScanner(
+        "reader",
+        { fps: 10, qrbox: { width: 250, height: 250 } },
+        /* verbose= */ false
+      );
+
+      scanner.render(onScanSuccess, onScanFailure);
+      scannerRef.current = scanner;
+    }, 100);
 
     return () => {
+      clearTimeout(timer);
       if (scannerRef.current) {
         scannerRef.current.clear().catch(error => {
           console.error("Failed to clear scanner", error);
         });
       }
     };
-  }, [router]);
+  }, [loading]);
 
   async function onScanSuccess(decodedText: string) {
     if (searching) return;
