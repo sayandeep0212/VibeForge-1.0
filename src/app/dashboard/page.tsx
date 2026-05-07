@@ -12,6 +12,7 @@ import {
 import { useAuth } from '@/context/AuthContext';
 import { ref, get, query, orderByChild, equalTo } from 'firebase/database';
 import { db } from '@/lib/firebase';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import EventPass from '@/components/EventPass';
@@ -148,14 +149,16 @@ function DashboardContent() {
       <div className="relative min-h-screen">
         {/* Background */}
         <div className="absolute inset-0 z-0 pointer-events-none">
-          <img 
+          <Image 
             src="/backgrounds/dashboardbg.jpg" 
-            alt="Background" 
-            className="w-full h-full object-cover opacity-40 brightness-[0.3]"
+            alt="Dashboard Background" 
+            fill
+            className="object-cover opacity-70 brightness-[0.8]"
+            priority
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black" />
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-yellow-300/5 blur-[100px] rounded-full" />
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-red-500/5 blur-[100px] rounded-full" />
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-yellow-300/10 blur-[120px] rounded-full" />
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-red-500/10 blur-[120px] rounded-full" />
         </div>
 
         <div className="relative z-10 pt-32 pb-20 px-6 max-w-6xl mx-auto">
