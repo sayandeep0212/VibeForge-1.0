@@ -3,8 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, User, Clock, Search, Filter, Trash2, CheckCircle, MessageSquare } from 'lucide-react';
-import { ref, get, remove, update } from 'firebase/database';
-import { getDb } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import AdminLayout from '@/components/AdminLayout';
 
@@ -46,13 +44,14 @@ export default function AdminInquiriesPage() {
 
   const fetchInquiries = async () => {
     try {
-      const snap = await get(ref(getDb(), 'inquiries'));
-      if (snap.exists()) {
-        const data = snap.val();
+      const res = await fetch('/api/admin/inquiries');
+      const data = await res.json();
+      
+      if (res.ok && data) {
         const list = Object.keys(data).map(id => ({
           id,
           ...data[id]
-        })).sort((a, b) => b.createdAt - a.createdAt);
+        })).sort((a: any, b: any) => b.createdAt - a.createdAt);
         setInquiries(list);
       } else {
         setInquiries([]);
@@ -66,7 +65,11 @@ export default function AdminInquiriesPage() {
 
   const markAsRead = async (id: string) => {
     try {
-      await update(ref(getDb(), `inquiries/${id}`), { status: 'read' });
+      await fetch('/api/admin/inquiries', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ inquiryId: id, status: 'read' })
+      });
       fetchInquiries();
     } catch (err) {
       console.error('Error marking as read:', err);
@@ -76,7 +79,9 @@ export default function AdminInquiriesPage() {
   const deleteInquiry = async (id: string) => {
     if (!confirm('Are you sure you want to delete this inquiry?')) return;
     try {
-      await remove(ref(getDb(), `inquiries/${id}`));
+      await fetch(`/api/admin/inquiries?id=${id}`, {
+        method: 'DELETE'
+      });
       fetchInquiries();
     } catch (err) {
       console.error('Error deleting inquiry:', err);
