@@ -26,6 +26,7 @@ export default function AdminDashboardPage() {
     otherStudents: 0,
     shortlistedUsers: 0,
     shortlistedTeams: 0,
+    checkedInTeams: 0,
     newInquiries: 0,
   });
   const [loading, setLoading] = useState(true);
