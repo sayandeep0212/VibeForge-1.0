@@ -2,14 +2,26 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Sword, Zap, Ghost } from 'lucide-react';
+import { Menu, X, Sword, Zap, Ghost, User } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
+
+  // Safely try to access auth context (may not be available on admin pages)
+  let authData: { user: { photoURL: string | null; displayName: string | null } | null; userProfile: { photoURL: string; name: string } | null } | null = null;
+  try {
+    authData = useAuth();
+  } catch {
+    // Auth context not available (e.g., on admin pages without provider)
+  }
+
+  const user = authData?.user || null;
+  const userProfile = authData?.userProfile || null;
 
   // Handle scroll for navbar background effect
   useEffect(() => {
@@ -79,9 +91,29 @@ const Navbar = () => {
                     }`} />
                 </Link>
               ))}
-              <Link href="/signup" className="bg-yellow-300 hover:bg-gradient-to-r hover:from-yellow-300 hover:to-red-400 text-black px-6 py-2 rounded-full font-bold text-xs tracking-widest transition-all hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(253,224,71,0.3)]">
-                SIGN UP
-              </Link>
+
+              {/* Auth Section */}
+              {user ? (
+                <Link href="/dashboard" className="flex items-center gap-2 group">
+                  <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-yellow-300/30 group-hover:border-yellow-300/60 transition-colors">
+                    {(userProfile?.photoURL || user.photoURL) ? (
+                      <img
+                        src={userProfile?.photoURL || user.photoURL || ''}
+                        alt="Profile"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-yellow-300/10 flex items-center justify-center">
+                        <User className="w-4 h-4 text-yellow-300/50" />
+                      </div>
+                    )}
+                  </div>
+                </Link>
+              ) : (
+                <Link href="/signup" className="bg-yellow-300 hover:bg-gradient-to-r hover:from-yellow-300 hover:to-red-400 text-black px-6 py-2 rounded-full font-bold text-xs tracking-widest transition-all hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(253,224,71,0.3)]">
+                  SIGN UP
+                </Link>
+              )}
             </div>
 
             {/* Mobile: Hamburger Button */}
@@ -119,13 +151,24 @@ const Navbar = () => {
                 </Link>
               ))}
               <hr className="border-white/10" />
-              <Link
-                href="/signup"
-                onClick={() => setIsOpen(false)}
-                className="bg-yellow-300 hover:bg-gradient-to-r hover:from-yellow-300 hover:to-red-400 text-black text-center py-4 rounded-xl font-bold tracking-widest uppercase"
-              >
-                SIGN UP
-              </Link>
+              
+              {user ? (
+                <Link
+                  href="/dashboard"
+                  onClick={() => setIsOpen(false)}
+                  className="bg-yellow-300 hover:bg-gradient-to-r hover:from-yellow-300 hover:to-red-400 text-black text-center py-4 rounded-xl font-bold tracking-widest uppercase"
+                >
+                  DASHBOARD
+                </Link>
+              ) : (
+                <Link
+                  href="/signup"
+                  onClick={() => setIsOpen(false)}
+                  className="bg-yellow-300 hover:bg-gradient-to-r hover:from-yellow-300 hover:to-red-400 text-black text-center py-4 rounded-xl font-bold tracking-widest uppercase"
+                >
+                  SIGN UP
+                </Link>
+              )}
             </div>
           </motion.div>
         )}

@@ -33,7 +33,7 @@ export default function SponsorsPage() {
             </h1>
             <div className="h-1 w-24 bg-red-400 mx-auto" />
             <p className="mt-6 text-neutral-400 max-w-2xl mx-auto text-lg font-medium tracking-wide">
-              The legendary guilds and visionaries powering GAMEJAM 2K26. Join the ranks of those who forge the future of gaming.
+              The legendary guilds and visionaries powering VIBEFORGE 1.0. Join the ranks of those who forge the future of gaming.
             </p>
           </motion.div>
 

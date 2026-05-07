@@ -1,12 +1,48 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Phone, MapPin, Globe, Send, User } from 'lucide-react';
+import { Mail, Phone, MapPin, Globe, Send, User, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import { ref, push, set } from 'firebase/database';
+import { getDb } from '@/lib/firebase';
 
 const ContactPage = () => {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    try {
+      const inquiryRef = ref(getDb(), 'inquiries');
+      const newInquiryRef = push(inquiryRef);
+      await set(newInquiryRef, {
+        name: name.trim(),
+        email: email.trim().toLowerCase(),
+        message: message.trim(),
+        status: 'new',
+        createdAt: Date.now()
+      });
+
+      setSuccess(true);
+      setName('');
+      setEmail('');
+      setMessage('');
+    } catch (err: any) {
+      console.error('Inquiry submission error:', err);
+      setError('Failed to send message. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <main className="relative min-h-screen bg-black text-white selection:bg-yellow-300 selection:text-black overflow-hidden">
       {/* Navigation */}
@@ -117,33 +153,91 @@ const ContactPage = () => {
                 
                 <h2 className="text-3xl font-black mb-8 italic italic tracking-tight">SEND A MESSAGE</h2>
                 
-                <form className="space-y-6">
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold text-neutral-500 uppercase tracking-widest ml-1">Email Address</label>
-                    <input 
-                      type="email" 
-                      placeholder="ninja@shadow.com"
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-yellow-300 transition-all"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold text-neutral-500 uppercase tracking-widest ml-1">Message</label>
-                    <textarea 
-                      rows={5}
-                      placeholder="How can we help you on your quest?"
-                      className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-yellow-300 transition-all resize-none"
-                    />
-                  </div>
-
-                  <motion.button 
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="w-full bg-yellow-300 hover:bg-gradient-to-r hover:from-yellow-300 hover:to-red-400 text-black py-5 rounded-2xl font-black text-lg tracking-widest shadow-[0_0_30px_rgba(253,224,71,0.3)] flex items-center justify-center gap-3 transition-all"
+                {success ? (
+                  <motion.div 
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="text-center py-12"
                   >
-                    SEND MESSAGE <Send className="w-5 h-5" />
-                  </motion.button>
-                </form>
+                    <CheckCircle className="w-16 h-16 text-green-400 mx-auto mb-4" />
+                    <h3 className="text-2xl font-bold mb-2">Message Sent!</h3>
+                    <p className="text-neutral-400 mb-8">We've received your inquiry and will get back to you soon.</p>
+                    <button 
+                      onClick={() => setSuccess(false)}
+                      className="text-yellow-300 font-bold tracking-widest hover:underline uppercase text-sm"
+                    >
+                      Send another message
+                    </button>
+                  </motion.div>
+                ) : (
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    {error && (
+                      <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center gap-3 text-red-400 text-sm">
+                        <AlertCircle className="w-5 h-5 shrink-0" />
+                        {error}
+                      </div>
+                    )}
+
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold text-neutral-500 uppercase tracking-widest ml-1">Your Name</label>
+                      <div className="relative group/input">
+                        <User className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-600 group-focus-within/input:text-yellow-300 transition-colors" />
+                        <input 
+                          type="text" 
+                          required
+                          placeholder="What should we call you?"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          disabled={loading}
+                          className="w-full bg-white/5 border border-white/10 rounded-2xl pl-14 pr-6 py-4 text-white focus:outline-none focus:border-yellow-300 transition-all disabled:opacity-50"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold text-neutral-500 uppercase tracking-widest ml-1">Email Address</label>
+                      <div className="relative group/input">
+                        <Mail className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-600 group-focus-within/input:text-yellow-300 transition-colors" />
+                        <input 
+                          type="email" 
+                          required
+                          placeholder="ninja@shadow.com"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          disabled={loading}
+                          className="w-full bg-white/5 border border-white/10 rounded-2xl pl-14 pr-6 py-4 text-white focus:outline-none focus:border-yellow-300 transition-all disabled:opacity-50"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold text-neutral-500 uppercase tracking-widest ml-1">Message</label>
+                      <textarea 
+                        required
+                        rows={5}
+                        placeholder="How can we help you on your quest?"
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                        disabled={loading}
+                        className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-yellow-300 transition-all resize-none disabled:opacity-50"
+                      />
+                    </div>
+
+                    <motion.button 
+                      type="submit"
+                      disabled={loading}
+                      whileHover={{ scale: loading ? 1 : 1.02 }}
+                      whileTap={{ scale: loading ? 1 : 0.98 }}
+                      className="w-full bg-yellow-300 hover:bg-gradient-to-r hover:from-yellow-300 hover:to-red-400 text-black py-5 rounded-2xl font-black text-lg tracking-widest shadow-[0_0_30px_rgba(253,224,71,0.3)] flex items-center justify-center gap-3 transition-all disabled:opacity-50"
+                    >
+                      {loading ? (
+                        <Loader2 className="w-6 h-6 animate-spin" />
+                      ) : (
+                        <>SEND MESSAGE <Send className="w-5 h-5" /></>
+                      )}
+                    </motion.button>
+                  </form>
+                )}
               </div>
             </motion.div>
           </div>

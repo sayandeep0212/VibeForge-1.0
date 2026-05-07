@@ -1,7 +1,10 @@
 'use client';
 
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, ExternalLink, Globe } from 'lucide-react';
+import { Mail, ExternalLink, Globe, Loader2 } from 'lucide-react';
+import { ref, get } from 'firebase/database';
+import { getDb } from '@/lib/firebase';
 
 interface TeamMember {
   name: string;
@@ -101,41 +104,42 @@ const MemberCard = ({ member }: { member: TeamMember }) => {
 };
 
 export default function Team() {
-  const faculty: TeamMember[] = [
-    {
-      name: "Dr. Sajal Saha",
-      role: "Assoc. Dean cum HOD of CSE",
-      image: "https://gameliminals.vercel.app/assets/Club_Advisor.jpeg"
-    },
-    {
-      name: "Mr. Ayushman Bilas Thakur",
-      role: "Faculty Co-Ordinator",
-      image: "https://gameliminals.vercel.app/assets/Faculty_Co-ordinator.jpeg"
-    }
-  ];
+  const [faculty, setFaculty] = useState<TeamMember[]>([]);
+  const [management, setManagement] = useState<TeamMember[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const management: TeamMember[] = [
-    {
-      name: "Alex Rivera",
-      role: "Lead Organizer",
-      image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex"
-    },
-    {
-      name: "Elena Vance",
-      role: "Tech Director",
-      image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Elena"
-    },
-    {
-      name: "Marcus Thorne",
-      role: "Design Lead",
-      image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Marcus"
-    },
-    {
-      name: "Sofia Yang",
-      role: "Communications",
-      image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sofia"
-    }
-  ];
+  useEffect(() => {
+    const fetchTeam = async () => {
+      try {
+        const [facultySnap, teamSnap] = await Promise.all([
+          get(ref(getDb(), 'faculty')),
+          get(ref(getDb(), 'coreTeam'))
+        ]);
+
+        if (facultySnap.exists()) {
+          setFaculty(Object.values(facultySnap.val()));
+        }
+        
+        if (teamSnap.exists()) {
+          setManagement(Object.values(teamSnap.val()));
+        }
+      } catch (error) {
+        console.error('Error fetching team data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTeam();
+  }, []);
+
+  if (loading) {
+    return (
+      <section id="team" className="relative py-24 bg-transparent overflow-hidden flex items-center justify-center min-h-[50vh]">
+        <Loader2 className="w-10 h-10 text-yellow-300 animate-spin" />
+      </section>
+    );
+  }
 
   return (
     <section id="team" className="relative py-24 bg-transparent overflow-hidden">

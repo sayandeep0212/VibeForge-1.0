@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { ChevronDown, Sword, Ghost, Zap } from 'lucide-react';
+import Link from 'next/link';
 
 // Components
 import Preloader from '@/components/Preloader';
@@ -38,7 +39,7 @@ export default function Home() {
             GAMELIMINAL'S PRESENTS
           </p>
           <ShuffleText 
-            text="GAMEJAM"
+            text="VIBEFORGE"
             className="text-6xl md:text-8xl lg:text-9xl font-heading tracking-tighter mb-4 bg-gradient-to-b from-white to-neutral-500 bg-clip-text text-transparent leading-none pr-8 block"
             delay={10}
           />
@@ -50,21 +51,21 @@ export default function Home() {
           </p>
 
           <div className="flex flex-wrap gap-6 justify-start mt-4">
-            <button className="group relative px-10 py-5 rounded-2xl font-black tracking-[0.2em] text-yellow-300 transition-all duration-500 hover:scale-105 active:scale-95">
+            <Link href="/dashboard" className="group relative px-10 py-5 rounded-2xl font-black tracking-[0.2em] text-yellow-300 transition-all duration-500 hover:scale-105 active:scale-95">
               {/* Glassy Background */}
               <div className="absolute inset-0 bg-yellow-400/5 backdrop-blur-xl rounded-2xl border border-yellow-400/20 group-hover:border-yellow-400/50 transition-colors" />
               {/* Neon Spread */}
               <div className="absolute inset-0 rounded-2xl shadow-[0_0_20px_rgba(253,224,71,0.2)] group-hover:shadow-[0_0_40px_rgba(253,224,71,0.4)] transition-all duration-500" />
               <span className="relative z-10">ENTER ARENA</span>
-            </button>
+            </Link>
 
-            <button className="group relative px-10 py-5 rounded-2xl font-black tracking-[0.2em] text-red-500 transition-all duration-500 hover:scale-105 active:scale-95">
+            <Link href="/register" className="group relative px-10 py-5 rounded-2xl font-black tracking-[0.2em] text-red-500 transition-all duration-500 hover:scale-105 active:scale-95">
               {/* Glassy Background */}
               <div className="absolute inset-0 bg-red-600/5 backdrop-blur-xl rounded-2xl border border-red-600/20 group-hover:border-red-600/50 transition-colors" />
               {/* Neon Spread */}
               <div className="absolute inset-0 rounded-2xl shadow-[0_0_20px_rgba(220,38,38,0.2)] group-hover:shadow-[0_0_40px_rgba(220,38,38,0.4)] transition-all duration-500" />
               <span className="relative z-10">REGISTER NOW</span>
-            </button>
+            </Link>
           </div>
         </motion.div>
 

@@ -55,7 +55,14 @@ export default function ShuffleText({ text, className, duration = 0.35, delay = 
       }}
       className={className}
     >
-      {displayText}
+      {displayText.split('').map((char, i) => (
+        <span 
+          key={i} 
+          className={/[\d.]/.test(char) ? 'font-sans font-black' : ''}
+        >
+          {char}
+        </span>
+      ))}
     </motion.span>
   );
 }

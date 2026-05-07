@@ -64,7 +64,7 @@ export default function About() {
 
               <div className="space-y-6">
                 <p className="text-lg text-neutral-300 font-medium">
-                  <span className="text-red-500 font-black">GAMEJAM 2K26</span> is the ultimate 48-hour survival challenge. 
+                  <span className="text-red-500 font-black">VIBEFORGE 1.0</span> is the ultimate 48-hour survival challenge. 
                 </p>
                 
                 <ul className="space-y-4">

@@ -32,7 +32,7 @@ const PrizesAndMerch = () => {
 
   const merch = [
     { name: "Ninja Hoodie", price: "₹1,499", image: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?q=80&w=800&auto=format&fit=crop" },
-    { name: "GameJam T-Shirt", price: "₹699", image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=800&auto=format&fit=crop" },
+    { name: "VibeForge 1.0 T-Shirt", price: "₹699", image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=800&auto=format&fit=crop" },
     { name: "Cyber Cap", price: "₹499", image: "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?q=80&w=800&auto=format&fit=crop" }
   ];
 

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Volume2, VolumeX } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface BackgroundMusicProps {
@@ -12,6 +13,12 @@ const BackgroundMusic: React.FC<BackgroundMusicProps> = ({ audioUrl }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const pathname = usePathname();
+
+  // Remove music player from admin panel
+  if (pathname.startsWith('/admin')) {
+    return null;
+  }
 
   useEffect(() => {
     // Prevent creating multiple audio instances if component re-renders

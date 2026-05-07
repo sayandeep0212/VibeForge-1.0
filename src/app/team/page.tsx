@@ -36,7 +36,7 @@ export default function TeamPage() {
             </h1>
             <div className="h-1 w-24 bg-gradient-to-r from-yellow-300 to-red-500 mx-auto rounded-full shadow-[0_0_15px_rgba(239,68,68,0.5)]" />
             <p className="mt-6 text-neutral-300 max-w-2xl mx-auto text-lg font-medium tracking-wide">
-              The masterminds behind GAMEJAM 2K26. A fusion of technical prowess and creative vision.
+              The masterminds behind VIBEFORGE 1.0. A fusion of technical prowess and creative vision.
             </p>
           </motion.div>
 

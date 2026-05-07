@@ -1,10 +1,19 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Cpu, Shield, Globe, Zap, Box, Layers } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
+import Link from 'next/link';
+import { ref, get } from 'firebase/database';
+import { getDb } from '@/lib/firebase';
 
-const SponsorCard = ({ icon: Icon, name, tier }: { icon: any, name: string, tier: string }) => (
+interface Sponsor {
+  name: string;
+  brandingType: string;
+  image: string;
+}
+
+const SponsorCard = ({ image, name, brandingType }: Sponsor) => (
   <motion.div
     whileHover={{ y: -10, scale: 1.02 }}
     className="relative group p-8 rounded-3xl border border-white/5 bg-neutral-900 hover:bg-neutral-800 transition-all duration-500 overflow-hidden"
@@ -13,25 +22,43 @@ const SponsorCard = ({ icon: Icon, name, tier }: { icon: any, name: string, tier
 
     <div className="relative z-10 flex flex-col items-center gap-6">
       <div className="p-4 rounded-2xl bg-black/40 border border-white/10 group-hover:border-red-400/50 transition-colors">
-        <Icon className="w-12 h-12 text-neutral-500 group-hover:text-red-400 transition-colors" />
+        <img src={image} alt={name} className="w-16 h-16 object-contain" />
       </div>
       <div className="text-center">
         <h3 className="text-xl font-bold text-white group-hover:text-yellow-400 transition-colors tracking-tighter uppercase">{name}</h3>
-        <p className="text-xs font-medium text-yellow-300 tracking-[0.3em] uppercase mt-2">{tier}</p>
+        <p className="text-xs font-medium text-yellow-300 tracking-[0.3em] uppercase mt-2">{brandingType}</p>
       </div>
     </div>
   </motion.div>
 );
 
 const Sponsors = () => {
-  const sponsors = [
-    { name: 'Nexus Core', tier: 'Platinum', icon: Cpu },
-    { name: 'Aegis Systems', tier: 'Gold', icon: Shield },
-    { name: 'Terraform', tier: 'Gold', icon: Globe },
-    { name: 'Volt Dynamics', tier: 'Silver', icon: Zap },
-    { name: 'Void Box', tier: 'Silver', icon: Box },
-    { name: 'Layer Zero', tier: 'Silver', icon: Layers },
-  ];
+  const [sponsors, setSponsors] = useState<Sponsor[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchSponsors = async () => {
+      try {
+        const snap = await get(ref(getDb(), 'sponsors'));
+        if (snap.exists()) {
+          setSponsors(Object.values(snap.val()));
+        }
+      } catch (error) {
+        console.error('Error fetching sponsors:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSponsors();
+  }, []);
+
+  if (loading) {
+    return (
+      <section id="sponsors" className="relative py-24 flex items-center justify-center min-h-[50vh] overflow-hidden bg-transparent">
+        <Loader2 className="w-10 h-10 text-yellow-300 animate-spin" />
+      </section>
+    );
+  }
 
   return (
     <section id="sponsors" className="relative py-24 px-6 md:px-24 overflow-hidden bg-transparent">
@@ -55,16 +82,18 @@ const Sponsors = () => {
 
         <div className="flex flex-col items-center gap-8 bg-gradient-to-b from-white/[0.05] to-transparent p-12 rounded-[3rem] border border-white/5 backdrop-blur-xl">
           <div className="text-center max-w-2xl">
-            <h3 className="text-3xl font-bold mb-4 italic">WANT TO EMPOWER THE FUTURE?</h3>
-            <p className="text-neutral-400">Join the elite rank of organizations shaping the next generation of ninja developers. Partner with GAMEJAM 2026.</p>
+            <h3 className="text-3xl font-bold mb-4 italic uppercase">WANT TO EMPOWER THE FUTURE?</h3>
+            <p className="text-neutral-400">Join the elite rank of organizations shaping the next generation of ninja developers. Partner with VIBEFORGE 1.0.</p>
           </div>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="bg-yellow-300 hover:bg-gradient-to-r hover:from-yellow-300 hover:to-red-400 text-black px-12 py-5 rounded-full font-black text-xl tracking-widest shadow-[0_0_30px_rgba(253,224,71,0.4)] transition-all"
-          >
-            BECOME A SPONSOR
-          </motion.button>
+          <Link href="/contact">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="bg-yellow-300 hover:bg-gradient-to-r hover:from-yellow-300 hover:to-red-400 text-black px-12 py-5 rounded-full font-black text-xl tracking-widest shadow-[0_0_30px_rgba(253,224,71,0.4)] transition-all"
+            >
+              BECOME A SPONSOR
+            </motion.button>
+          </Link>
         </div>
       </div>
     </section>

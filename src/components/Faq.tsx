@@ -43,8 +43,8 @@ const FaqItem = ({ question, answer }: { question: string, answer: string }) => 
 const Faq = () => {
   const faqs = [
     {
-      question: "Who can participate in GAMEJAM 2026?",
-      answer: "GAMEJAM is open to all students, professional developers, and creative designers worldwide. Whether you're a first-time hacker or a seasoned pro, the only requirement is a passion for building cool things!"
+      question: "Who can participate in VIBEFORGE 1.0?",
+      answer: "VIBEFORGE is open to all students, professional developers, and creative designers worldwide. Whether you're a first-time hacker or a seasoned pro, the only requirement is a passion for building cool things!"
     },
     {
       question: "What is the team size?",
@@ -52,7 +52,7 @@ const Faq = () => {
     },
     {
       question: "Is there any registration fee?",
-      answer: "None at all! Registration and participation in GAMEJAM 2026 are completely free. We provide the platform, the mentorship, and the prizes—you just provide the code."
+      answer: "None at all! Registration and participation in VIBEFORGE 1.0 are completely free. We provide the platform, the mentorship, and the prizes—you just provide the code."
     },
     {
       question: "What if I don't have a team or an idea?",

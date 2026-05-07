@@ -24,7 +24,7 @@ export default function Preloader() {
     };
   }, [loading]);
 
-  const text = "GAMEJAM 2K26";
+  const text = "VIBEFORGE 1.0";
   const letters = Array.from(text);
 
   const container = {
@@ -129,7 +129,7 @@ export default function Preloader() {
                 <motion.span
                   variants={child}
                   key={index}
-                  className={`${letter === " " ? "mr-4" : "inline-block"} ${/\d/.test(letter) ? 'font-sans font-black' : ''}`}
+                  className={`${letter === " " ? "mr-4" : "inline-block"} ${/[\d.]/.test(letter) ? 'font-sans font-black' : ''}`}
                   style={{
                     color: index >= 8 ? "#dc2626" : "#fde047", // Yellow for GAMEJAM, Deep Red for 2K26 house
                     textShadow: index >= 8 ? "0 0 25px rgba(220,38,38,0.6)" : "0 0 25px rgba(253,224,71,0.3)"
