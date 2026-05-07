@@ -53,6 +53,7 @@ interface Registration {
   };
   status: 'pending_approval' | 'approved' | 'rejected';
   passId?: string;
+  bookingId?: string;
   shortlisted?: boolean;
   createdAt: number;
 }
@@ -390,6 +391,7 @@ function DashboardContent() {
               {currentRegistration?.status === 'approved' && currentRegistration.passId && (
                 <EventPass
                   passId={currentRegistration.passId}
+                  bookingId={currentRegistration.bookingId}
                   teamName={currentRegistration.teamName}
                   type={currentRegistration.type}
                   members={currentRegistration.members}

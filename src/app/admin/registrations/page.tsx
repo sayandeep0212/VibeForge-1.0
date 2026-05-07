@@ -35,6 +35,7 @@ interface Registration {
   };
   status: 'pending_approval' | 'approved' | 'rejected';
   passId: string;
+  bookingId?: string;
   shortlisted?: boolean;
   createdAt: number;
 }
@@ -112,14 +113,16 @@ export default function RegistrationsPage() {
 
   const handleApprove = async (regId: string) => {
     const passId = `PASS-${nanoid(6).toUpperCase()}`;
+    const bookingId = `BOOK-${nanoid(8).toUpperCase()}`;
     try {
       await update(ref(db!, `registrations/${regId}`), {
         status: 'approved',
         passId,
+        bookingId,
       });
       setRegistrations(prev => ({
         ...prev,
-        [regId]: { ...prev[regId], status: 'approved', passId }
+        [regId]: { ...prev[regId], status: 'approved', passId, bookingId }
       }));
     } catch (err) {
       console.error('Error approving registration:', err);

@@ -6,6 +6,7 @@ import { Shield, Users, Trophy } from 'lucide-react';
 
 interface EventPassProps {
   passId: string;
+  bookingId?: string;
   teamName: string;
   type: 'individual' | 'team';
   members: Array<{
@@ -17,7 +18,7 @@ interface EventPassProps {
   leaderName: string;
 }
 
-export default function EventPass({ passId, teamName, type, members, leaderName }: EventPassProps) {
+export default function EventPass({ passId, bookingId, teamName, type, members, leaderName }: EventPassProps) {
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
@@ -43,12 +44,22 @@ export default function EventPass({ passId, teamName, type, members, leaderName 
         </div>
       </div>
 
-      {/* Pass ID */}
-      <div className="text-center mb-6">
-        <p className="text-neutral-500 text-xs uppercase tracking-wider mb-1">Pass ID</p>
-        <p className="text-3xl font-black font-mono text-yellow-300 tracking-widest drop-shadow-[0_0_10px_rgba(253,224,71,0.5)]">
-          {passId}
-        </p>
+      {/* Pass ID & Booking ID */}
+      <div className="grid grid-cols-2 gap-4 mb-6 text-center">
+        <div>
+          <p className="text-neutral-500 text-xs uppercase tracking-wider mb-1">Pass ID</p>
+          <p className="text-xl font-black font-mono text-yellow-300 tracking-widest drop-shadow-[0_0_10px_rgba(253,224,71,0.5)]">
+            {passId}
+          </p>
+        </div>
+        {bookingId && (
+          <div>
+            <p className="text-neutral-500 text-xs uppercase tracking-wider mb-1">Booking ID</p>
+            <p className="text-xl font-black font-mono text-cyan-400 tracking-widest drop-shadow-[0_0_10px_rgba(34,211,238,0.5)]">
+              {bookingId}
+            </p>
+          </div>
+        )}
       </div>
 
       <div className="h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent mb-6" />

@@ -83,30 +83,24 @@ export default function Preloader() {
           <div className="relative z-10 flex flex-col items-center">
             {/* Logos */}
             <div className="flex items-center gap-6 mb-8">
-              <motion.img 
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.2 }}
-                src="https://gameliminals.vercel.app/assets/logo.png" 
-                alt="Logo 1" 
-                className="w-12 h-12 object-contain" 
-              />
-              <motion.img 
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.3 }}
-                src="https://gameliminals.vercel.app/assets/au_logo.jpg" 
-                alt="Logo 2" 
-                className="w-12 h-12 object-cover rounded-full" 
-              />
-              <motion.img 
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.4 }}
-                src="https://gameliminals.vercel.app/assets/acm.jpeg" 
-                alt="Logo 3" 
-                className="w-12 h-12 object-cover rounded-full" 
-              />
+              <motion.div
+                whileHover={{ scale: 1.1 }}
+                className="w-10 h-10 sm:w-12 sm:h-12 relative flex items-center justify-center overflow-hidden rounded-lg bg-white/5 border border-white/10"
+              >
+                <img src="/Logos/logo.png" alt="Logo 1" className="w-full h-full object-contain" />
+              </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.1 }}
+                className="w-10 h-10 sm:w-12 sm:h-12 relative flex items-center justify-center overflow-hidden rounded-lg bg-white/5 border border-white/10"
+              >
+                <img src="/Logos/au_logo.jpg" alt="Logo 2" className="w-full h-full object-cover" />
+              </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.1 }}
+                className="w-10 h-10 sm:w-12 sm:h-12 relative flex items-center justify-center overflow-hidden rounded-lg bg-white/5 border border-white/10"
+              >
+                <img src="/Logos/acm.jpeg" alt="Logo 3" className="w-full h-full object-cover" />
+              </motion.div>
             </div>
 
             {/* Presenter Text */}
@@ -118,6 +112,13 @@ export default function Preloader() {
             >
               The Ninja Collective Presents
             </motion.div>
+
+            <p 
+              className="text-xl md:text-2xl font-light tracking-[0.3em] text-yellow-300 uppercase mb-8"
+              style={{ fontFamily: "var(--font-orbitron), sans-serif" }}
+            >
+              24 Hrs Vibe Coding Game making Competition
+            </p>
             
             <motion.div
               variants={container}

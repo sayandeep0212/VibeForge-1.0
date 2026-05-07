@@ -47,7 +47,7 @@ export default function Home() {
             className="text-xl md:text-2xl font-light tracking-[0.3em] text-yellow-300 uppercase mb-8"
             style={{ fontFamily: "var(--font-orbitron), sans-serif" }}
           >
-            48 hour game making competition
+            24 Hrs Vibe Coding Game making Competition
           </p>
 
           <div className="flex flex-wrap gap-6 justify-start mt-4">
