@@ -3,7 +3,15 @@ import * as admin from 'firebase-admin';
 function getAdminApp() {
   if (!admin.apps.length) {
     try {
-      const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
+      let privateKey = process.env.FIREBASE_PRIVATE_KEY;
+      
+      if (privateKey) {
+        // Handle escaped newlines and potential extra quotes from Vercel
+        privateKey = privateKey.replace(/\\n/g, '\n').trim();
+        if (privateKey.startsWith('"') && privateKey.endsWith('"')) {
+          privateKey = privateKey.substring(1, privateKey.length - 1);
+        }
+      }
       
       if (!privateKey || !process.env.FIREBASE_CLIENT_EMAIL || !process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID) {
         console.warn('Firebase Admin credentials missing - skipping initialization');

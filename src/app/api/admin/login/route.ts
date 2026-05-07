@@ -56,8 +56,11 @@ export async function POST(req: Request) {
     await session.save();
 
     return NextResponse.json({ success: true, user: session.user });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Admin login error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    const message = error.message === 'Firebase Admin not initialized' 
+      ? 'Database configuration error. Please check environment variables.'
+      : 'Internal server error';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
