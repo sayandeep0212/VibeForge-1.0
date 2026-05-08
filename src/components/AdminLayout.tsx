@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
-  LayoutDashboard, Users, ClipboardList, Settings, LogOut, Shield, MessageSquare, Image as ImageIcon, Scan, Menu, X
+  LayoutDashboard, Users, ClipboardList, Settings, LogOut, Shield, MessageSquare, Image as ImageIcon, Scan, Menu, X, ShoppingBag
 } from 'lucide-react';
 
 interface AdminLayoutProps {
@@ -23,6 +23,7 @@ export default function AdminLayout({ children, onLogout, adminName }: AdminLayo
     { name: 'Participants', href: '/admin/participants', icon: Users },
     { name: 'Registrations', href: '/admin/registrations', icon: ClipboardList },
     { name: 'Inquiries', href: '/admin/inquiries', icon: MessageSquare },
+    { name: 'Merch', href: '/admin/merch', icon: ShoppingBag },
     { name: 'Content', href: '/admin/content', icon: ImageIcon },
     { name: 'Settings', href: '/admin/settings', icon: Settings },
   ];

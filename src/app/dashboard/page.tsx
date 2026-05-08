@@ -7,7 +7,8 @@ import AuthGuard from '@/components/AuthGuard';
 import { motion } from 'framer-motion';
 import {
   User, Mail, Phone, Building2, GraduationCap, BookOpen, Hash,
-  Shield, Users, Trophy, LogOut, Copy, CheckCircle, Clock, XCircle
+  Shield, Users, Trophy, LogOut, Copy, CheckCircle, Clock, XCircle,
+  ShoppingBag, Download
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { ref, get, query, orderByChild, equalTo } from 'firebase/database';
@@ -58,6 +59,19 @@ interface Registration {
   createdAt: number;
 }
 
+interface MerchOrder {
+  id: string;
+  productType: 't-shirt' | 'cap';
+  color: string;
+  size?: string;
+  amount: number;
+  payment: {
+    razorpayId: string;
+    paidAt: number;
+  };
+  createdAt: number;
+}
+
 export default function DashboardPage() {
   return (
     <AuthGuard requireProfile={true}>
@@ -74,11 +88,28 @@ function DashboardContent() {
   const [teamRegistration, setTeamRegistration] = useState<Registration | null>(null);
   const [regLoading, setRegLoading] = useState(true);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [merchOrders, setMerchOrders] = useState<MerchOrder[]>([]);
+  const [merchLoading, setMerchLoading] = useState(true);
 
   useEffect(() => {
     fetchRegistration();
+    fetchMerchOrders();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
+  }, [user, userProfile]);
+
+  const fetchMerchOrders = async () => {
+    if (!userProfile?.uid) return;
+    setMerchLoading(true);
+    try {
+      const res = await fetch(`/api/user/merch-orders?uid=${userProfile.uid}`);
+      const data = await res.json();
+      if (!data.error) setMerchOrders(data);
+    } catch (error) {
+      console.error('Error fetching merch orders:', error);
+    } finally {
+      setMerchLoading(false);
+    }
+  };
 
   const fetchRegistration = async () => {
     if (!user || !userProfile) return;
@@ -382,6 +413,65 @@ function DashboardContent() {
                       className="inline-flex items-center gap-2 px-6 py-3 bg-yellow-300 hover:bg-gradient-to-r hover:from-yellow-300 hover:to-red-400 text-black rounded-xl font-bold tracking-widest transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(253,224,71,0.3)]"
                     >
                       REGISTER NOW
+                    </Link>
+                  </div>
+                )}
+              </div>
+
+              {/* Merch Orders */}
+              <div className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl p-6 relative overflow-hidden">
+                <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                  <ShoppingBag className="w-5 h-5 text-yellow-300" />
+                  My Merchandise
+                </h3>
+
+                {merchLoading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <div className="w-8 h-8 border-2 border-yellow-300/30 border-t-yellow-300 rounded-full animate-spin" />
+                  </div>
+                ) : merchOrders.length > 0 ? (
+                  <div className="space-y-4">
+                    {merchOrders.map((order) => (
+                      <div key={order.id} className="bg-white/5 rounded-2xl p-4 border border-white/5">
+                        <div className="flex justify-between items-start mb-4">
+                          <div>
+                            <p className="text-xs text-neutral-500 uppercase tracking-widest font-bold mb-1">
+                              {new Date(order.createdAt).toLocaleDateString()}
+                            </p>
+                            <p className="text-white font-bold uppercase italic tracking-tighter">
+                              {order.productType} — {order.color} {order.size ? `(${order.size})` : ''}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-yellow-300 font-black italic">₹{order.amount}</p>
+                            <p className="text-[10px] text-neutral-500 font-mono mt-1 uppercase">{order.id}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center justify-between pt-4 border-t border-white/5">
+                          <div className="flex items-center gap-2 text-[10px] text-neutral-500 font-mono">
+                            <CheckCircle className="w-3 h-3 text-green-400" />
+                            PAID: {order.payment.razorpayId}
+                          </div>
+                          <Link
+                            href={`/merch?success=${order.id}`}
+                            className="flex items-center gap-2 text-[10px] text-yellow-300 font-bold uppercase hover:text-white transition-colors"
+                          >
+                            <Download className="w-3 h-3" />
+                            View Receipt
+                          </Link>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <ShoppingBag className="w-12 h-12 text-neutral-600 mx-auto mb-3" />
+                    <p className="text-neutral-400 mb-4">You haven&apos;t purchased any merch yet.</p>
+                    <Link
+                      href="/merch"
+                      className="text-yellow-300 font-bold text-sm hover:underline"
+                    >
+                      Browse Merch Store
                     </Link>
                   </div>
                 )}

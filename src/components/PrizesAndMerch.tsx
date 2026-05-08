@@ -1,10 +1,22 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Trophy, Gift, ShoppingBag, Star, Crown, Zap } from 'lucide-react';
+import Link from 'next/link';
 
 const PrizesAndMerch = () => {
+  const [prices, setPrices] = useState({ tshirtPrice: 699, capPrice: 499 });
+
+  useEffect(() => {
+    fetch('/api/merch/settings')
+      .then(res => res.json())
+      .then(data => {
+        if (!data.error) setPrices(data);
+      })
+      .catch(err => console.error('Error fetching prices:', err));
+  }, []);
+
   const prizes = [
     {
       rank: "2ND RUNNER UP",
@@ -39,9 +51,18 @@ const PrizesAndMerch = () => {
   ];
 
   const merch = [
-    { name: "Ninja Hoodie", price: "₹1,499", image: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?q=80&w=800&auto=format&fit=crop" },
-    { name: "VibeForge 1.0 T-Shirt", price: "₹699", image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=800&auto=format&fit=crop" },
-    { name: "Cyber Cap", price: "₹499", image: "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?q=80&w=800&auto=format&fit=crop" }
+    { 
+      name: "VibeForge 1.0 T-Shirt", 
+      price: `₹${prices.tshirtPrice}`, 
+      image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=800&auto=format&fit=crop",
+      type: "t-shirt"
+    },
+    { 
+      name: "Cyber Cap", 
+      price: `₹${prices.capPrice}`, 
+      image: "/Merch/caps/blackcap.png",
+      type: "cap"
+    }
   ];
 
   return (
@@ -105,7 +126,7 @@ const PrizesAndMerch = () => {
           <p className="text-neutral-400 text-lg uppercase tracking-widest font-bold">Official GameLiminals Merchandise</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {merch.map((item, idx) => (
             <motion.div
               key={item.name}
@@ -125,14 +146,17 @@ const PrizesAndMerch = () => {
                 <div className="absolute bottom-0 left-0 w-full p-8">
                   <h3 className="text-2xl font-black italic text-white mb-1 uppercase">{item.name}</h3>
                   <p className="text-yellow-300 font-bold mb-4">{item.price}</p>
-                  <motion.button 
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="w-full py-3 bg-white text-black font-black uppercase text-xs tracking-widest rounded-xl hover:bg-gradient-to-r hover:from-yellow-300 hover:to-red-400 hover:text-black transition-all flex items-center justify-center gap-2"
+                  <Link 
+                    href={prices.merchEnabled ? `/merch?type=${item.type}` : '#'}
+                    className={`w-full py-3 font-black uppercase text-xs tracking-widest rounded-xl transition-all flex items-center justify-center gap-2 ${
+                      prices.merchEnabled 
+                      ? 'bg-white text-black hover:bg-gradient-to-r hover:from-yellow-300 hover:to-red-400 hover:text-black' 
+                      : 'bg-neutral-800 text-neutral-500 cursor-not-allowed'
+                    }`}
                   >
                     <ShoppingBag className="w-4 h-4" />
-                    BUY MERCH
-                  </motion.button>
+                    {prices.merchEnabled ? 'BUY MERCH' : 'STORE CLOSED'}
+                  </Link>
                 </div>
               </div>
             </motion.div>
