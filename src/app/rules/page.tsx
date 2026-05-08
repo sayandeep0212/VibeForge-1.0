@@ -74,7 +74,7 @@ export default function RulesPage() {
                     </div>
                   </div>
                   <div className="flex-1">
-                    <p className="text-neutral-300 text-lg md:text-xl leading-relaxed font-orbitron group-hover:text-white transition-colors">
+                    <p className="text-neutral-300 text-lg md:text-xl leading-relaxed font-sans group-hover:text-white transition-colors">
                       {rule}
                     </p>
                   </div>
@@ -91,7 +91,7 @@ export default function RulesPage() {
               <AlertTriangle className="w-12 h-12 text-red-500 shrink-0" />
               <div>
                 <h4 className="text-white font-black italic uppercase tracking-widest mb-2">Notice to All Ninjas</h4>
-                <p className="text-neutral-400 text-sm font-orbitron">
+                <p className="text-neutral-400 text-sm font-sans">
                   Strict adherence to these rules is mandatory. Failure to comply with any regulation may result in immediate expulsion from the arena without appeal. Play fair, code hard.
                 </p>
               </div>
@@ -100,7 +100,7 @@ export default function RulesPage() {
 
           {/* Quick Support Link */}
           <div className="mt-12 text-center">
-            <p className="text-neutral-500 text-sm font-orbitron mb-4">Have questions regarding the regulations?</p>
+            <p className="text-neutral-500 text-sm font-sans mb-4">Have questions regarding the regulations?</p>
             <a 
               href="mailto:adamasgamingclub@gmail.com" 
               className="inline-flex items-center gap-2 text-yellow-300 hover:text-white transition-colors font-bold uppercase tracking-widest text-xs border-b border-yellow-300/30 pb-1"

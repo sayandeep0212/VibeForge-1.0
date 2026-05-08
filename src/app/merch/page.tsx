@@ -135,7 +135,8 @@ function MerchContent() {
 
     if (!user) {
       setError('Please sign in to purchase merchandise.');
-      router.push(`/login?redirect=/merch?type=${activeTab}`);
+      const redirectPath = `/merch?type=${activeTab}`;
+      router.push(`/signin?redirect=${encodeURIComponent(redirectPath)}`);
       return;
     }
 
@@ -562,47 +563,57 @@ function MerchContent() {
 
                 <div className="h-px bg-white/5" />
 
-                {/* User Details */}
-                <div className="space-y-4">
-                  <p className="text-neutral-400 text-xs uppercase tracking-[0.2em] font-bold">Delivery Info</p>
+                {/* User Details - Only show when signed in */}
+                {user ? (
+                  <motion.div 
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    className="space-y-4"
+                  >
+                    <p className="text-neutral-400 text-xs uppercase tracking-[0.2em] font-bold">Delivery Info</p>
 
-                  <div className="relative group">
-                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500 group-focus-within:text-yellow-300 transition-colors" />
-                    <input
-                      type="text"
-                      required
-                      placeholder="Your Name"
-                      value={userData.name}
-                      onChange={(e) => setUserData({ ...userData, name: e.target.value })}
-                      className="w-full bg-black/50 border border-white/5 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:border-yellow-300/50 transition-all text-sm"
-                    />
-                  </div>
+                    <div className="relative group">
+                      <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500 group-focus-within:text-yellow-300 transition-colors" />
+                      <input
+                        type="text"
+                        required
+                        placeholder="Your Name"
+                        value={userData.name}
+                        onChange={(e) => setUserData({ ...userData, name: e.target.value })}
+                        className="w-full bg-black/50 border border-white/5 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:border-yellow-300/50 transition-all text-sm"
+                      />
+                    </div>
 
-                  <div className="relative group">
-                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500 group-focus-within:text-yellow-300 transition-colors" />
-                    <input
-                      type="email"
-                      required
-                      placeholder="Email Address"
-                      value={userData.email}
-                      readOnly={!!user}
-                      onChange={(e) => !user && setUserData({ ...userData, email: e.target.value })}
-                      className={`w-full bg-black/50 border border-white/5 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:border-yellow-300/50 transition-all text-sm ${!!user ? 'opacity-70 cursor-not-allowed' : ''}`}
-                    />
-                  </div>
+                    <div className="relative group">
+                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500 group-focus-within:text-yellow-300 transition-colors" />
+                      <input
+                        type="email"
+                        required
+                        placeholder="Email Address"
+                        value={userData.email}
+                        readOnly={true}
+                        className="w-full bg-black/50 border border-white/5 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:border-yellow-300/50 transition-all text-sm opacity-70 cursor-not-allowed"
+                      />
+                    </div>
 
-                  <div className="relative group">
-                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500 group-focus-within:text-yellow-300 transition-colors" />
-                    <input
-                      type="tel"
-                      required
-                      placeholder="Phone Number"
-                      value={userData.phone}
-                      onChange={(e) => setUserData({ ...userData, phone: e.target.value })}
-                      className="w-full bg-black/50 border border-white/5 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:border-yellow-300/50 transition-all text-sm"
-                    />
+                    <div className="relative group">
+                      <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500 group-focus-within:text-yellow-300 transition-colors" />
+                      <input
+                        type="tel"
+                        required
+                        placeholder="Phone Number"
+                        value={userData.phone}
+                        onChange={(e) => setUserData({ ...userData, phone: e.target.value })}
+                        className="w-full bg-black/50 border border-white/5 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:border-yellow-300/50 transition-all text-sm"
+                      />
+                    </div>
+                  </motion.div>
+                ) : (
+                  <div className="p-6 bg-white/5 rounded-[30px] border border-white/5 text-center">
+                    <p className="text-neutral-400 text-sm mb-2">Ready to gear up?</p>
+                    <p className="text-xs text-neutral-500 uppercase tracking-widest font-bold">Sign in to complete your purchase</p>
                   </div>
-                </div>
+                )}
 
                 {/* Store Closed Message */}
                 {!prices.merchEnabled && (
@@ -635,6 +646,10 @@ function MerchContent() {
                     'STORE CLOSED'
                   ) : !prices.stock[activeTab === 't-shirt' ? 'tshirt' : 'cap'][selectedColor as keyof typeof prices.stock.tshirt] ? (
                     'OUT OF STOCK'
+                  ) : !user ? (
+                    <>
+                      <User className="w-5 h-5" /> SIGN IN TO PURCHASE
+                    </>
                   ) : (
                     <>
                       <CreditCard className="w-5 h-5" /> PAY NOW ₹{activeTab === 't-shirt' ? prices.tshirtPrice : prices.capPrice}

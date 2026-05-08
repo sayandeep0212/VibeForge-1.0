@@ -1,26 +1,30 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { motion } from 'framer-motion';
 import { Mail, Lock, AlertCircle, Loader2 } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 
-export default function SignInPage() {
+function SignInContent() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { signIn, signInWithGoogle, signInWithGitHub } = useAuth();
 
   const handleRedirect = () => {
-    // After sign in, the AuthContext will automatically check profile
-    // We redirect to dashboard; AuthGuard will handle further redirects
-    router.push('/dashboard');
+    const redirect = searchParams.get('redirect');
+    if (redirect) {
+      router.push(redirect);
+    } else {
+      router.push('/dashboard');
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -202,5 +206,13 @@ export default function SignInPage() {
 
       <Footer />
     </main>
+  );
+}
+
+export default function SignInPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-black flex items-center justify-center"><Loader2 className="w-10 h-10 animate-spin text-yellow-300" /></div>}>
+      <SignInContent />
+    </Suspense>
   );
 }

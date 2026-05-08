@@ -1,25 +1,31 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { motion } from 'framer-motion';
 import { Mail, Lock, User, AlertCircle, Loader2 } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 
-export default function SignUpPage() {
+function SignUpContent() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { signUp, signInWithGoogle, signInWithGitHub } = useAuth();
 
   const handleRedirect = () => {
-    router.push('/profile/setup');
+    const redirect = searchParams.get('redirect');
+    if (redirect) {
+      router.push(redirect);
+    } else {
+      router.push('/profile/setup');
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -222,5 +228,13 @@ export default function SignUpPage() {
 
       <Footer />
     </main>
+  );
+}
+
+export default function SignUpPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-black flex items-center justify-center"><Loader2 className="w-10 h-10 animate-spin text-yellow-300" /></div>}>
+      <SignUpContent />
+    </Suspense>
   );
 }
