@@ -413,15 +413,25 @@ export default function AdminMerchPage() {
               <div>
                 <p className="text-[10px] text-neutral-500 uppercase font-bold mb-3 tracking-widest">By Color</p>
                 <div className="space-y-2">
-                  {Object.entries(inventory.tshirtColors).map(([color, count]) => (
-                    <div key={color} className="flex items-center justify-between bg-white/5 p-2 px-3 rounded-lg">
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full border border-white/20" style={{ backgroundColor: color }} />
-                        <span className="text-xs text-white capitalize">{color}</span>
-                      </div>
-                      <span className="text-xs font-black text-yellow-300">{count}</span>
-                    </div>
-                  ))}
+                    {Object.entries(inventory.tshirtColors).map(([color, count]) => {
+                      const colorMap: Record<string, string> = {
+                        lavender: '#B57EDC',
+                        black: '#000000',
+                        white: '#FFFFFF'
+                      };
+                      return (
+                        <div key={color} className="flex items-center justify-between bg-white/5 p-2 px-3 rounded-lg">
+                          <div className="flex items-center gap-2">
+                            <div 
+                              className="w-2 h-2 rounded-full border border-white/20" 
+                              style={{ backgroundColor: colorMap[color.toLowerCase()] || color }} 
+                            />
+                            <span className="text-xs text-white capitalize">{color}</span>
+                          </div>
+                          <span className="text-xs font-black text-yellow-300">{count}</span>
+                        </div>
+                      );
+                    })}
                   {Object.keys(inventory.tshirtColors).length === 0 && <p className="text-[10px] text-neutral-600 italic">No orders yet</p>}
                 </div>
               </div>
@@ -448,15 +458,25 @@ export default function AdminMerchPage() {
             <div className="max-w-xs">
               <p className="text-[10px] text-neutral-500 uppercase font-bold mb-3 tracking-widest">By Color</p>
               <div className="space-y-2">
-                {Object.entries(inventory.capColors).map(([color, count]) => (
-                  <div key={color} className="flex items-center justify-between bg-white/5 p-2 px-3 rounded-lg">
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 rounded-full border border-white/20" style={{ backgroundColor: color }} />
-                      <span className="text-xs text-white capitalize">{color}</span>
+                {Object.entries(inventory.capColors).map(([color, count]) => {
+                  const colorMap: Record<string, string> = {
+                    lavender: '#B57EDC',
+                    black: '#000000',
+                    white: '#FFFFFF'
+                  };
+                  return (
+                    <div key={color} className="flex items-center justify-between bg-white/5 p-2 px-3 rounded-lg">
+                      <div className="flex items-center gap-2">
+                        <div 
+                          className="w-2 h-2 rounded-full border border-white/20" 
+                          style={{ backgroundColor: colorMap[color.toLowerCase()] || color }} 
+                        />
+                        <span className="text-xs text-white capitalize">{color}</span>
+                      </div>
+                      <span className="text-xs font-black text-yellow-300">{count}</span>
                     </div>
-                    <span className="text-xs font-black text-yellow-300">{count}</span>
-                  </div>
-                ))}
+                  );
+                })}
                 {Object.keys(inventory.capColors).length === 0 && <p className="text-[10px] text-neutral-600 italic">No orders yet</p>}
               </div>
             </div>

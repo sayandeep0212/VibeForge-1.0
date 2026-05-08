@@ -22,7 +22,7 @@ declare global {
 const TSHIRT_SIZES = ['XS', 'S', 'M', 'L', 'XL'];
 const COLORS = [
   { name: 'Black', value: 'black', hex: '#000000' },
-  { name: 'Lavender', value: 'lavender', hex: '#E6E6FA' },
+  { name: 'Lavender', value: 'lavender', hex: '#B57EDC' },
   { name: 'White', value: 'white', hex: '#FFFFFF' }
 ];
 
@@ -46,9 +46,14 @@ function MerchContent() {
     }
   });
   const [loading, setLoading] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [error, setError] = useState('');
   const [successOrder, setSuccessOrder] = useState<any>(null);
   const receiptRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setCurrentImageIndex(0);
+  }, [selectedColor, activeTab]);
 
   useEffect(() => {
     if (userProfile) {
@@ -247,14 +252,41 @@ function MerchContent() {
     }
   };
 
-  const getPreviewImage = () => {
+  const getProductImages = () => {
     if (activeTab === 'cap') {
-      if (selectedColor === 'black') return '/Merch/caps/blackcap.png';
-      if (selectedColor === 'lavender') return '/Merch/caps/lavendercap.png';
-      if (selectedColor === 'white') return '/Merch/caps/whitecap.png';
+      const caps = {
+        black: ['/Merch/caps/blackcap.png'],
+        lavender: ['/Merch/caps/lavendercap.png'],
+        white: ['/Merch/caps/whitecap.png']
+      };
+      return caps[selectedColor as keyof typeof caps] || [];
     }
-    // Placeholder for t-shirts
-    return `https://placehold.co/600x600/1a1a1a/white?text=${selectedColor.toUpperCase()}+TSHIRT`;
+
+    const tshirts = {
+      black: [
+        '/Merch/t-shirts/black polo shirt/1.png',
+        '/Merch/t-shirts/black polo shirt/2.png',
+        '/Merch/t-shirts/black polo shirt/3.png',
+        '/Merch/t-shirts/black polo shirt/4.png',
+        '/Merch/t-shirts/black polo shirt/5.png',
+        '/Merch/t-shirts/black polo shirt/6.png',
+      ],
+      white: [
+        '/Merch/t-shirts/white polo shirt/1.png',
+        '/Merch/t-shirts/white polo shirt/2.png',
+        '/Merch/t-shirts/white polo shirt/3.png',
+        '/Merch/t-shirts/white polo shirt/4.png',
+        '/Merch/t-shirts/white polo shirt/5.png',
+        '/Merch/t-shirts/white polo shirt/6.png',
+      ],
+      lavender: [
+        '/Merch/t-shirts/lavender for girls polo/1.png',
+        '/Merch/t-shirts/lavender for girls polo/2.png',
+        '/Merch/t-shirts/lavender for girls polo/3.png',
+        '/Merch/t-shirts/lavender for girls polo/4.png',
+      ]
+    };
+    return tshirts[selectedColor as keyof typeof tshirts] || [];
   };
 
   if (successOrder) {
@@ -400,30 +432,76 @@ function MerchContent() {
                 ))}
               </div>
 
-              {/* Product Preview */}
-              <div className="relative aspect-square w-full max-w-2xl bg-neutral-900/50 border border-white/5 rounded-[40px] overflow-hidden flex items-center justify-center p-8 mb-12 group">
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent pointer-events-none" />
-                <AnimatePresence mode="wait">
-                  <motion.img
-                    key={`${activeTab}-${selectedColor}`}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.8 }}
-                    src={getPreviewImage()}
-                    alt="Preview"
-                    className="w-full h-full object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
-                  />
-                </AnimatePresence>
+              {/* Product Preview Section */}
+              <div className="space-y-6 mb-12">
+                <div className="relative aspect-square w-full max-w-2xl bg-neutral-900/50 border border-white/5 rounded-[40px] overflow-hidden flex items-center justify-center p-8 group">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent pointer-events-none" />
+                  <AnimatePresence mode="wait">
+                    <motion.img
+                      key={getProductImages()[currentImageIndex]}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.9 }}
+                      transition={{ duration: 0.4 }}
+                      src={getProductImages()[currentImageIndex]}
+                      alt="Preview"
+                      className="w-full h-full object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
+                    />
+                  </AnimatePresence>
 
-                <div className="absolute bottom-8 left-8 right-8 flex justify-between items-end">
-                  <div>
-                    <p className="text-neutral-500 text-xs uppercase tracking-widest font-bold mb-1">Price</p>
-                    <p className="text-4xl font-black text-white italic">₹{activeTab === 't-shirt' ? prices.tshirtPrice : prices.capPrice}</p>
-                  </div>
-                  <div className="bg-yellow-300/10 border border-yellow-300/20 px-4 py-2 rounded-xl backdrop-blur-md">
-                    <p className="text-yellow-300 text-[10px] font-bold uppercase tracking-widest">In Stock</p>
+                  {/* Image Indicators */}
+                  <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-1.5 px-3 py-1.5 bg-black/40 backdrop-blur-md rounded-full border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity">
+                    {getProductImages().map((_, i) => (
+                      <div 
+                        key={i} 
+                        className={`w-1.5 h-1.5 rounded-full transition-all ${currentImageIndex === i ? 'w-4 bg-yellow-300' : 'bg-white/30'}`}
+                      />
+                    ))}
                   </div>
                 </div>
+
+                {/* Thumbnails Selection */}
+                {getProductImages().length > 1 && (
+                  <div className="flex flex-wrap gap-3">
+                    {getProductImages().map((img, idx) => {
+                      let label = "View";
+                      if (activeTab === 't-shirt') {
+                        if (selectedColor === 'lavender') {
+                          if (idx === 0) label = "Front";
+                          else if (idx === 1) label = "Back";
+                          else if (idx === 2) label = "Female Front";
+                          else if (idx === 3) label = "Female Back";
+                        } else {
+                          if (idx === 0) label = "Front";
+                          else if (idx === 1) label = "Back";
+                          else if (idx === 2) label = "Male Front";
+                          else if (idx === 3) label = "Male Back";
+                          else if (idx === 4) label = "Female Front";
+                          else if (idx === 5) label = "Female Back";
+                        }
+                      }
+                      
+                      return (
+                        <button
+                          key={idx}
+                          onClick={() => setCurrentImageIndex(idx)}
+                          className={`relative w-20 aspect-square rounded-xl overflow-hidden border-2 transition-all ${
+                            currentImageIndex === idx 
+                            ? 'border-yellow-300 scale-105 shadow-[0_0_15px_rgba(253,224,71,0.3)]' 
+                            : 'border-white/10 opacity-60 hover:opacity-100 hover:scale-105'
+                          }`}
+                        >
+                          <img src={img} className="w-full h-full object-cover" />
+                          <div className="absolute bottom-0 left-0 w-full bg-black/60 backdrop-blur-sm py-1 px-1">
+                            <p className="text-[7px] font-black uppercase text-center text-white truncate tracking-tighter">
+                              {label}
+                            </p>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             </motion.div>
           </div>

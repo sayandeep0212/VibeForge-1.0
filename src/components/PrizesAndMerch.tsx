@@ -6,7 +6,15 @@ import { Trophy, Gift, ShoppingBag, Star, Crown, Zap } from 'lucide-react';
 import Link from 'next/link';
 
 const PrizesAndMerch = () => {
-  const [prices, setPrices] = useState({ tshirtPrice: 699, capPrice: 499 });
+  const [prices, setPrices] = useState<any>({ 
+    tshirtPrice: 699, 
+    capPrice: 499, 
+    merchEnabled: true,
+    stock: {
+      tshirt: { black: true, white: true, lavender: true },
+      cap: { black: true, white: true, lavender: true }
+    }
+  });
 
   useEffect(() => {
     fetch('/api/merch/settings')
@@ -52,9 +60,9 @@ const PrizesAndMerch = () => {
 
   const merch = [
     { 
-      name: "VibeForge 1.0 T-Shirt", 
+      name: "Vibeforge polo T shirt", 
       price: `₹${prices.tshirtPrice}`, 
-      image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=800&auto=format&fit=crop",
+      image: "/Merch/t-shirts/black polo shirt/1.png",
       type: "t-shirt"
     },
     { 
@@ -143,9 +151,23 @@ const PrizesAndMerch = () => {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
                 
-                <div className="absolute bottom-0 left-0 w-full p-8">
-                  <h3 className="text-2xl font-black italic text-white mb-1 uppercase">{item.name}</h3>
-                  <p className="text-yellow-300 font-bold mb-4">{item.price}</p>
+                <div className="absolute bottom-0 left-0 w-full p-8 pt-0 space-y-4">
+                  <div className="flex justify-between items-end">
+                    <div>
+                      <h3 className="text-2xl font-black italic tracking-tighter text-white group-hover:text-yellow-300 transition-colors uppercase leading-tight">
+                        {item.name}
+                      </h3>
+                      <div className="flex items-center gap-2 mt-2">
+                        <div className="flex -space-x-1">
+                          <div className="w-3 h-3 rounded-full bg-black border border-white/20" title="Black" />
+                          <div className="w-3 h-3 rounded-full bg-white border border-white/20" title="White" />
+                          <div className="w-3 h-3 rounded-full bg-[#B57EDC] border border-white/20" title="Lavender" />
+                        </div>
+                        <span className="text-[10px] text-neutral-500 uppercase font-bold tracking-widest">Other colors available</span>
+                      </div>
+                      <p className="text-xl font-black italic text-yellow-300 mt-1 mb-4">{item.price}</p>
+                    </div>
+                  </div>
                   <Link 
                     href={prices.merchEnabled ? `/merch?type=${item.type}` : '#'}
                     className={`w-full py-3 font-black uppercase text-xs tracking-widest rounded-xl transition-all flex items-center justify-center gap-2 ${
