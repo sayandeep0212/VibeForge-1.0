@@ -12,7 +12,7 @@ export default function Preloader() {
     } else {
       document.body.style.overflow = 'unset';
     }
-    
+
     const timer = setTimeout(() => {
       setLoading(false);
       document.body.style.overflow = 'unset';
@@ -63,7 +63,7 @@ export default function Preloader() {
       {loading && (
         <motion.div
           initial={{ opacity: 1 }}
-          exit={{ 
+          exit={{
             opacity: 0,
             scale: 1.1,
             filter: "blur(20px)",
@@ -72,8 +72,8 @@ export default function Preloader() {
           className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-black overflow-hidden"
         >
           {/* Subtle Ambient Glow */}
-          <motion.div 
-            animate={{ 
+          <motion.div
+            animate={{
               opacity: [0.05, 0.15, 0.05],
             }}
             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
@@ -102,7 +102,7 @@ export default function Preloader() {
                 <img src="/Logos/cycoders.png" alt="Logo 3" className="w-full h-full object-cover" />
               </motion.div>
             </div>
- 
+
             {/* Presenter Text */}
             <motion.div
               initial={{ opacity: 0, letterSpacing: "0.2em" }}
@@ -113,13 +113,13 @@ export default function Preloader() {
               GameLiminals Presents
             </motion.div>
 
-            <p 
+            <p
               className="text-sm sm:text-xl md:text-2xl font-light tracking-[0.2em] sm:tracking-[0.3em] text-yellow-300 uppercase mb-8 text-center px-4"
               style={{ fontFamily: "var(--font-orbitron), sans-serif" }}
             >
-              5Hrs Vibe Coding Hackathon
+              5-Hrs Vibe Coding Hackathon
             </p>
-            
+
             <motion.div
               variants={container}
               initial="hidden"
@@ -148,9 +148,9 @@ export default function Preloader() {
               <motion.div
                 initial={{ x: "-100%" }}
                 animate={{ x: "100%" }}
-                transition={{ 
-                  duration: 2.5, 
-                  repeat: Infinity, 
+                transition={{
+                  duration: 2.5,
+                  repeat: Infinity,
                   ease: "easeInOut",
                   repeatDelay: 0.5
                 }}

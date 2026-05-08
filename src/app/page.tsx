@@ -15,6 +15,7 @@ import Footer from '@/components/Footer';
 import About from '@/components/About';
 import ScrollNavigation from '@/components/ScrollNavigation';
 import ShuffleText from '@/components/ShuffleText';
+import CountdownTimer from '@/components/CountdownTimer';
 
 export default function Home() {
   return (
@@ -36,17 +37,27 @@ export default function Home() {
           <p className="text-xs md:text-base text-cyan-400 font-heading tracking-[0.3em] uppercase mb-4 drop-shadow-[0_0_15px_rgba(34,211,238,0.8)]">
             GAMELIMINAL'S PRESENTS
           </p>
-          <ShuffleText 
+          <ShuffleText
             text="VIBEFORGE"
             className="text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-heading tracking-tighter mb-4 bg-gradient-to-b from-white to-neutral-500 bg-clip-text text-transparent leading-none pr-8 block"
             delay={10}
           />
-          <p 
-            className="text-sm sm:text-lg md:text-2xl font-light tracking-[0.2em] md:tracking-[0.3em] text-yellow-300 uppercase mb-8"
+          <p
+            className="text-sm sm:text-lg md:text-2xl font-light tracking-[0.2em] md:tracking-[0.3em] text-yellow-300 uppercase mb-2 md:mb-10"
             style={{ fontFamily: "var(--font-orbitron), sans-serif" }}
           >
-            5Hrs Vibe Coding Hackathon
+            5-Hrs Vibe Coding Hackathon
           </p>
+
+          {/* Event Date */}
+          <div className="mb-6">
+            <span className="text-xl md:text-3xl font-orbitron font-black italic text-red-500 tracking-widest uppercase">
+              23-RD SEPTEMBER
+            </span>
+          </div>
+
+          {/* Countdown Timer */}
+          <CountdownTimer targetDate="2026-09-23T09:00:00" />
 
           <div className="flex flex-wrap gap-6 justify-start mt-4">
             <Link href="/dashboard" className="group relative px-10 py-5 rounded-2xl font-black tracking-[0.2em] text-yellow-300 transition-all duration-500 hover:scale-105 active:scale-95">

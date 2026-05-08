@@ -41,18 +41,25 @@ export default function About() {
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-4 pt-4 border-t border-white/10">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-6 border-t border-white/10">
               <div className="text-center">
                 <p className="text-[10px] text-neutral-500 uppercase tracking-widest mb-1">TEAM SIZE</p>
                 <p className="text-lg font-black text-white italic">UP TO 3</p>
               </div>
-              <div className="text-center border-x border-white/10">
+              <div className="text-center border-x border-white/10 px-2">
                 <p className="text-[10px] text-neutral-500 uppercase tracking-widest mb-1">REG FEE</p>
-                <p className="text-lg font-black text-yellow-300 italic">₹150 - ₹250</p>
+                <div className="flex flex-col gap-1">
+                  <p className="text-[10px] font-black text-yellow-300 italic uppercase">₹150 <span className="text-[8px] text-neutral-500 font-sans not-italic">ADAMAS</span></p>
+                  <p className="text-[10px] font-black text-yellow-300 italic uppercase">₹250 <span className="text-[8px] text-neutral-500 font-sans not-italic">OTHERS</span></p>
+                </div>
+              </div>
+              <div className="text-center border-r border-white/10">
+                <p className="text-[10px] text-neutral-500 uppercase tracking-widest mb-1">DURATION</p>
+                <p className="text-lg font-black text-white italic">5 HRS</p>
               </div>
               <div className="text-center">
-                <p className="text-[10px] text-neutral-500 uppercase tracking-widest mb-1">DURATION</p>
-                <p className="text-lg font-black text-red-500 italic">5 HOURS</p>
+                <p className="text-[10px] text-neutral-500 uppercase tracking-widest mb-1">THEME</p>
+                <p className="text-[10px] font-black text-red-500 italic uppercase leading-tight">ON SPOT<br/>DECLARATION</p>
               </div>
             </div>
           </motion.div>

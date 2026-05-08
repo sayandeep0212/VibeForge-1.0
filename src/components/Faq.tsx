@@ -30,7 +30,7 @@ const FaqItem = ({ question, answer }: { question: string, answer: string }) => 
             transition={{ duration: 0.3, ease: 'easeInOut' }}
             className="overflow-hidden"
           >
-            <div className="pb-8 text-neutral-500 leading-relaxed text-lg max-w-4xl font-orbitron">
+            <div className="pb-8 text-neutral-500 leading-relaxed text-lg max-w-4xl font-sans">
               {answer}
             </div>
           </motion.div>
