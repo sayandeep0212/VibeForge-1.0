@@ -53,13 +53,19 @@ const Footer = () => {
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center gap-3 mb-6">
               <motion.div whileHover={{ scale: 1.1 }} className="w-12 h-12 relative flex items-center justify-center overflow-hidden rounded-xl bg-white/5 border border-white/10 backdrop-blur-md">
-                <img src="/Logos/logo.png" alt="Logo 1" className="w-full h-full object-contain p-1" />
+                <a href="https://gameliminals.vercel.app" target="_blank" rel="noopener noreferrer" className="w-full h-full flex items-center justify-center">
+                  <img src="/Logos/logo.png" alt="Logo 1" className="w-full h-full object-contain p-1" />
+                </a>
               </motion.div>
               <motion.div whileHover={{ scale: 1.1 }} className="w-12 h-12 relative flex items-center justify-center overflow-hidden rounded-xl bg-white/5 border border-white/10 backdrop-blur-md">
-                <img src="/Logos/au_logo.jpg" alt="Logo 2" className="w-full h-full object-cover" />
+                <a href="https://adamasuniversity.ac.in/" target="_blank" rel="noopener noreferrer" className="w-full h-full flex items-center justify-center">
+                  <img src="/Logos/au_logo.jpg" alt="Logo 2" className="w-full h-full object-cover" />
+                </a>
               </motion.div>
               <motion.div whileHover={{ scale: 1.1 }} className="w-12 h-12 relative flex items-center justify-center overflow-hidden rounded-xl bg-white/5 border border-white/10 backdrop-blur-md">
-                <img src="/Logos/cycoders.png" alt="Logo 3" className="w-full h-full object-cover" />
+                <a href="https://cycoders.in/" target="_blank" rel="noopener noreferrer" className="w-full h-full flex items-center justify-center">
+                  <img src="/Logos/cycoders.png" alt="Logo 3" className="w-full h-full object-cover" />
+                </a>
               </motion.div>
             </div>
             <h2 className="text-xl md:text-2xl font-black tracking-wider text-white mb-4 italic leading-tight">

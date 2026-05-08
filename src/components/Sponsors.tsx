@@ -11,6 +11,7 @@ interface Sponsor {
   name: string;
   brandingType: string;
   image: string;
+  displayOrder?: number;
 }
 
 const SponsorCard = ({ image, name, brandingType }: Sponsor) => (
@@ -41,7 +42,10 @@ const Sponsors = () => {
       try {
         const snap = await get(ref(getDb(), 'sponsors'));
         if (snap.exists()) {
-          setSponsors(Object.values(snap.val()));
+          const data = snap.val();
+          const list = Object.values(data) as Sponsor[];
+          list.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
+          setSponsors(list);
         }
       } catch (error) {
         console.error('Error fetching sponsors:', error);

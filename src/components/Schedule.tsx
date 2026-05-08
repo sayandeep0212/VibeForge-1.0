@@ -62,7 +62,7 @@ const Schedule = () => {
 
                       <div className="flex flex-col gap-1">
                          <span className="text-[10px] font-sans font-black tracking-[0.2em] text-yellow-400 uppercase">{event.time}</span>
-                        <h4 className="text-lg font-black text-white uppercase italic">{event.title}</h4>
+                        <h4 className="text-lg font-black text-white uppercase italic font-orbitron">{event.title}</h4>
                         <p className="text-sm text-neutral-400 font-medium leading-relaxed">{event.desc}</p>
                       </div>
                     </div>

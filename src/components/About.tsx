@@ -24,7 +24,7 @@ export default function About() {
               </h2>
             </div>
 
-            <p className="text-xl text-neutral-300 leading-relaxed font-medium font-orbitron">
+            <p className="text-xl text-neutral-300 leading-relaxed font-medium font-sans">
               <span className="text-cyan-400 font-black">GAMELIMINALS</span> is not just a club; it's a brotherhood of digital architects. Based at Adamas University, we are a collective of developers, artists, and storytellers dedicated to the art of game creation.
             </p>
 
@@ -32,12 +32,12 @@ export default function About() {
               <div className="p-6 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 group hover:border-cyan-400/50 transition-all">
                 <Shield className="w-8 h-8 text-cyan-400 mb-3" />
                 <h3 className="font-bold text-white uppercase mb-2">OUR MISSION</h3>
-                <p className="text-sm text-neutral-400 font-orbitron">To push the limits of interactive storytelling and technical innovation.</p>
+                <p className="text-sm text-neutral-400 font-sans">To push the limits of interactive storytelling and technical innovation.</p>
               </div>
               <div className="p-6 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 group hover:border-yellow-300/50 transition-all">
                 <Zap className="w-8 h-8 text-yellow-300 mb-3" />
                 <h3 className="font-bold text-white uppercase mb-2">OUR LEGACY</h3>
-                <p className="text-sm text-neutral-400 font-orbitron">Hosting the most intense development challenges in the region.</p>
+                <p className="text-sm text-neutral-400 font-sans">Hosting the most intense development challenges in the region.</p>
               </div>
             </div>
 
@@ -79,17 +79,17 @@ export default function About() {
 
               <div className="space-y-6">
                 <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-6 mb-6">
-                  <p className="text-lg text-neutral-200 font-orbitron leading-relaxed">
+                  <p className="text-lg text-neutral-200 font-sans leading-relaxed">
                     <span className="text-red-500 font-black">VIBEFORGE 1.0</span> is a fast-paced vibe coding hackathon presented by GameLiminals club of Adamas University built around innovation, creativity, collaboration, and real-time problem solving.
                   </p>
                 </div>
 
-                <p className="text-neutral-400 font-orbitron leading-relaxed">
+                <p className="text-neutral-400 font-sans leading-relaxed">
                   Participants will work individually or in teams to brainstorm concepts, design experiences, develop prototypes, and showcase their creativity through technology. It is a total <span className="text-white font-bold">web development and UI/UX hackathon</span> designed to push creative thinking and hands-on execution.
                 </p>
 
                 <div className="p-4 bg-white/5 rounded-xl border border-white/10">
-                  <p className="text-sm text-cyan-400 font-orbitron font-bold italic">
+                  <p className="text-sm text-cyan-400 font-sans font-bold italic">
                     "People will vibe-code working websites and deploy in a timeframe of 5 hours."
                   </p>
                 </div>

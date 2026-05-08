@@ -58,23 +58,29 @@ const Navbar = () => {
                 whileHover={{ scale: 1.1 }}
                 className="w-10 h-10 sm:w-12 sm:h-12 relative flex items-center justify-center overflow-hidden rounded-lg bg-white/5 border border-white/10"
               >
-                <img src="/Logos/logo.png" alt="Logo 1" className="w-full h-full object-contain" />
+                <a href="https://gameliminals.vercel.app" target="_blank" rel="noopener noreferrer" className="w-full h-full flex items-center justify-center">
+                  <img src="/Logos/logo.png" alt="Logo 1" className="w-full h-full object-contain" />
+                </a>
               </motion.div>
               <motion.div
                 whileHover={{ scale: 1.1 }}
                 className="w-10 h-10 sm:w-12 sm:h-12 relative flex items-center justify-center overflow-hidden rounded-lg bg-white/5 border border-white/10"
               >
-                <img src="/Logos/au_logo.jpg" alt="Logo 2" className="w-full h-full object-cover" />
+                <a href="https://adamasuniversity.ac.in/" target="_blank" rel="noopener noreferrer" className="w-full h-full flex items-center justify-center">
+                  <img src="/Logos/au_logo.jpg" alt="Logo 2" className="w-full h-full object-cover" />
+                </a>
               </motion.div>
               <motion.div
                 whileHover={{ scale: 1.1 }}
                 className="w-10 h-10 sm:w-12 sm:h-12 relative flex items-center justify-center overflow-hidden rounded-lg bg-white/5 border border-white/10"
               >
-                <img src="/Logos/cycoders.png" alt="Logo 3" className="w-full h-full object-cover" />
+                <a href="https://cycoders.in/" target="_blank" rel="noopener noreferrer" className="w-full h-full flex items-center justify-center">
+                  <img src="/Logos/cycoders.png" alt="Logo 3" className="w-full h-full object-cover" />
+                </a>
               </motion.div>
-              <div className="ml-2 hidden lg:block">
+              <Link href="/" className="ml-2 hidden lg:block hover:opacity-80 transition-opacity">
                 <span className="text-xl font-heading tracking-wider italic text-white">GAMELIMINALS</span>
-              </div>
+              </Link>
             </div>
 
             {/* Right: Desktop Links */}
