@@ -69,6 +69,8 @@ export default function EditProfileModal({
     }
   };
 
+  const [showSuccess, setShowSuccess] = useState(false);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -80,7 +82,6 @@ export default function EditProfileModal({
         finalPhotoURL = await uploadToImgBB(photoFile);
       }
 
-      // Users can only update name, phone, and photo
       const updates: any = {
         name: name.trim(),
         phone: phone.trim(),
@@ -89,8 +90,8 @@ export default function EditProfileModal({
       };
 
       await update(ref(db!, `users/${firebaseUid}`), updates);
+      setShowSuccess(true);
       onSuccess();
-      onClose();
     } catch (err: any) {
       console.error('Update profile error:', err);
       setError(err.message || 'Failed to update profile.');
@@ -107,7 +108,7 @@ export default function EditProfileModal({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        onClick={onClose}
+        onClick={() => !loading && (showSuccess ? onClose() : null)}
         className="absolute inset-0 bg-black/80 backdrop-blur-sm"
       />
       
@@ -124,132 +125,177 @@ export default function EditProfileModal({
           <X className="w-6 h-6" />
         </button>
 
-        <h2 className="text-2xl font-black italic tracking-tighter text-white mb-6">
-          EDIT <span className="text-red-400">PROFILE</span>
-        </h2>
-
-        {error && (
-          <div className="mb-6 p-3 bg-red-500/10 border border-red-500/30 rounded-xl flex items-center gap-2 text-red-400 text-sm">
-            <AlertCircle className="w-4 h-4" />
-            {error}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Photo */}
-          <div className="flex flex-col items-center mb-6">
-            <div
-              onClick={() => fileInputRef.current?.click()}
-              className="relative w-24 h-24 rounded-full border-2 border-dashed border-white/20 hover:border-yellow-300/50 transition-colors cursor-pointer group overflow-hidden"
+        <AnimatePresence mode="wait">
+          {showSuccess ? (
+            <motion.div
+              key="success"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="py-8 text-center"
             >
-              {photoPreview ? (
-                <img src={photoPreview} alt="Profile" className="w-full h-full object-cover rounded-full" />
-              ) : (
-                <div className="w-full h-full bg-white/5 flex items-center justify-center">
-                  <Camera className="w-8 h-8 text-neutral-500" />
+              <div className="w-16 h-16 bg-green-500/10 border border-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <CheckCircle className="w-8 h-8 text-green-400" />
+              </div>
+              <h2 className="text-2xl font-black italic text-white mb-2 uppercase">Profile Updated!</h2>
+              <p className="text-neutral-400 text-sm mb-8">Your account setup is now complete. Please take a moment to review the event rules.</p>
+              
+              <div className="space-y-3">
+                <button
+                  onClick={() => {
+                    const win = window.open('/rules', '_blank');
+                    if (win) win.focus();
+                    onClose();
+                  }}
+                  className="w-full bg-yellow-300 hover:bg-yellow-400 text-black py-4 rounded-xl font-bold tracking-widest transition-all flex items-center justify-center gap-2"
+                >
+                  <BookOpen className="w-5 h-5" />
+                  SEE EVENT RULES
+                </button>
+                <button
+                  onClick={onClose}
+                  className="w-full bg-white/5 hover:bg-white/10 text-white py-3 rounded-xl text-sm font-medium transition-all"
+                >
+                  Go to Dashboard
+                </button>
+              </div>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="form"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <h2 className="text-2xl font-black italic tracking-tighter text-white mb-6 uppercase">
+                EDIT <span className="text-red-400">PROFILE</span>
+              </h2>
+
+              {error && (
+                <div className="mb-6 p-3 bg-red-500/10 border border-red-500/30 rounded-xl flex items-center gap-2 text-red-400 text-sm">
+                  <AlertCircle className="w-4 h-4" />
+                  {error}
                 </div>
               )}
-              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                <Camera className="w-6 h-6 text-white" />
-              </div>
-            </div>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              onChange={handlePhotoChange}
-              className="hidden"
-            />
-            <p className="text-neutral-500 text-[10px] mt-2 uppercase tracking-widest">Update Photo</p>
-          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {/* Name */}
-            <div className="relative group col-span-2">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-neutral-500">
-                <User className="w-4 h-4" />
-              </div>
-              <input
-                type="text"
-                required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Full Name"
-                className="w-full bg-black/50 border border-white/10 text-white rounded-xl py-3 pl-12 pr-4 focus:outline-none focus:border-yellow-300/50 transition-all text-sm"
-              />
-            </div>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                {/* Photo */}
+                <div className="flex flex-col items-center mb-6">
+                  <div
+                    onClick={() => fileInputRef.current?.click()}
+                    className="relative w-24 h-24 rounded-full border-2 border-dashed border-white/20 hover:border-yellow-300/50 transition-colors cursor-pointer group overflow-hidden"
+                  >
+                    {photoPreview ? (
+                      <img src={photoPreview} alt="Profile" className="w-full h-full object-cover rounded-full" />
+                    ) : (
+                      <div className="w-full h-full bg-white/5 flex items-center justify-center">
+                        <Camera className="w-8 h-8 text-neutral-500" />
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <Camera className="w-6 h-6 text-white" />
+                    </div>
+                  </div>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handlePhotoChange}
+                    className="hidden"
+                  />
+                  <p className="text-neutral-500 text-[10px] mt-2 uppercase tracking-widest">Update Photo</p>
+                </div>
 
-            {/* Phone */}
-            <div className="relative group col-span-2">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-neutral-500">
-                <Phone className="w-4 h-4" />
-              </div>
-              <input
-                type="text"
-                required
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="Phone Number"
-                className="w-full bg-black/50 border border-white/10 text-white rounded-xl py-3 pl-12 pr-4 focus:outline-none focus:border-yellow-300/50 transition-all text-sm"
-              />
-            </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {/* Name */}
+                  <div className="relative group col-span-2">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-neutral-500">
+                      <User className="w-4 h-4" />
+                    </div>
+                    <input
+                      type="text"
+                      required
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Full Name"
+                      className="w-full bg-black/50 border border-white/10 text-white rounded-xl py-3 pl-12 pr-4 focus:outline-none focus:border-yellow-300/50 transition-all text-sm"
+                    />
+                  </div>
 
-            {/* College - READ ONLY */}
-            <div className="relative group col-span-2">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-neutral-500">
-                <Building2 className="w-4 h-4" />
-              </div>
-              <input
-                type="text"
-                readOnly
-                value={profile.college}
-                className="w-full bg-black/30 border border-white/5 text-neutral-500 rounded-xl py-3 pl-12 pr-4 text-sm cursor-not-allowed"
-              />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-neutral-600 uppercase tracking-wider">Locked</span>
-            </div>
+                  {/* Phone */}
+                  <div className="relative group col-span-2">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-neutral-500">
+                      <Phone className="w-4 h-4" />
+                    </div>
+                    <input
+                      type="text"
+                      required
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder="Phone Number"
+                      className="w-full bg-black/50 border border-white/10 text-white rounded-xl py-3 pl-12 pr-4 focus:outline-none focus:border-yellow-300/50 transition-all text-sm"
+                    />
+                  </div>
 
-            {/* Year - READ ONLY */}
-            <div className="relative group">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-neutral-500">
-                <GraduationCap className="w-4 h-4" />
-              </div>
-              <input
-                type="text"
-                readOnly
-                value={profile.year}
-                className="w-full bg-black/30 border border-white/5 text-neutral-500 rounded-xl py-3 pl-12 pr-4 text-sm cursor-not-allowed"
-              />
-            </div>
+                  {/* College - READ ONLY */}
+                  <div className="relative group col-span-2">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-neutral-500">
+                      <Building2 className="w-4 h-4" />
+                    </div>
+                    <input
+                      type="text"
+                      readOnly
+                      value={profile.college}
+                      className="w-full bg-black/30 border border-white/5 text-neutral-500 rounded-xl py-3 pl-12 pr-4 text-sm cursor-not-allowed"
+                    />
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-neutral-600 uppercase tracking-wider">Locked</span>
+                  </div>
 
-            {/* Program - READ ONLY */}
-            <div className="relative group">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-neutral-500">
-                <BookOpen className="w-4 h-4" />
-              </div>
-              <input
-                type="text"
-                readOnly
-                value={profile.program}
-                className="w-full bg-black/30 border border-white/5 text-neutral-500 rounded-xl py-3 pl-12 pr-4 text-sm cursor-not-allowed"
-              />
-            </div>
-          </div>
+                  {/* Year - READ ONLY */}
+                  <div className="relative group">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-neutral-500">
+                      <GraduationCap className="w-4 h-4" />
+                    </div>
+                    <input
+                      type="text"
+                      readOnly
+                      value={profile.year}
+                      className="w-full bg-black/30 border border-white/5 text-neutral-500 rounded-xl py-3 pl-12 pr-4 text-sm cursor-not-allowed"
+                    />
+                  </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-yellow-300 hover:bg-gradient-to-r hover:from-yellow-300 hover:to-red-400 text-black py-3 rounded-xl font-bold tracking-widest transition-all hover:scale-[1.02] active:scale-[0.98] mt-4 disabled:opacity-50 flex items-center justify-center gap-2"
-          >
-            {loading ? (
-              <>
-                <Loader2 className="w-5 h-5 animate-spin" />
-                UPDATING...
-              </>
-            ) : (
-              'SAVE CHANGES'
-            )}
-          </button>
-        </form>
+                  {/* Program - READ ONLY */}
+                  <div className="relative group">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-neutral-500">
+                      <BookOpen className="w-4 h-4" />
+                    </div>
+                    <input
+                      type="text"
+                      readOnly
+                      value={profile.program}
+                      className="w-full bg-black/30 border border-white/5 text-neutral-500 rounded-xl py-3 pl-12 pr-4 text-sm cursor-not-allowed"
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-yellow-300 hover:bg-gradient-to-r hover:from-yellow-300 hover:to-red-400 text-black py-3 rounded-xl font-bold tracking-widest transition-all hover:scale-[1.02] active:scale-[0.98] mt-4 disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      UPDATING...
+                    </>
+                  ) : (
+                    'SAVE CHANGES'
+                  )}
+                </button>
+              </form>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.div>
     </div>
   );

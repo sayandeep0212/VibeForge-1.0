@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin/
 Disallow: /api/
 
-Sitemap: https://vibeforge.vercel.app/sitemap.xml
+Sitemap: https://vibe-forge-1-0.vercel.app/sitemap.xml

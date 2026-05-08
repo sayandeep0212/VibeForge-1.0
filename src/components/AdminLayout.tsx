@@ -20,6 +20,7 @@ export default function AdminLayout({ children, onLogout, adminName }: AdminLayo
   const navItems = [
     { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
     { name: 'Scanner', href: '/admin/scanner', icon: Scan },
+    { name: 'Entries', href: '/admin/entries', icon: ClipboardList },
     { name: 'Participants', href: '/admin/participants', icon: Users },
     { name: 'Registrations', href: '/admin/registrations', icon: ClipboardList },
     { name: 'Inquiries', href: '/admin/inquiries', icon: MessageSquare },

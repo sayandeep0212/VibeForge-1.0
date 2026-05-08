@@ -18,7 +18,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import EventPass from '@/components/EventPass';
 import EditProfileModal from '@/components/EditProfileModal';
-import { Settings as SettingsIcon } from 'lucide-react';
+import FoodCoupon from '@/components/FoodCoupon';
+import { Settings as SettingsIcon, Utensils } from 'lucide-react';
 
 interface UserProfile {
   uid: string;
@@ -56,6 +57,7 @@ interface Registration {
   passId?: string;
   bookingId?: string;
   shortlisted?: boolean;
+  checkedIn?: boolean;
   createdAt: number;
 }
 
@@ -476,6 +478,25 @@ function DashboardContent() {
                   </div>
                 )}
               </div>
+
+              {/* Food Coupon - Show to anyone if checked in */}
+              {currentRegistration?.checkedIn && (
+                <div className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl p-6 relative overflow-hidden">
+                  <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                    <Utensils className="w-5 h-5 text-yellow-300" />
+                    Food Coupon
+                  </h3>
+                  <p className="text-neutral-400 text-sm mb-6">
+                    You have successfully checked in! Here is your official food coupon for the event. 
+                    Please show this at the food counter.
+                  </p>
+                  
+                  <FoodCoupon 
+                    userName={userProfile?.name || ''} 
+                    userUid={userProfile?.uid || ''} 
+                  />
+                </div>
+              )}
 
               {/* Event Pass - Only show to Leader if approved */}
               {isLeader && currentRegistration?.status === 'approved' && currentRegistration.passId && (

@@ -7,7 +7,7 @@ import AuthGuard from '@/components/AuthGuard';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Users, User as UserIcon, Shield, AlertTriangle, Loader2,
-  CheckCircle, XCircle, Search, CreditCard, AlertCircle, Info
+  CheckCircle, XCircle, Search, CreditCard, AlertCircle, Info, BookOpen
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { ref, get, set, push, query, orderByChild, equalTo } from 'firebase/database';
@@ -517,9 +517,24 @@ function RegisterContent() {
                 <p className="text-neutral-400 text-sm mb-2">
                   Your registration has been submitted. You&apos;ll receive a confirmation email shortly.
                 </p>
-                <p className="text-yellow-300 text-sm">
+                <p className="text-yellow-300 text-sm mb-6">
                   Your pass will be generated once an admin approves your registration.
                 </p>
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                  <button
+                    onClick={() => router.push('/dashboard')}
+                    className="w-full sm:w-auto px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-xl font-bold transition-all"
+                  >
+                    Go to Dashboard
+                  </button>
+                  <button
+                    onClick={() => router.push('/rules')}
+                    className="w-full sm:w-auto px-6 py-3 bg-yellow-300 hover:bg-yellow-400 text-black rounded-xl font-bold transition-all flex items-center justify-center gap-2"
+                  >
+                    <BookOpen className="w-4 h-4" />
+                    SEE EVENT RULES
+                  </button>
+                </div>
               </motion.div>
             )}
 
