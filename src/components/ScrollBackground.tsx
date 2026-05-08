@@ -83,7 +83,9 @@ const ScrollBackground = () => {
         const ratio = Math.max(canvasWidth / imgWidth, canvasHeight / imgHeight);
         const newWidth = imgWidth * ratio;
         const newHeight = imgHeight * ratio;
-        const x = (canvasWidth - newWidth) / 2;
+        // Mobile optimization: shift to the right so the subject remains visible
+        const isMobile = window.innerWidth < 768;
+        const x = isMobile ? (canvasWidth - newWidth) * 0.85 : (canvasWidth - newWidth) / 2;
         const y = (canvasHeight - newHeight) / 2;
 
         ctx.drawImage(img, x, y, newWidth, newHeight);

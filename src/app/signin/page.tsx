@@ -80,11 +80,11 @@ export default function SignInPage() {
 
       <div className="relative min-h-screen flex items-center justify-center">
         {/* Background Image */}
-        <div className="absolute inset-0 z-0 pointer-events-none">
+        <div className="fixed top-24 sm:top-0 left-0 w-full h-[55vh] sm:h-full z-0 pointer-events-none">
           <img 
             src="/backgrounds/signup.png" 
             alt="Auth Background" 
-            className="w-full h-full object-cover opacity-80 brightness-75"
+            className="w-full h-full object-cover object-center opacity-80 brightness-75"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black" />
         </div>

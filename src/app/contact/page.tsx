@@ -49,11 +49,11 @@ const ContactPage = () => {
       <Navbar />
 
       {/* Background Image */}
-      <div className="absolute inset-0 z-0">
+      <div className="fixed top-24 sm:top-0 left-0 w-full h-[55vh] sm:h-full z-0 pointer-events-none">
         <img 
           src="/backgrounds/contactbg.png" 
           alt="Contact Background" 
-          className="w-full h-full object-cover opacity-80 brightness-75"
+          className="w-full h-full object-cover object-center opacity-80 brightness-75"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black" />
       </div>
@@ -65,10 +65,10 @@ const ContactPage = () => {
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-20"
           >
-            <h1 className="text-6xl md:text-8xl font-black tracking-tighter mb-4 italic text-yellow-300">
+            <h1 className="text-5xl sm:text-6xl md:text-8xl font-black tracking-tighter mb-4 italic text-yellow-300">
               CONTACT <span className="text-red-400 text-shadow-glow">US</span>
             </h1>
-            <p className="text-xl text-neutral-400 tracking-[0.5em] uppercase">The Ninja Network</p>
+            <p className="text-sm sm:text-xl text-neutral-400 tracking-[0.5em] uppercase">The Ninja Network</p>
           </motion.div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
@@ -82,8 +82,8 @@ const ContactPage = () => {
               {/* Coordinators Section */}
               <div className="space-y-8">
                 <div>
-                  <h2 className="text-2xl font-bold uppercase tracking-widest mb-6 flex items-center gap-3">
-                    <User className="w-6 h-6 text-red-400" /> <span className="text-yellow-300">Student</span> <span className="text-white">Coordinators</span>
+                  <h2 className="text-xl sm:text-2xl font-bold uppercase tracking-widest mb-6 flex items-center gap-2 sm:gap-3">
+                    <User className="w-5 h-5 sm:w-6 sm:h-6 text-red-400" /> <span className="text-yellow-300">Student</span> <span className="text-white">Coordinators</span>
                   </h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="bg-white/5 backdrop-blur-md p-4 rounded-xl border border-white/10">
@@ -98,8 +98,8 @@ const ContactPage = () => {
                 </div>
 
                 <div>
-                  <h2 className="text-2xl font-bold uppercase tracking-widest mb-6 flex items-center gap-3">
-                    <User className="w-6 h-6 text-red-400" /> <span className="text-yellow-300">Event</span> <span className="text-white">Coordinators</span>
+                  <h2 className="text-xl sm:text-2xl font-bold uppercase tracking-widest mb-6 flex items-center gap-2 sm:gap-3">
+                    <User className="w-5 h-5 sm:w-6 sm:h-6 text-red-400" /> <span className="text-yellow-300">Event</span> <span className="text-white">Coordinators</span>
                   </h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="bg-white/5 backdrop-blur-md p-4 rounded-xl border border-white/10">

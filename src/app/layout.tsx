@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import BackgroundMusic from "@/components/BackgroundMusic";
 import { AuthProvider } from "@/context/AuthContext";
+import Preloader from "@/components/Preloader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -61,6 +62,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${casualPassion.variable} ${orbitron.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-sans">
+        <Preloader />
         <AuthProvider>
           {children}
         </AuthProvider>

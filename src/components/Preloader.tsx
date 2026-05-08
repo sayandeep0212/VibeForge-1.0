@@ -114,7 +114,7 @@ export default function Preloader() {
             </motion.div>
 
             <p 
-              className="text-xl md:text-2xl font-light tracking-[0.3em] text-yellow-300 uppercase mb-8"
+              className="text-sm sm:text-xl md:text-2xl font-light tracking-[0.2em] sm:tracking-[0.3em] text-yellow-300 uppercase mb-8 text-center px-4"
               style={{ fontFamily: "var(--font-orbitron), sans-serif" }}
             >
               5Hrs Vibe Coding Hackathon
@@ -124,7 +124,7 @@ export default function Preloader() {
               variants={container}
               initial="hidden"
               animate="visible"
-              className="text-5xl md:text-8xl font-heading italic tracking-tighter flex px-4"
+              className="text-[2rem] sm:text-5xl md:text-8xl font-heading italic tracking-tighter flex px-4 justify-center"
             >
               {letters.map((letter, index) => (
                 <motion.span

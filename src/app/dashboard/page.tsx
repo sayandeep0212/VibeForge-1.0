@@ -163,12 +163,12 @@ function DashboardContent() {
 
       <div className="relative min-h-screen">
         {/* Background */}
-        <div className="absolute inset-0 z-0 pointer-events-none">
+        <div className="fixed top-24 sm:top-0 left-0 w-full h-[55vh] sm:h-full z-0 pointer-events-none">
           <Image 
             src="/backgrounds/dashboardbg.jpg" 
             alt="Dashboard Background" 
             fill
-            className="object-cover opacity-70 brightness-[0.8]"
+            className="object-cover object-center opacity-70 brightness-[0.8]"
             priority
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black" />

@@ -5,7 +5,6 @@ import { ChevronDown, Sword, Ghost, Zap } from 'lucide-react';
 import Link from 'next/link';
 
 // Components
-import Preloader from '@/components/Preloader';
 import Navbar from '@/components/Navbar';
 import ScrollBackground from '@/components/ScrollBackground';
 import ThreeOverlay from '@/components/ThreeOverlay';
@@ -20,7 +19,6 @@ import ShuffleText from '@/components/ShuffleText';
 export default function Home() {
   return (
     <main className="relative min-h-[500vh] bg-black text-white selection:bg-yellow-400 selection:text-black">
-      <Preloader />
       {/* Navigation */}
       <Navbar />
 
@@ -35,16 +33,16 @@ export default function Home() {
           transition={{ duration: 1.2, ease: "easeOut" }}
           className="max-w-7xl relative z-30"
         >
-          <p className="text-sm md:text-base text-cyan-400 font-heading tracking-[0.3em] uppercase mb-4 drop-shadow-[0_0_15px_rgba(34,211,238,0.8)]">
+          <p className="text-xs md:text-base text-cyan-400 font-heading tracking-[0.3em] uppercase mb-4 drop-shadow-[0_0_15px_rgba(34,211,238,0.8)]">
             GAMELIMINAL'S PRESENTS
           </p>
           <ShuffleText 
             text="VIBEFORGE"
-            className="text-6xl md:text-8xl lg:text-9xl font-heading tracking-tighter mb-4 bg-gradient-to-b from-white to-neutral-500 bg-clip-text text-transparent leading-none pr-8 block"
+            className="text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-heading tracking-tighter mb-4 bg-gradient-to-b from-white to-neutral-500 bg-clip-text text-transparent leading-none pr-8 block"
             delay={10}
           />
           <p 
-            className="text-xl md:text-2xl font-light tracking-[0.3em] text-yellow-300 uppercase mb-8"
+            className="text-sm sm:text-lg md:text-2xl font-light tracking-[0.2em] md:tracking-[0.3em] text-yellow-300 uppercase mb-8"
             style={{ fontFamily: "var(--font-orbitron), sans-serif" }}
           >
             5Hrs Vibe Coding Hackathon

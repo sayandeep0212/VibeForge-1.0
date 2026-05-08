@@ -172,7 +172,7 @@ export default function AdminContentPage() {
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-4 border-b border-white/10 pb-4">
+        <div className="flex gap-2 sm:gap-4 border-b border-white/10 pb-4 overflow-x-auto whitespace-nowrap scrollbar-hide">
           {([
             { key: 'judges' as Tab, label: 'Judges', icon: Star },
             { key: 'faculty' as Tab, label: 'The Spectator', icon: Users },
@@ -180,7 +180,7 @@ export default function AdminContentPage() {
             { key: 'sponsors' as Tab, label: 'Sponsors', icon: Box },
           ]).map(tab => (
             <button key={tab.key} onClick={() => setActiveTab(tab.key)}
-              className={`flex items-center gap-2 px-6 py-3 rounded-t-xl font-bold uppercase tracking-widest text-sm transition-all ${activeTab === tab.key ? 'bg-yellow-300/10 text-yellow-300 border-b-2 border-yellow-300' : 'text-neutral-500 hover:text-white'}`}>
+              className={`flex items-center gap-2 px-4 sm:px-6 py-3 rounded-t-xl font-bold uppercase tracking-widest text-xs sm:text-sm transition-all whitespace-nowrap ${activeTab === tab.key ? 'bg-yellow-300/10 text-yellow-300 border-b-2 border-yellow-300' : 'text-neutral-500 hover:text-white'}`}>
               <tab.icon className="w-4 h-4" /> {tab.label}
             </button>
           ))}
@@ -188,8 +188,8 @@ export default function AdminContentPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Form */}
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-6 lg:col-span-1 h-fit">
-            <h2 className="text-lg font-bold text-white mb-6 uppercase tracking-wider">Add New {getTabLabel(activeTab)}</h2>
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-6 lg:col-span-1 h-fit w-full overflow-hidden">
+            <h2 className="text-xl font-bold font-sans text-white mb-6 uppercase tracking-wider">ADD NEW {getTabLabel(activeTab)}</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="flex flex-col items-center justify-center mb-4">
                 <div onClick={() => fileInputRef.current?.click()}
@@ -298,7 +298,7 @@ export default function AdminContentPage() {
           <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setEditingId(null)}>
             <div className="bg-neutral-900 border border-white/10 rounded-2xl p-6 w-full max-w-md" onClick={e => e.stopPropagation()}>
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-white font-bold">Edit {getTabLabel(activeTab)}</h3>
+                <h3 className="text-white font-bold font-sans">Edit {getTabLabel(activeTab)}</h3>
                 <button onClick={() => setEditingId(null)} className="text-neutral-500 hover:text-white"><X className="w-5 h-5" /></button>
               </div>
               <div className="space-y-4">

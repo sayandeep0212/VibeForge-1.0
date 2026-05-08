@@ -10,13 +10,12 @@ export default function SponsorsPage() {
   return (
     <main className="min-h-screen bg-black overflow-hidden">
       <Navbar />
-      
       {/* Background Image */}
-      <div className="fixed inset-0 z-0 pointer-events-none">
+      <div className="fixed top-24 sm:top-0 left-0 w-full h-[55vh] sm:h-full z-0 pointer-events-none">
         <img 
           src="/backgrounds/sponsorsbg.jpg" 
           alt="Sponsors Background" 
-          className="w-full h-full object-cover opacity-80 brightness-75"
+          className="w-full h-full object-cover object-center opacity-80 brightness-75"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black" />
       </div>
@@ -28,7 +27,7 @@ export default function SponsorsPage() {
             transition={{ duration: 0.8 }}
             className="text-center mb-12"
           >
-            <h1 className="text-6xl md:text-8xl font-black italic tracking-tighter text-yellow-300 mb-4">
+            <h1 className="text-5xl sm:text-6xl md:text-8xl font-black italic tracking-tighter text-yellow-300 mb-4">
               OUR <span className="text-red-400">SPONSORS</span>
             </h1>
             <div className="h-1 w-24 bg-red-400 mx-auto" />
