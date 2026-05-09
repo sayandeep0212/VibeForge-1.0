@@ -147,9 +147,20 @@ export default function RegistrationsPage() {
   const handleDelete = async (regId: string) => {
     if (!confirm(`Delete team "${registrations[regId]?.teamName}"? This cannot be undone.`)) return;
     try {
-      await remove(ref(getDb(), `registrations/${regId}`));
+      const res = await fetch(`/api/admin/registrations/delete?id=${regId}`, {
+        method: 'DELETE',
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Failed to delete registration');
+      }
+
       setRegistrations(prev => { const n = { ...prev }; delete n[regId]; return n; });
-    } catch (err) { console.error('Error deleting:', err); }
+    } catch (err: any) { 
+      console.error('Error deleting:', err); 
+      alert(err.message || 'Failed to delete registration');
+    }
   };
 
   const startEdit = (regId: string) => {

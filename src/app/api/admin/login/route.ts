@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/session';
-import { adminDb } from '@/lib/firebase-admin';
+import { adminDb, adminAuth } from '@/lib/firebase-admin';
 import bcrypt from 'bcryptjs';
 import { checkRateLimit, authLimiter } from '@/lib/rate-limit';
 
@@ -43,6 +43,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
     }
 
+    // Create Firebase custom token for client-side auth
+    const firebaseToken = await adminAuth.createCustomToken(adminId);
+
     // Create session
     const session = await getSession();
     session.user = {
@@ -55,7 +58,7 @@ export async function POST(req: Request) {
     };
     await session.save();
 
-    return NextResponse.json({ success: true, user: session.user });
+    return NextResponse.json({ success: true, user: session.user, token: firebaseToken });
   } catch (error: any) {
     console.error('Admin login error:', error);
     const message = error.message === 'Firebase Admin not initialized' 

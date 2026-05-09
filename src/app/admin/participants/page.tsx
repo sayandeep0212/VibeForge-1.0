@@ -186,15 +186,23 @@ export default function ParticipantsPage() {
     }
 
     try {
-      await remove(ref(getDb(), `users/${firebaseId}`));
+      const res = await fetch(`/api/admin/participants/delete?id=${firebaseId}`, {
+        method: 'DELETE',
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Failed to delete participant');
+      }
+
       setUsers(prev => {
         const newUsers = { ...prev };
         delete newUsers[firebaseId];
         return newUsers;
       });
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error deleting user:', err);
-      alert('Failed to delete participant.');
+      alert(err.message || 'Failed to delete participant.');
     }
   };
 

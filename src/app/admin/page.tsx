@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Shield, Mail, Lock, AlertCircle, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { getFirebaseAuth } from '@/lib/firebase';
+import { signInWithCustomToken } from 'firebase/auth';
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState('');
@@ -51,6 +53,12 @@ export default function AdminLoginPage() {
         setError(data.error || 'Invalid credentials');
         setLoading(false);
         return;
+      }
+
+      // Sign into Firebase Auth on the client side
+      if (data.token) {
+        const auth = getFirebaseAuth();
+        await signInWithCustomToken(auth, data.token);
       }
 
       router.push('/admin/dashboard');

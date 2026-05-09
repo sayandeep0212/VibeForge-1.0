@@ -47,6 +47,11 @@ export const adminAuth = {
     const app = getAdminApp();
     if (!app) throw new Error('Firebase Admin not initialized');
     return admin.auth(app).verifyIdToken(token);
+  },
+  createCustomToken: async (uid: string) => {
+    const app = getAdminApp();
+    if (!app) throw new Error('Firebase Admin not initialized');
+    return admin.auth(app).createCustomToken(uid);
   }
 };
 
