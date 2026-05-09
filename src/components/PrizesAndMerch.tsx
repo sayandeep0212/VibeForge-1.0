@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Trophy, Gift, ShoppingBag, Star, Crown, Zap } from 'lucide-react';
 import Link from 'next/link';
 
@@ -15,6 +15,29 @@ const PrizesAndMerch = () => {
       cap: { black: true, white: true, lavender: true }
     }
   });
+
+  const [tshirtIndex, setTshirtIndex] = useState(0);
+  const [capIndex, setCapIndex] = useState(0);
+
+  const tshirtImages = [
+    "/Merch/t-shirts/black polo shirt/1.png",
+    "/Merch/t-shirts/white polo shirt/1.png",
+    "/Merch/t-shirts/lavender for girls polo/1.png"
+  ];
+
+  const capImages = [
+    "/Merch/caps/blackcap.png",
+    "/Merch/caps/whitecap.png",
+    "/Merch/caps/lavendercap.png"
+  ];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTshirtIndex((prev) => (prev + 1) % tshirtImages.length);
+      setCapIndex((prev) => (prev + 1) % capImages.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     fetch('/api/merch/settings')
@@ -62,14 +85,16 @@ const PrizesAndMerch = () => {
     { 
       name: "Vibeforge polo T shirt", 
       price: `₹${prices.tshirtPrice}`, 
-      image: "/Merch/t-shirts/black polo shirt/1.png",
-      type: "t-shirt"
+      image: tshirtImages[tshirtIndex],
+      type: "t-shirt",
+      id: "tshirt"
     },
     { 
       name: "Cyber Cap", 
       price: `₹${prices.capPrice}`, 
-      image: "/Merch/caps/blackcap.png",
-      type: "cap"
+      image: capImages[capIndex],
+      type: "cap",
+      id: "cap"
     }
   ];
 
@@ -143,13 +168,20 @@ const PrizesAndMerch = () => {
               transition={{ delay: idx * 0.1 }}
               className="group relative"
             >
-              <div className="aspect-[4/5] rounded-3xl overflow-hidden relative border border-white/10">
-                <img 
-                  src={item.image} 
-                  alt={item.name}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
+              <div className="aspect-[4/5] rounded-3xl overflow-hidden relative border border-white/10 bg-neutral-900">
+                <AnimatePresence mode="wait">
+                  <motion.img 
+                    key={item.image}
+                    src={item.image} 
+                    alt={item.name}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.5, ease: "easeInOut" }}
+                    className="w-full h-full object-cover"
+                  />
+                </AnimatePresence>
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent pointer-events-none" />
                 
                 <div className="absolute bottom-0 left-0 w-full p-8 pt-0 space-y-4">
                   <div className="flex justify-between items-end">

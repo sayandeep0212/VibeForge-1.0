@@ -46,18 +46,18 @@ export default function Home() {
             className="text-sm sm:text-lg md:text-2xl font-light tracking-[0.2em] md:tracking-[0.3em] text-yellow-300 uppercase mb-2 md:mb-10"
             style={{ fontFamily: "var(--font-orbitron), sans-serif" }}
           >
-            5-Hrs Vibe Coding Hackathon
+            5-Hrs Vibe Coding Inter College Hackathon
           </p>
 
           {/* Event Date */}
           <div className="mb-6">
             <span className="text-xl md:text-3xl font-orbitron font-black italic text-red-500 tracking-widest uppercase">
-              23-RD SEPTEMBER
+              21-ST AUGUST
             </span>
           </div>
 
           {/* Countdown Timer */}
-          <CountdownTimer targetDate="2026-09-23T09:00:00" />
+          <CountdownTimer targetDate="2026-08-21T09:00:00" />
 
           <div className="flex flex-wrap gap-6 justify-start mt-4">
             <Link href="/dashboard" className="group relative px-10 py-5 rounded-2xl font-black tracking-[0.2em] text-yellow-300 transition-all duration-500 hover:scale-105 active:scale-95">
