@@ -60,7 +60,7 @@ export default function Home() {
           <CountdownTimer targetDate="2026-08-21T09:00:00" />
 
           <div className="flex flex-wrap gap-6 justify-start mt-4">
-            <Link href="/dashboard" className="group relative px-10 py-5 rounded-2xl font-black tracking-[0.2em] text-yellow-300 transition-all duration-500 hover:scale-105 active:scale-95">
+            <Link href="/arena" className="group relative px-10 py-5 rounded-2xl font-black tracking-[0.2em] text-yellow-300 transition-all duration-500 hover:scale-105 active:scale-95">
               {/* Glassy Background */}
               <div className="absolute inset-0 bg-yellow-400/5 backdrop-blur-xl rounded-2xl border border-yellow-400/20 group-hover:border-yellow-400/50 transition-colors" />
               {/* Neon Spread */}

@@ -11,6 +11,7 @@ interface BackgroundMusicProps {
 
 const BackgroundMusic: React.FC<BackgroundMusicProps> = ({ audioUrl }) => {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [userMuted, setUserMuted] = useState<boolean | null>(null);
   const [isHovered, setIsHovered] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const pathname = usePathname();
@@ -21,55 +22,53 @@ const BackgroundMusic: React.FC<BackgroundMusicProps> = ({ audioUrl }) => {
   }
 
   useEffect(() => {
-    // Prevent creating multiple audio instances if component re-renders
+    // 1. Initial Load: Check localStorage
+    const savedMuteStatus = localStorage.getItem('bg-music-muted');
+    const isMuted = savedMuteStatus === 'true';
+    setUserMuted(isMuted);
+
+    // 2. Initialize Audio Instance
     if (!audioRef.current) {
       audioRef.current = new Audio(audioUrl);
       audioRef.current.loop = true;
-      audioRef.current.volume = 0.3; // Default volume (30%)
+      audioRef.current.volume = 0.3;
     } else {
-      audioRef.current.src = audioUrl; // Update src if audioUrl prop changes
+      audioRef.current.src = audioUrl;
     }
 
     const audio = audioRef.current;
 
-    // Try to auto-play (browsers often block this without interaction)
-    const playPromise = audio.play();
-    
-    if (playPromise !== undefined) {
-      playPromise
-        .then(() => {
-          setIsPlaying(true);
-        })
+    // 3. Play Logic
+    const attemptPlay = () => {
+      // Don't play if user manually muted in previous session
+      if (localStorage.getItem('bg-music-muted') === 'true') {
+        setIsPlaying(false);
+        return;
+      }
+
+      audio.play()
+        .then(() => setIsPlaying(true))
         .catch(() => {
-          // Auto-play prevented by browser. Wait for user interaction.
+          // Autoplay blocked: wait for interaction
           setIsPlaying(false);
-          
           const handleInteraction = () => {
-            if (audio && audio.paused) {
-              audio.play()
-                .then(() => setIsPlaying(true))
-                .catch(e => console.log("Audio play failed:", e));
-              
-              // Remove listeners after first interaction
-              document.removeEventListener('click', handleInteraction);
-              document.removeEventListener('keydown', handleInteraction);
+            if (localStorage.getItem('bg-music-muted') !== 'true') {
+              audio.play().then(() => {
+                setIsPlaying(true);
+                document.removeEventListener('click', handleInteraction);
+                document.removeEventListener('touchstart', handleInteraction);
+              }).catch(e => console.log("Interaction play failed:", e));
             }
           };
-          
           document.addEventListener('click', handleInteraction);
-          document.addEventListener('keydown', handleInteraction);
-          
-          return () => {
-            document.removeEventListener('click', handleInteraction);
-            document.removeEventListener('keydown', handleInteraction);
-          };
+          document.addEventListener('touchstart', handleInteraction); // Better for mobile
         });
-    }
+    };
+
+    attemptPlay();
 
     return () => {
-      if (audio) {
-        audio.pause();
-      }
+      if (audio) audio.pause();
     };
   }, [audioUrl]);
 
@@ -78,9 +77,15 @@ const BackgroundMusic: React.FC<BackgroundMusicProps> = ({ audioUrl }) => {
       if (isPlaying) {
         audioRef.current.pause();
         setIsPlaying(false);
+        localStorage.setItem('bg-music-muted', 'true');
+        setUserMuted(true);
       } else {
         audioRef.current.play()
-          .then(() => setIsPlaying(true))
+          .then(() => {
+            setIsPlaying(true);
+            localStorage.setItem('bg-music-muted', 'false');
+            setUserMuted(false);
+          })
           .catch(e => console.error("Could not play audio", e));
       }
     }

@@ -62,7 +62,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/images/vibeforge-banner.jpg",
+        url: "/images/vibeforge-banner.png",
         width: 1200,
         height: 630,
         alt: "VibeForge 1.0 Hackathon Banner",
@@ -73,7 +73,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "VibeForge 1.0 | Intercollege Vibe Coding Hackathon",
     description: "Join VibeForge 1.0, a 5-hour intercollege hackathon by GameLiminals at Adamas University.",
-    images: ["/images/vibeforge-banner.jpg"],
+    images: ["/images/vibeforge-banner.png"],
     creator: "@GameLiminals",
   },
   icons: {
