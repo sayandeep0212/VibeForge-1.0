@@ -6,6 +6,7 @@ import BackgroundMusic from "@/components/BackgroundMusic";
 import { AuthProvider } from "@/context/AuthContext";
 import Preloader from "@/components/Preloader";
 import JsonLd from "@/components/SEO/JsonLd";
+import { GoogleAnalytics, GoogleTagManager } from '@next/third-parties/google';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -100,6 +101,8 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${casualPassion.variable} ${orbitron.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-sans">
+        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID || ""} />
+        <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_ID || ""} />
         <Preloader />
         <AuthProvider>
           <JsonLd />
