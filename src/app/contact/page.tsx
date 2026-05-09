@@ -50,9 +50,9 @@ const ContactPage = () => {
 
       {/* Background Image */}
       <div className="fixed top-24 sm:top-0 left-0 w-full h-[55vh] sm:h-full z-0 pointer-events-none">
-        <img 
-          src="/backgrounds/contactbg.png" 
-          alt="Contact Background" 
+        <img
+          src="/backgrounds/contactbg.png"
+          alt="Contact Background"
           className="w-full h-full object-cover object-center opacity-80 brightness-75"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black" />
@@ -60,7 +60,7 @@ const ContactPage = () => {
       <div className="relative z-20 pt-32 pb-20 px-6 md:px-24">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-20"
@@ -73,7 +73,7 @@ const ContactPage = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
             {/* Left Column: Info */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
@@ -87,12 +87,12 @@ const ContactPage = () => {
                   </h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="bg-white/5 backdrop-blur-md p-4 rounded-xl border border-white/10">
-                      <p className="font-bold">Rahul Sharma</p>
-                      <p className="text-neutral-400 text-sm">+91 98765 43210</p>
+                      <p className="font-bold">Kushankur Das</p>
+                      <p className="text-neutral-400 text-sm">+91 60022 06681</p>
                     </div>
-                    <div className="bg-white/5 backdrop-blur-md p-4 rounded-xl border border-white/10">
-                      <p className="font-bold">Priya Das</p>
-                      <p className="text-neutral-400 text-sm">+91 87654 32109</p>
+                    <div className="bg-white/5 backdrop-blur-md p-4 rounded-x l border border-white/10">
+                      <p className="font-bold">Sayandeep Pradhan</p>
+                      <p className="text-neutral-400 text-sm">+91 62962 86113</p>
                     </div>
                   </div>
                 </div>
@@ -143,18 +143,18 @@ const ContactPage = () => {
             </motion.div>
 
             {/* Right Column: Contact Form */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.4 }}
             >
               <div className="bg-black/40 backdrop-blur-3xl p-10 rounded-[2.5rem] border border-white/10 shadow-2xl relative overflow-hidden group">
                 <div className="absolute inset-0 bg-gradient-to-br from-red-600/5 to-transparent pointer-events-none" />
-                
+
                 <h2 className="text-3xl font-black mb-8 italic italic tracking-tight">SEND A MESSAGE</h2>
-                
+
                 {success ? (
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     className="text-center py-12"
@@ -162,7 +162,7 @@ const ContactPage = () => {
                     <CheckCircle className="w-16 h-16 text-green-400 mx-auto mb-4" />
                     <h3 className="text-2xl font-bold mb-2">Message Sent!</h3>
                     <p className="text-neutral-400 mb-8">We've received your inquiry and will get back to you soon.</p>
-                    <button 
+                    <button
                       onClick={() => setSuccess(false)}
                       className="text-yellow-300 font-bold tracking-widest hover:underline uppercase text-sm"
                     >
@@ -182,8 +182,8 @@ const ContactPage = () => {
                       <label className="text-xs font-bold text-neutral-500 uppercase tracking-widest ml-1">Your Name</label>
                       <div className="relative group/input">
                         <User className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-600 group-focus-within/input:text-yellow-300 transition-colors" />
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           required
                           placeholder="What should we call you?"
                           value={name}
@@ -198,8 +198,8 @@ const ContactPage = () => {
                       <label className="text-xs font-bold text-neutral-500 uppercase tracking-widest ml-1">Email Address</label>
                       <div className="relative group/input">
                         <Mail className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-600 group-focus-within/input:text-yellow-300 transition-colors" />
-                        <input 
-                          type="email" 
+                        <input
+                          type="email"
                           required
                           placeholder="ninja@shadow.com"
                           value={email}
@@ -212,7 +212,7 @@ const ContactPage = () => {
 
                     <div className="space-y-2">
                       <label className="text-xs font-bold text-neutral-500 uppercase tracking-widest ml-1">Message</label>
-                      <textarea 
+                      <textarea
                         required
                         rows={5}
                         placeholder="How can we help you on your quest?"
@@ -223,7 +223,7 @@ const ContactPage = () => {
                       />
                     </div>
 
-                    <motion.button 
+                    <motion.button
                       type="submit"
                       disabled={loading}
                       whileHover={{ scale: loading ? 1 : 1.02 }}
