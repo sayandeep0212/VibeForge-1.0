@@ -49,6 +49,7 @@ type CollegeFilter = 'all' | 'adamas' | 'external';
 export default function RegistrationsPage() {
   const router = useRouter();
   const [adminName, setAdminName] = useState('');
+  const [photoURL, setPhotoURL] = useState('');
   const [registrations, setRegistrations] = useState<Record<string, Registration>>({});
   const [userProfiles, setUserProfiles] = useState<Record<string, any>>({});
   const [loading, setLoading] = useState(true);
@@ -68,6 +69,7 @@ export default function RegistrationsPage() {
         const data = await res.json();
         if (!data.isLoggedIn) { router.push('/admin'); return; }
         setAdminName(data.user.name);
+        setPhotoURL(data.user.photoURL);
         fetchData();
       } catch { router.push('/admin'); }
     };
@@ -232,7 +234,7 @@ export default function RegistrationsPage() {
   };
 
   return (
-    <AdminLayout onLogout={() => router.push('/admin')} adminName={adminName}>
+    <AdminLayout onLogout={() => router.push('/admin')} adminName={adminName} photoURL={photoURL}>
       <div>
         {/* Stats Cards */}
         <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-9 gap-3 mb-6">

@@ -98,7 +98,7 @@ export default function AdminDashboardPage() {
   ];
 
   return (
-    <AdminLayout onLogout={handleLogout} adminName={adminSession.name || 'Admin'}>
+    <AdminLayout onLogout={handleLogout} adminName={adminSession.name || 'Admin'} photoURL={adminSession.photoURL}>
       <div>
         <h1 className="text-2xl font-black italic tracking-tighter text-white mb-1">
           ADMIN <span className="text-yellow-300">DASHBOARD</span>

@@ -233,7 +233,7 @@ export default function AdminMerchPage() {
   if (!adminSession) return null;
 
   return (
-    <AdminLayout onLogout={handleLogout} adminName={adminSession.name}>
+    <AdminLayout onLogout={handleLogout} adminName={adminSession.name} photoURL={adminSession.photoURL}>
       <div className="space-y-8">
         
         {/* Header */}

@@ -154,7 +154,7 @@ export default function AdminEntriesPage() {
   };
 
   return (
-    <AdminLayout adminName={adminSession?.name} onLogout={() => router.push('/admin')}>
+    <AdminLayout adminName={adminSession?.name} photoURL={adminSession?.photoURL} onLogout={() => router.push('/admin')}>
       <div className="space-y-8 pb-20">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>

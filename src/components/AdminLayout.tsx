@@ -11,9 +11,10 @@ interface AdminLayoutProps {
   children: React.ReactNode;
   onLogout: () => void;
   adminName: string;
+  photoURL?: string;
 }
 
-export default function AdminLayout({ children, onLogout, adminName }: AdminLayoutProps) {
+export default function AdminLayout({ children, onLogout, adminName, photoURL }: AdminLayoutProps) {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -94,8 +95,12 @@ export default function AdminLayout({ children, onLogout, adminName }: AdminLayo
         {/* Footer */}
         <div className="p-4 border-t border-white/5">
           <div className="flex items-center gap-3 mb-3 px-2">
-            <div className="w-8 h-8 rounded-full bg-yellow-300/10 flex items-center justify-center text-yellow-300 text-xs font-bold">
-              {adminName?.charAt(0) || 'A'}
+            <div className="w-8 h-8 rounded-full bg-yellow-300/10 flex items-center justify-center text-yellow-300 text-xs font-bold overflow-hidden border border-white/10">
+              {photoURL ? (
+                <img src={photoURL} alt={adminName} className="w-full h-full object-cover" />
+              ) : (
+                adminName?.charAt(0) || 'A'
+              )}
             </div>
             <div>
               <p className="text-white text-sm font-medium truncate">{adminName || 'Admin'}</p>

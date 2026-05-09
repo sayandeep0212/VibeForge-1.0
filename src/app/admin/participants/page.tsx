@@ -32,6 +32,7 @@ interface AdminSession {
   id: string;
   email: string;
   name: string;
+  photoURL?: string;
 }
 
 interface EditForm {
@@ -213,7 +214,7 @@ export default function ParticipantsPage() {
   if (!adminSession) return null;
 
   return (
-    <AdminLayout onLogout={handleLogout} adminName={adminSession.name || 'Admin'}>
+    <AdminLayout onLogout={handleLogout} adminName={adminSession.name || 'Admin'} photoURL={adminSession.photoURL}>
       <div>
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 gap-4">
           <div>

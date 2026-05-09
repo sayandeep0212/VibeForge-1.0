@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import {
   User as UserIcon, Mail, Phone, Lock, Camera, UserPlus,
-  AlertCircle, CheckCircle, Loader2, Shield, CalendarClock, ToggleLeft, ToggleRight
+  AlertCircle, CheckCircle, Loader2, Shield, CalendarClock, ToggleLeft, ToggleRight, Trash2
 } from 'lucide-react';
 import { uploadToImgBB } from '@/lib/imgbb';
 import { useRouter } from 'next/navigation';
@@ -50,6 +50,10 @@ export default function AdminSettingsPage() {
   const [addAdminSuccess, setAddAdminSuccess] = useState(false);
   const [addAdminError, setAddAdminError] = useState('');
 
+  // Admins list states
+  const [admins, setAdmins] = useState<any[]>([]);
+  const [adminsLoading, setAdminsLoading] = useState(true);
+
   // Registration control states
   const [regOpen, setRegOpen] = useState(true);
   const [regDeadline, setRegDeadline] = useState('');
@@ -74,7 +78,22 @@ export default function AdminSettingsPage() {
       });
     // Fetch registration settings
     fetchRegSettings();
+    fetchAdmins();
   }, [router]);
+
+  const fetchAdmins = async () => {
+    try {
+      const res = await fetch('/api/admin/list');
+      const data = await res.json();
+      if (data.admins) {
+        setAdmins(data.admins);
+      }
+    } catch (err) {
+      console.error('Error fetching admins:', err);
+    } finally {
+      setAdminsLoading(false);
+    }
+  };
 
   const fetchRegSettings = async () => {
     try {
@@ -230,12 +249,27 @@ export default function AdminSettingsPage() {
       setNewAdminEmail('');
       setNewAdminPassword('');
       setNewAdminName('');
+      fetchAdmins(); // Refresh the list
       setTimeout(() => setAddAdminSuccess(false), 3000);
     } catch (err: any) {
       console.error('Error adding admin:', err);
       setAddAdminError(err.message || 'Failed to add admin.');
     } finally {
       setAddAdminLoading(false);
+    }
+  };
+  const handleDeleteAdmin = async (id: string, name: string) => {
+    if (id === adminSession?.id) return;
+    if (!confirm(`Are you sure you want to delete admin "${name}"? This action cannot be undone.`)) return;
+
+    try {
+      const res = await fetch(`/api/admin/delete?id=${id}`, { method: 'DELETE' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to delete admin');
+      fetchAdmins(); // Refresh the list
+    } catch (err: any) {
+      console.error('Error deleting admin:', err);
+      alert(err.message || 'Failed to delete admin.');
     }
   };
 
@@ -246,7 +280,7 @@ export default function AdminSettingsPage() {
   if (!adminSession) return null;
 
   return (
-    <AdminLayout onLogout={handleLogout} adminName={adminSession.name}>
+    <AdminLayout onLogout={handleLogout} adminName={adminSession.name} photoURL={adminSession.photoURL}>
       <div className="max-w-2xl">
         <h1 className="text-2xl font-black italic tracking-tighter text-white mb-1">
           ADMIN <span className="text-yellow-300">SETTINGS</span>
@@ -519,6 +553,60 @@ export default function AdminSettingsPage() {
           >
             {addAdminLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Add Admin'}
           </button>
+        </motion.div>
+
+        {/* All Admins List Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="bg-black/40 border border-white/5 rounded-2xl p-6 mt-6"
+        >
+          <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <Shield className="w-5 h-5 text-yellow-300" />
+            All Administrators
+          </h2>
+
+          {adminsLoading ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="w-6 h-6 text-yellow-300 animate-spin" />
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {admins.map((admin) => (
+                <div key={admin.id} className="flex items-center justify-between p-4 bg-white/[0.02] rounded-xl border border-white/5 group hover:border-yellow-300/20 transition-all">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full overflow-hidden bg-yellow-300/10 border border-white/10 flex items-center justify-center text-yellow-300 font-bold">
+                      {admin.photoURL ? (
+                        <img src={admin.photoURL} alt={admin.name} className="w-full h-full object-cover" />
+                      ) : (
+                        admin.name?.charAt(0) || 'A'
+                      )}
+                    </div>
+                    <div>
+                      <p className="text-white font-medium">{admin.name}</p>
+                      <p className="text-neutral-500 text-xs">{admin.email}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    {admin.email === adminSession.email ? (
+                      <span className="text-[10px] bg-yellow-300/10 text-yellow-300 px-2 py-1 rounded-full border border-yellow-300/20 uppercase font-black tracking-tighter">
+                        You
+                      </span>
+                    ) : (
+                      <button
+                        onClick={() => handleDeleteAdmin(admin.id, admin.name)}
+                        className="p-2 text-neutral-500 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-all"
+                        title="Delete Admin"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </motion.div>
       </div>
     </AdminLayout>

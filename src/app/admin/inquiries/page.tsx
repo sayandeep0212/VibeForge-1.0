@@ -18,6 +18,7 @@ interface Inquiry {
 export default function AdminInquiriesPage() {
   const router = useRouter();
   const [adminName, setAdminName] = useState('');
+  const [photoURL, setPhotoURL] = useState('');
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -33,6 +34,7 @@ export default function AdminInquiriesPage() {
           return;
         }
         setAdminName(data.user.name);
+        setPhotoURL(data.user.photoURL);
         fetchInquiries();
       } catch (err) {
         console.error('Session check error:', err);
@@ -100,7 +102,7 @@ export default function AdminInquiriesPage() {
   });
 
   return (
-    <AdminLayout adminName={adminName} onLogout={() => router.push('/admin')}>
+    <AdminLayout adminName={adminName} photoURL={photoURL} onLogout={() => router.push('/admin')}>
       <div className="space-y-8">
         <div>
           <h1 className="text-2xl font-black italic tracking-tighter text-white mb-1 uppercase">

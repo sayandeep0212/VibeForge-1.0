@@ -14,6 +14,7 @@ type Tab = 'judges' | 'faculty' | 'coreTeam' | 'sponsors';
 export default function AdminContentPage() {
   const router = useRouter();
   const [adminName, setAdminName] = useState('');
+  const [photoURL, setPhotoURL] = useState('');
   const [activeTab, setActiveTab] = useState<Tab>('judges');
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -44,6 +45,7 @@ export default function AdminContentPage() {
         const data = await res.json();
         if (!data.isLoggedIn) { router.push('/admin'); return; }
         setAdminName(data.user.name);
+        setPhotoURL(data.user.photoURL);
         fetchItems(activeTab);
       } catch { router.push('/admin'); }
     };
@@ -162,7 +164,7 @@ export default function AdminContentPage() {
   };
 
   return (
-    <AdminLayout adminName={adminName} onLogout={() => router.push('/admin')}>
+    <AdminLayout adminName={adminName} photoURL={photoURL} onLogout={() => router.push('/admin')}>
       <div className="space-y-8">
         <div>
           <h1 className="text-2xl font-black italic tracking-tighter text-white mb-1 uppercase">

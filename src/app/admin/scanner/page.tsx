@@ -33,6 +33,7 @@ interface Registration {
 export default function AdminScannerPage() {
   const router = useRouter();
   const [adminName, setAdminName] = useState('');
+  const [photoURL, setPhotoURL] = useState('');
   const [loading, setLoading] = useState(true);
   const [manualId, setManualId] = useState('');
   const [scanResult, setScanResult] = useState<Registration | null>(null);
@@ -51,6 +52,7 @@ export default function AdminScannerPage() {
           return;
         }
         setAdminName(data.user.name);
+        setPhotoURL(data.user.photoURL);
         setLoading(false);
       });
 
@@ -158,7 +160,7 @@ export default function AdminScannerPage() {
   if (loading) return null;
 
   return (
-    <AdminLayout adminName={adminName} onLogout={() => router.push('/admin')}>
+    <AdminLayout adminName={adminName} photoURL={photoURL} onLogout={() => router.push('/admin')}>
       <div className="max-w-4xl mx-auto space-y-8 pb-20">
         <div>
           <h1 className="text-2xl font-black italic tracking-tighter text-white mb-1 uppercase">
