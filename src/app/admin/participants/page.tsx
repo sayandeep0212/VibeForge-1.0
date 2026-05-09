@@ -4,9 +4,9 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import {
   Search, Download, Star, StarOff, User as UserIcon,
-  Building2, Edit3, X, Save, Loader2
+  Building2, Edit3, Trash2, X, Save, Loader2
 } from 'lucide-react';
-import { ref, get, update } from 'firebase/database';
+import { ref, get, update, remove } from 'firebase/database';
 import { getDb } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import AdminLayout from '@/components/AdminLayout';
@@ -176,6 +176,25 @@ export default function ParticipantsPage() {
       alert('Failed to save changes.');
     } finally {
       setEditSaving(false);
+    }
+  };
+
+  const handleDelete = async (firebaseId: string) => {
+    const user = users[firebaseId];
+    if (!window.confirm(`Are you sure you want to delete participant "${user.name}"? This will remove their profile data permanently.`)) {
+      return;
+    }
+
+    try {
+      await remove(ref(getDb(), `users/${firebaseId}`));
+      setUsers(prev => {
+        const newUsers = { ...prev };
+        delete newUsers[firebaseId];
+        return newUsers;
+      });
+    } catch (err) {
+      console.error('Error deleting user:', err);
+      alert('Failed to delete participant.');
     }
   };
 
@@ -366,7 +385,7 @@ export default function ParticipantsPage() {
                     <th className="text-left p-4 text-neutral-500 font-medium text-xs uppercase tracking-wider">Program</th>
                     <th className="text-left p-4 text-neutral-500 font-medium text-xs uppercase tracking-wider">Phone</th>
                     <th className="text-left p-4 text-neutral-500 font-medium text-xs uppercase tracking-wider">Reg. No.</th>
-                    <th className="text-left p-4 text-neutral-500 font-medium text-xs uppercase tracking-wider">Edit</th>
+                    <th className="text-left p-4 text-neutral-500 font-medium text-xs uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -417,10 +436,16 @@ export default function ParticipantsPage() {
                       <td className="p-4 text-neutral-300 text-xs">{user.phone}</td>
                       <td className="p-4 text-neutral-300 text-xs font-mono">{user.registrationNumber || '—'}</td>
                       <td className="p-4">
-                        <button onClick={() => startEdit(firebaseId)}
-                          className="p-1.5 bg-white/5 hover:bg-white/10 text-neutral-500 hover:text-yellow-300 rounded-lg transition-all" title="Edit">
-                          <Edit3 className="w-3.5 h-3.5" />
-                        </button>
+                        <div className="flex items-center gap-1.5">
+                          <button onClick={() => startEdit(firebaseId)}
+                            className="p-1.5 bg-white/5 hover:bg-white/10 text-neutral-500 hover:text-yellow-300 rounded-lg transition-all" title="Edit">
+                            <Edit3 className="w-3.5 h-3.5" />
+                          </button>
+                          <button onClick={() => handleDelete(firebaseId)}
+                            className="p-1.5 bg-red-500/5 hover:bg-red-500/10 text-neutral-600 hover:text-red-400 rounded-lg transition-all" title="Delete">
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
                       </td>
                     </motion.tr>
                   ))}
