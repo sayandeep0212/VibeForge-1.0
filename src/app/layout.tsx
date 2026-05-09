@@ -45,8 +45,8 @@ export const metadata: Metadata = {
     images: ["https://www.yourwebsite.com/images/vibeforge-banner.jpg"],
   },
   icons: {
-    icon: "/Logos/logo.png",
-    apple: "/Logos/logo.png",
+    icon: "/Logos/logo.ico",
+    apple: "/Logos/logo.ico",
   },
 };
 

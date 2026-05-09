@@ -23,13 +23,19 @@
       ]
     },
     {
-      "source": "/favicon.ico",
+      "source": "/Logos/logo.ico",
       "headers": [
         {
           "key": "Cache-Control",
           "value": "public, max-age=86400"
         }
       ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/favicon.ico",
+      "destination": "/Logos/logo.ico"
     }
   ],
   "cleanUrls": true
