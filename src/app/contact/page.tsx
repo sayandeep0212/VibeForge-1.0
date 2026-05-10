@@ -38,8 +38,8 @@ const ContactPage = () => {
         await fetch('/api/contact/autoreply', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-            name: name.trim(), 
+          body: JSON.stringify({
+            name: name.trim(),
             email: email.trim().toLowerCase(),
             message: message.trim()
           }),
@@ -120,12 +120,12 @@ const ContactPage = () => {
                   </h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="bg-white/5 backdrop-blur-md p-4 rounded-xl border border-white/10">
-                      <p className="font-bold">Amit Patel</p>
-                      <p className="text-neutral-400 text-sm">+91 76543 21098</p>
+                      <p className="font-bold">Souvik Das</p>
+                      <p className="text-neutral-400 text-sm">+91 82407 49882</p>
                     </div>
                     <div className="bg-white/5 backdrop-blur-md p-4 rounded-xl border border-white/10">
-                      <p className="font-bold">Sneha Roy</p>
-                      <p className="text-neutral-400 text-sm">+91 65432 10987</p>
+                      <p className="font-bold">Saptaparni Saha</p>
+                      <p className="text-neutral-400 text-sm">+91 87775 93963</p>
                     </div>
                   </div>
                 </div>
