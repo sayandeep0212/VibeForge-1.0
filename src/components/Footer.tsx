@@ -168,8 +168,6 @@ const Footer = () => {
             </p>
             <p className="text-neutral-500 text-[10px] uppercase tracking-[0.2em]">
               Website developed by <a href="https://www.linkedin.com/in/sayandeep0212/" target="_blank" rel="noopener noreferrer" className="text-red-500 hover:text-red-400 font-bold transition-colors">Sayandeep Pradhan</a>
-              {' • '}
-              <Link href="/admin" className="text-neutral-700 hover:text-white transition-colors">Admin</Link>
             </p>
           </div>
           
