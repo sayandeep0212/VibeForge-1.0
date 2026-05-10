@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { resend } from '@/lib/resend';
-import { InquiryAutoReplyEmail } from '@/components/emails/InquiryAutoReply';
 import { checkRateLimit, apiLimiter } from '@/lib/rate-limit';
 
 export const dynamic = 'force-dynamic';
