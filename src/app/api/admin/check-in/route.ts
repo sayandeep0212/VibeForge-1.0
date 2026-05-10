@@ -5,43 +5,46 @@ import { adminDb } from '@/lib/firebase-admin';
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: Request) {
-  const session = await getSession();
-  if (!session.user?.isLoggedIn) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
-  const { searchParams } = new URL(req.url);
-  const id = searchParams.get('id');
-
-  if (!id) {
-    return NextResponse.json({ error: 'ID is required' }, { status: 400 });
-  }
-
   try {
+    const session = await getSession();
+    if (!session.user?.isLoggedIn) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get('id');
+
+    if (!id) {
+      return NextResponse.json({ error: 'ID is required' }, { status: 400 });
+    }
+
     const cleanId = id.trim().toUpperCase();
     
-    // Search by bookingId
-    const bookingSnap = await adminDb.ref('registrations')
+    // Search by bookingId using once('value') which is more reliable in some environments
+    const registrationsRef = adminDb.ref('registrations');
+    const bookingSnap = await registrationsRef
       .orderByChild('bookingId')
       .equalTo(cleanId)
-      .get();
+      .once('value');
 
     let registration = null;
     let regKey = null;
 
     if (bookingSnap.exists()) {
-      regKey = Object.keys(bookingSnap.val())[0];
-      registration = bookingSnap.val()[regKey];
+      const data = bookingSnap.val();
+      regKey = Object.keys(data)[0];
+      registration = data[regKey];
     } else {
       // Search by passId
-      const passSnap = await adminDb.ref('registrations')
+      const passSnap = await registrationsRef
         .orderByChild('passId')
         .equalTo(cleanId)
-        .get();
+        .once('value');
       
       if (passSnap.exists()) {
-        regKey = Object.keys(passSnap.val())[0];
-        registration = passSnap.val()[regKey];
+        const data = passSnap.val();
+        regKey = Object.keys(data)[0];
+        registration = data[regKey];
       }
     }
 
@@ -50,9 +53,12 @@ export async function GET(req: Request) {
     }
 
     return NextResponse.json({ id: regKey, ...registration });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Check-in search error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ 
+      error: 'Internal server error', 
+      details: error?.message || 'Unknown error' 
+    }, { status: 500 });
   }
 }
 

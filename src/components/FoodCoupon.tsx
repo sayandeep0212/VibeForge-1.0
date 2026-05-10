@@ -3,7 +3,7 @@
 import React, { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Download, Loader2, Utensils, Check } from 'lucide-react';
-import html2canvas from 'html2canvas';
+import * as htmlToImage from 'html-to-image';
 
 interface FoodCouponProps {
   userName: string;
@@ -19,14 +19,21 @@ export default function FoodCoupon({ userName, userUid }: FoodCouponProps) {
     if (!couponRef.current) return;
     setDownloading(true);
     try {
-      const canvas = await html2canvas(couponRef.current, {
-        scale: 3,
-        useCORS: true,
-        backgroundColor: null,
+      const dataUrl = await htmlToImage.toPng(couponRef.current, {
+        quality: 1.0,
+        pixelRatio: 3,
+        width: 1000,
+        height: 500,
+        style: {
+          width: '1000px',
+          height: '500px',
+          transform: 'none',
+        }
       });
+      
       const link = document.createElement('a');
       link.download = `food-coupon-${userUid}.png`;
-      link.href = canvas.toDataURL('image/png');
+      link.href = dataUrl;
       link.click();
       setDownloaded(true);
       setTimeout(() => setDownloaded(false), 3000);
@@ -56,12 +63,12 @@ export default function FoodCoupon({ userName, userUid }: FoodCouponProps) {
           <div className="absolute inset-0 bg-black/10" />
 
           {/* Dynamic Content Overlays - Positioned at Bottom Right per user request */}
-          <div className="absolute bottom-12 right-12 text-right z-10 pointer-events-none">
-            <div className="space-y-0.5">
-              <p className="text-white text-2xl md:text-4xl font-black uppercase tracking-tight drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)] leading-none">
+          <div className="absolute bottom-6 right-8 md:bottom-10 md:right-12 text-right z-10 pointer-events-none">
+            <div className="space-y-0">
+              <p className="text-white text-xl md:text-3xl font-black uppercase tracking-tight drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)] leading-tight">
                 {userName}
               </p>
-              <p className="text-white/90 font-mono text-sm md:text-xl font-bold tracking-widest drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)]">
+              <p className="text-white/90 font-mono text-[10px] md:text-lg font-bold tracking-[0.2em] drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)]">
                 UID : {userUid}
               </p>
             </div>

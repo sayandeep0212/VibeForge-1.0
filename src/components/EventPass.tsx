@@ -4,7 +4,7 @@ import React, { useRef } from 'react';
 import { motion } from 'framer-motion';
 import { QRCodeSVG } from 'qrcode.react';
 import { Download, Shield, Users, Trophy } from 'lucide-react';
-import html2canvas from 'html2canvas';
+import * as htmlToImage from 'html-to-image';
 
 interface EventPassProps {
   passId: string;
@@ -33,25 +33,26 @@ export default function EventPass({
   const handleDownload = async () => {
     if (!passRef.current) return;
     try {
-      const el = passRef.current;
-      
-      const canvas = await html2canvas(el, {
-        scale: 3,
-        useCORS: true,
-        backgroundColor: null,
-        logging: false,
-        onclone: (clonedDoc) => {
-          // Remove all style tags that might contain modern CSS functions like lab() or oklch()
-          // which html2canvas cannot parse.
-          const styles = clonedDoc.getElementsByTagName('style');
-          for (let i = 0; i < styles.length; i++) {
-            styles[i].remove();
-          }
+      // Small delay to ensure any pending renders are settled
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      const dataUrl = await htmlToImage.toPng(passRef.current, {
+        quality: 1.0,
+        pixelRatio: 3,
+        skipFonts: false,
+        cacheBust: true,
+        // Force the element to be captured at its intended size
+        style: {
+          width: '500px',
+          height: '700px',
+          transform: 'none',
+          margin: '0',
         }
       });
+      
       const link = document.createElement('a');
       link.download = `VibeForge_Pass_${teamName.replace(/\s+/g, '_')}.png`;
-      link.href = canvas.toDataURL('image/png', 1.0);
+      link.href = dataUrl;
       link.click();
     } catch (err) {
       console.error('Error generating pass image:', err);
@@ -74,11 +75,10 @@ export default function EventPass({
         </button>
       </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="relative w-full max-w-[500px] mx-auto aspect-[3/4.2] overflow-hidden rounded-[2rem] shadow-2xl"
+      <div
+        className="relative w-full max-w-[500px] mx-auto aspect-[3/4.2] overflow-hidden rounded-[2rem] shadow-2xl bg-black"
         ref={passRef}
+        id="event-pass-card"
       >
         {/* Background Image */}
         <div 
@@ -101,43 +101,43 @@ export default function EventPass({
         <div className="absolute left-[14.5%] top-[44.5%] w-[28%] space-y-[10.5%]">
           {/* Team Name */}
           <div className="h-[7%] flex flex-col justify-center">
-            <p className="text-[min(1.8vw,10px)] font-black uppercase text-red-500 tracking-tighter opacity-0">TEAM NAME</p>
-            <p className="text-[min(2.8vw,16px)] font-black text-white truncate drop-shadow-lg">
+            <p className="text-[10px] font-black uppercase text-red-500 tracking-tighter opacity-0">TEAM NAME</p>
+            <p className="text-[16px] font-black text-white truncate drop-shadow-lg leading-tight">
               {teamName}
             </p>
           </div>
 
           {/* Team ID */}
           <div className="h-[7%] flex flex-col justify-center mt-[22%]">
-            <p className="text-[min(1.8vw,10px)] font-black uppercase text-red-500 tracking-tighter opacity-0">TEAM ID</p>
-            <p className="text-[min(2.4vw,13px)] font-mono font-bold text-white truncate drop-shadow-lg">
+            <p className="text-[10px] font-black uppercase text-red-500 tracking-tighter opacity-0">TEAM ID</p>
+            <p className="text-[13px] font-mono font-bold text-white truncate drop-shadow-lg leading-tight">
               {bookingId || passId}
             </p>
           </div>
 
           {/* Team Captain */}
           <div className="h-[7%] flex flex-col justify-center mt-[22%]">
-            <p className="text-[min(1.8vw,10px)] font-black uppercase text-red-500 tracking-tighter opacity-0">TEAM CAPTAIN</p>
-            <p className="text-[min(2.8vw,16px)] font-black text-white truncate drop-shadow-lg mt-[3px]">
+            <p className="text-[10px] font-black uppercase text-red-500 tracking-tighter opacity-0">TEAM CAPTAIN</p>
+            <p className="text-[16px] font-black text-white truncate drop-shadow-lg leading-tight mt-[3px]">
               {leaderName}
             </p>
           </div>
 
           {/* Members */}
           <div className="h-[7%] flex flex-col justify-center mt-[22%]">
-            <p className="text-[min(1.8vw,10px)] font-black uppercase text-red-500 tracking-tighter opacity-0">MEMBERS</p>
-            <p className="text-[min(2.8vw,16px)] font-black text-white drop-shadow-lg mt-[3px]">
+            <p className="text-[10px] font-black uppercase text-red-500 tracking-tighter opacity-0">MEMBERS</p>
+            <p className="text-[16px] font-black text-white drop-shadow-lg leading-tight mt-[3px]">
               {members?.length || 1} {members?.length === 1 ? 'PERSON' : 'PEOPLE'}
             </p>
           </div>
         </div>
 
         {/* Bottom Status (Optional Overlay) */}
-        <div className="absolute top-[2%] right-[5%] flex items-center gap-1 px-3 py-1 bg-green-500/20 backdrop-blur-md border border-green-500/40 rounded-full scale-75 origin-right">
-          <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+        <div className="absolute top-[2%] right-[5%] flex items-center gap-1 px-3 py-1 bg-black/60 border border-green-500/40 rounded-full scale-75 origin-right">
+          <div className="w-2 h-2 bg-green-400 rounded-full" />
           <span className="text-green-400 text-[10px] font-black uppercase tracking-wider">Verified Pass</span>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }

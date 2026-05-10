@@ -120,10 +120,37 @@ export default function AdminScannerPage() {
       }
 
       setScanResult(data);
+
+      // AUTOMATIC CHECK-IN: If it's a scan (id is provided) and NOT already checked in
+      if (id && !data.checkedIn && data.status === 'approved') {
+        // We use a small delay to let the UI update first
+        setTimeout(() => {
+          autoCheckIn(data.id);
+        }, 500);
+      }
     } catch (err: any) {
       setError(err.message);
     } finally {
       setSearching(false);
+    }
+  };
+
+  const autoCheckIn = async (regId: string) => {
+    setCheckInLoading(true);
+    try {
+      const res = await fetch('/api/admin/check-in', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ regId })
+      });
+
+      if (res.ok) {
+        setScanResult(prev => prev ? { ...prev, checkedIn: true, checkedInAt: Date.now(), checkedInBy: adminName } : null);
+      }
+    } catch (err) {
+      console.error("Auto check-in failed", err);
+    } finally {
+      setCheckInLoading(false);
     }
   };
 

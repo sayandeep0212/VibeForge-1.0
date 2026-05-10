@@ -33,6 +33,7 @@ interface AuthContextType {
   user: User | null;
   userProfile: UserProfile | null;
   loading: boolean;
+  profileLoading: boolean;
   signUp: (email: string, password: string, name: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signInWithGoogle: () => Promise<void>;
@@ -47,8 +48,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [profileLoading, setProfileLoading] = useState(false);
 
   const fetchUserProfile = useCallback(async (firebaseUser: User) => {
+    setProfileLoading(true);
     try {
       const userRef = ref(db!, `users/${firebaseUser.uid}`);
       const snapshot = await get(userRef);
@@ -60,6 +63,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (error) {
       console.error('Error fetching user profile:', error);
       setUserProfile(null);
+    } finally {
+      setProfileLoading(false);
     }
   }, []);
 
@@ -121,6 +126,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         user,
         userProfile,
         loading,
+        profileLoading,
         signUp,
         signIn,
         signInWithGoogle,

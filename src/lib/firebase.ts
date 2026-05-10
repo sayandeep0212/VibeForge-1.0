@@ -1,5 +1,12 @@
 import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, GithubAuthProvider, Auth } from 'firebase/auth';
+import { 
+  getAuth, 
+  GoogleAuthProvider, 
+  GithubAuthProvider, 
+  Auth,
+  setPersistence,
+  browserLocalPersistence
+} from 'firebase/auth';
 import { getDatabase, Database } from 'firebase/database';
 import { getAnalytics, Analytics } from 'firebase/analytics';
 
@@ -26,6 +33,12 @@ let analytics: Analytics | null = null;
 if (isConfigured) {
   app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
   auth = getAuth(app);
+  
+  // Set persistence to local to prevent session loss on mobile browsers
+  if (typeof window !== 'undefined') {
+    setPersistence(auth, browserLocalPersistence).catch(console.error);
+  }
+  
   db = getDatabase(app);
   
   // Analytics only works in the browser

@@ -9,7 +9,7 @@ import {
   Download, ChevronRight, User, Mail, Phone, Info
 } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import html2canvas from 'html2canvas';
+import * as htmlToImage from 'html-to-image';
 import { useAuth } from '@/context/AuthContext';
 
 declare global {
@@ -237,16 +237,13 @@ function MerchContent() {
   const downloadReceipt = async () => {
     if (!receiptRef.current) return;
     try {
-      // Ensure the receipt is temporarily visible for capture but positioned off-screen
-      const canvas = await html2canvas(receiptRef.current, {
+      const dataUrl = await htmlToImage.toPng(receiptRef.current, {
         backgroundColor: '#000000',
-        scale: 2,
-        logging: false,
-        useCORS: true
+        pixelRatio: 2,
       });
       const link = document.createElement('a');
       link.download = `receipt-${successOrder.id}.png`;
-      link.href = canvas.toDataURL('image/png');
+      link.href = dataUrl;
       link.click();
     } catch (err) {
       console.error('Error downloading receipt:', err);

@@ -10,20 +10,20 @@ interface AuthGuardProps {
 }
 
 export default function AuthGuard({ children, requireProfile = false }: AuthGuardProps) {
-  const { user, userProfile, loading } = useAuth();
+  const { user, userProfile, loading, profileLoading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading) {
+    if (!loading && !profileLoading) {
       if (!user) {
         router.push('/signin');
       } else if (requireProfile && (!userProfile || !userProfile.profileComplete)) {
         router.push('/profile/setup');
       }
     }
-  }, [user, userProfile, loading, requireProfile, router]);
+  }, [user, userProfile, loading, profileLoading, requireProfile, router]);
 
-  if (loading) {
+  if (loading || (requireProfile && profileLoading)) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
