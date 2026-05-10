@@ -9,7 +9,7 @@ import * as htmlToImage from 'html-to-image';
 interface EventPassProps {
   teamName: string;
   leaderName: string;
-  bookingId: string;
+  bookingId?: string;
   passId: string;
   type: 'individual' | 'team';
   members: any[];
