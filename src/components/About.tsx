@@ -55,11 +55,11 @@ export default function About() {
               </div>
               <div className="text-center border-r border-white/10">
                 <p className="text-[10px] text-neutral-500 uppercase tracking-widest mb-1">DURATION</p>
-                <p className="text-lg font-black text-white italic">5 HRS</p>
+                <p className="text-lg font-black text-white italic">12 HRS</p>
               </div>
               <div className="text-center">
                 <p className="text-[10px] text-neutral-500 uppercase tracking-widest mb-1">THEME</p>
-                <p className="text-[10px] font-black text-red-500 italic uppercase leading-tight">ON SPOT<br/>DECLARATION</p>
+                <p className="text-[10px] font-black text-red-500 italic uppercase leading-tight">ON SPOT<br />DECLARATION</p>
               </div>
             </div>
           </motion.div>

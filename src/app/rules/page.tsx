@@ -9,7 +9,7 @@ import { ShieldCheck, Info, AlertTriangle, CheckCircle2 } from 'lucide-react';
 export default function RulesPage() {
   const rules = [
     "Every participant must complete registration before entering the event.",
-    "Teams can consist of a maximum of 4 members. Solo participation is also allowed.",
+    "Teams can consist of a maximum of 3 members. Solo participation is also allowed.",
     "Participants must build and deploy their web development project within the allocated 5-hour timeframe.",
     "Pre-built or previously completed projects are strictly prohibited. Basic templates, libraries, and open-source resources are allowed.",
     "All participants are required to bring their own laptops, chargers, and necessary accessories.",
@@ -25,7 +25,7 @@ export default function RulesPage() {
   return (
     <main className="min-h-screen bg-black overflow-hidden relative">
       <Navbar />
-      
+
       {/* Background Decorative Elements */}
       <div className="fixed inset-0 z-0">
         <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(220,38,38,0.1),transparent_70%)]" />
@@ -57,7 +57,7 @@ export default function RulesPage() {
           <div className="bg-neutral-900/40 backdrop-blur-xl border border-white/5 rounded-[2.5rem] p-8 md:p-16 shadow-2xl relative overflow-hidden">
             {/* Top Bar Accent */}
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-red-500 to-transparent" />
-            
+
             <div className="grid grid-cols-1 gap-6">
               {rules.map((rule, index) => (
                 <motion.div
@@ -83,7 +83,7 @@ export default function RulesPage() {
             </div>
 
             {/* Warning Box */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               className="mt-16 p-8 rounded-3xl bg-red-600/5 border border-red-600/20 flex flex-col md:row items-center gap-6"
@@ -101,8 +101,8 @@ export default function RulesPage() {
           {/* Quick Support Link */}
           <div className="mt-12 text-center">
             <p className="text-neutral-500 text-sm font-sans mb-4">Have questions regarding the regulations?</p>
-            <a 
-              href="mailto:adamasgamingclub@gmail.com" 
+            <a
+              href="mailto:adamasgamingclub@gmail.com"
               className="inline-flex items-center gap-2 text-yellow-300 hover:text-white transition-colors font-bold uppercase tracking-widest text-xs border-b border-yellow-300/30 pb-1"
             >
               Contact Event Coordinators

@@ -48,7 +48,7 @@ const Faq = () => {
     },
     {
       question: "What is the team size?",
-      answer: "Participants can join individually or as a team of up to 4 members. Solo participation is also allowed!"
+      answer: "Participants can join individually or as a team of up to 3 members. Solo participation is also allowed!"
     },
     {
       question: "Is there any registration fee?",

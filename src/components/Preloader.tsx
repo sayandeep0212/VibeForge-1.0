@@ -117,7 +117,7 @@ export default function Preloader() {
               className="text-sm sm:text-xl md:text-2xl font-light tracking-[0.2em] sm:tracking-[0.3em] text-yellow-300 uppercase mb-8 text-center px-4"
               style={{ fontFamily: "var(--font-orbitron), sans-serif" }}
             >
-              5-Hrs Vibe Coding Hackathon
+              12-Hrs Vibe Coding Hackathon
             </p>
 
             <motion.div

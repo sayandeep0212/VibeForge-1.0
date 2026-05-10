@@ -46,7 +46,7 @@ export default function Home() {
             className="text-sm sm:text-lg md:text-2xl font-light tracking-[0.2em] md:tracking-[0.3em] text-yellow-300 uppercase mb-2 md:mb-10"
             style={{ fontFamily: "var(--font-orbitron), sans-serif" }}
           >
-            5-Hrs Vibe Coding Inter College Hackathon
+            12-Hrs Vibe Coding Inter College Hackathon
           </p>
 
           {/* Event Date */}
