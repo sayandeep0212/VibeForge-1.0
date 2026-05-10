@@ -14,7 +14,6 @@ import { ref, get, set, push, query, orderByChild, equalTo } from 'firebase/data
 import { db } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import { nanoid } from 'nanoid';
-import emailjs from '@emailjs/browser';
 
 declare global {
   interface Window {
@@ -276,26 +275,6 @@ function RegisterContent() {
     });
   };
 
-  const sendRegistrationEmail = async (emails: string[], teamName: string, type: string) => {
-    try {
-      const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
-      const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
-      const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
-
-      if (!serviceId || !templateId || !publicKey) return;
-
-      for (const email of emails) {
-        await emailjs.send(serviceId, templateId, {
-          to_email: email,
-          team_name: teamName,
-          registration_type: type,
-          event_name: 'VibeForge 1.0',
-        }, publicKey);
-      }
-    } catch (err) {
-      console.error('Error sending email:', err);
-    }
-  };
 
   const handlePayment = async () => {
     setError('');
@@ -430,9 +409,7 @@ function RegisterContent() {
         throw new Error(errData.error || 'Verification failed');
       }
 
-      // Send confirmation emails
-      const allEmails = members.map((m) => m.email);
-      await sendRegistrationEmail(allEmails, teamName.trim(), participationType === 'team' ? 'Team' : 'Individual');
+      // Email is now handled by the server-side verify API
 
       setPaymentSuccess(true);
       setLoading(false);

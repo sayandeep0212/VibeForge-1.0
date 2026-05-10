@@ -3,6 +3,7 @@ import crypto from 'crypto';
 import { adminDb } from '@/lib/firebase-admin';
 import { z } from 'zod';
 import { checkRateLimit, apiLimiter } from '@/lib/rate-limit';
+import { resend } from '@/lib/resend';
 
 export const dynamic = 'force-dynamic';
 
@@ -68,6 +69,32 @@ export async function POST(req: Request) {
 
     const newRegRef = adminDb.ref('registrations').push();
     await newRegRef.set(finalData);
+
+    // Send confirmation emails
+    try {
+      const leader = registrationData.members.find(m => m.firebaseId === registrationData.leaderId) || registrationData.members[0];
+      const allEmails = registrationData.members.map(m => m.email);
+      
+      // Send to each member
+      await Promise.all(registrationData.members.map(member => 
+        resend.emails.send({
+          from: 'GameLiminals Tech Team <registrations@vibeforge-1-0.tech>',
+          to: member.email,
+          subject: 'Registration Successful - VibeForge 1.0',
+          template: {
+            id: process.env.RESEND_PENDING_TEMPLATE_ID!,
+            variables: {
+              teamName: registrationData.teamName,
+              leaderName: member.name,
+              registrationId: newRegRef.key || 'N/A',
+              amount: registrationData.amount,
+            },
+          },
+        })
+      ));
+    } catch (emailError) {
+      console.error('Error sending registration emails:', emailError);
+    }
 
     return NextResponse.json({ success: true, registrationId: newRegRef.key });
   } catch (error) {

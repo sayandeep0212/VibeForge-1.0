@@ -129,12 +129,32 @@ export default function RegistrationsPage() {
   };
 
   const handleApprove = async (regId: string) => {
-    const passId = `PASS-${nanoid(6).toUpperCase()}`;
-    const bookingId = `BOOK-${nanoid(8).toUpperCase()}`;
     try {
-      await update(ref(getDb(), `registrations/${regId}`), { status: 'approved', passId, bookingId });
-      setRegistrations(prev => ({ ...prev, [regId]: { ...prev[regId], status: 'approved', passId, bookingId } }));
-    } catch (err) { console.error('Error approving:', err); }
+      const res = await fetch('/api/admin/registrations/approve', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ registrationId: regId }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Failed to approve');
+      }
+
+      const data = await res.json();
+      setRegistrations(prev => ({ 
+        ...prev, 
+        [regId]: { 
+          ...prev[regId], 
+          status: 'approved', 
+          passId: data.passId, 
+          bookingId: data.bookingId 
+        } 
+      }));
+    } catch (err: any) { 
+      console.error('Error approving:', err); 
+      alert(err.message || 'Failed to approve');
+    }
   };
 
   const handleReject = async (regId: string) => {
@@ -172,14 +192,24 @@ export default function RegistrationsPage() {
   const saveEdit = async () => {
     if (!editingId) return;
     try {
-      const updates: any = { teamName: editForm.teamName, status: editForm.status };
-      if (editForm.status === 'approved' && !registrations[editingId].passId) {
-        updates.passId = `PASS-${nanoid(6).toUpperCase()}`;
-        updates.bookingId = `BOOK-${nanoid(8).toUpperCase()}`;
+      // If status is changed to approved, use the approval API
+      if (editForm.status === 'approved' && registrations[editingId].status !== 'approved') {
+        await handleApprove(editingId);
+        // Also update team name if it was changed
+        if (editForm.teamName !== registrations[editingId].teamName) {
+          await update(ref(getDb(), `registrations/${editingId}`), { teamName: editForm.teamName });
+          setRegistrations(prev => ({ ...prev, [editingId!]: { ...prev[editingId!], teamName: editForm.teamName } }));
+        }
+      } else {
+        const updates: any = { teamName: editForm.teamName, status: editForm.status };
+        if (editForm.status === 'approved' && !registrations[editingId].passId) {
+          updates.passId = `PASS-${nanoid(6).toUpperCase()}`;
+          updates.bookingId = `BOOK-${nanoid(8).toUpperCase()}`;
+        }
+        if (editForm.status === 'rejected') { updates.passId = ''; }
+        await update(ref(getDb(), `registrations/${editingId}`), updates);
+        setRegistrations(prev => ({ ...prev, [editingId!]: { ...prev[editingId!], ...updates } }));
       }
-      if (editForm.status === 'rejected') { updates.passId = ''; }
-      await update(ref(getDb(), `registrations/${editingId}`), updates);
-      setRegistrations(prev => ({ ...prev, [editingId!]: { ...prev[editingId!], ...updates } }));
       setEditingId(null);
     } catch (err) { console.error('Error saving edit:', err); }
   };
