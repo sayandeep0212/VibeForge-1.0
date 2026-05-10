@@ -44,7 +44,7 @@ const ContactPage = () => {
     }
   };
   return (
-    <main className="relative min-h-screen bg-black text-white selection:bg-yellow-300 selection:text-black overflow-hidden">
+    <main className="relative min-h-screen bg-black text-white selection:bg-yellow-300 selection:text-black overflow-x-hidden">
       {/* Navigation */}
       <Navbar />
 
@@ -68,7 +68,7 @@ const ContactPage = () => {
             <h1 className="text-5xl sm:text-6xl md:text-8xl font-black tracking-tighter mb-4 italic text-yellow-300">
               CONTACT <span className="text-red-400 text-shadow-glow">US</span>
             </h1>
-            <p className="text-sm sm:text-xl text-neutral-400 tracking-[0.5em] uppercase">The Ninja Network</p>
+            <p className="text-[10px] sm:text-xl text-neutral-400 tracking-[0.3em] sm:tracking-[0.5em] uppercase">The Ninja Network</p>
           </motion.div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
@@ -82,7 +82,7 @@ const ContactPage = () => {
               {/* Coordinators Section */}
               <div className="space-y-8">
                 <div>
-                  <h2 className="text-xl sm:text-2xl font-bold uppercase tracking-widest mb-6 flex items-center gap-2 sm:gap-3">
+                  <h2 className="text-lg sm:text-2xl font-bold uppercase tracking-wider sm:tracking-widest mb-6 flex items-center gap-2 sm:gap-3">
                     <User className="w-5 h-5 sm:w-6 sm:h-6 text-red-400" /> <span className="text-yellow-300">Student</span> <span className="text-white">Coordinators</span>
                   </h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -90,7 +90,7 @@ const ContactPage = () => {
                       <p className="font-bold">Kushankur Das</p>
                       <p className="text-neutral-400 text-sm">+91 60022 06681</p>
                     </div>
-                    <div className="bg-white/5 backdrop-blur-md p-4 rounded-x l border border-white/10">
+                    <div className="bg-white/5 backdrop-blur-md p-4 rounded-xl border border-white/10">
                       <p className="font-bold">Sayandeep Pradhan</p>
                       <p className="text-neutral-400 text-sm">+91 62962 86113</p>
                     </div>
@@ -98,7 +98,7 @@ const ContactPage = () => {
                 </div>
 
                 <div>
-                  <h2 className="text-xl sm:text-2xl font-bold uppercase tracking-widest mb-6 flex items-center gap-2 sm:gap-3">
+                  <h2 className="text-lg sm:text-2xl font-bold uppercase tracking-wider sm:tracking-widest mb-6 flex items-center gap-2 sm:gap-3">
                     <User className="w-5 h-5 sm:w-6 sm:h-6 text-red-400" /> <span className="text-yellow-300">Event</span> <span className="text-white">Coordinators</span>
                   </h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
