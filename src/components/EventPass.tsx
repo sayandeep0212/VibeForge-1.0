@@ -99,7 +99,7 @@ export default function EventPass({
         <div className="absolute left-[14.5%] top-[44.5%] w-[28%] space-y-[10.5%]">
           {/* Team Name */}
           <div className="h-[7%] flex flex-col justify-center">
-            <p className="text-[min(1.8vw,10px)] font-black uppercase text-red-500 tracking-tighter opacity-0">TEAM NAME</p>
+            <p className="text-[min(1.8vw,10px)] font-black uppercase text-red-500 tracking-tighter">TEAM NAME</p>
             <p className="text-[min(2.8vw,16px)] font-black text-white truncate drop-shadow-lg">
               {teamName}
             </p>
@@ -107,7 +107,7 @@ export default function EventPass({
 
           {/* Team ID */}
           <div className="h-[7%] flex flex-col justify-center mt-[22%]">
-            <p className="text-[min(1.8vw,10px)] font-black uppercase text-red-500 tracking-tighter opacity-0">TEAM ID</p>
+            <p className="text-[min(1.8vw,10px)] font-black uppercase text-red-500 tracking-tighter">TEAM ID</p>
             <p className="text-[min(2.4vw,13px)] font-mono font-bold text-white truncate drop-shadow-lg">
               {bookingId || passId}
             </p>
@@ -115,16 +115,16 @@ export default function EventPass({
 
           {/* Team Captain */}
           <div className="h-[7%] flex flex-col justify-center mt-[22%]">
-            <p className="text-[min(1.8vw,10px)] font-black uppercase text-red-500 tracking-tighter opacity-0">TEAM CAPTAIN</p>
-            <p className="text-[min(2.8vw,16px)] font-black text-white truncate drop-shadow-lg">
+            <p className="text-[min(1.8vw,10px)] font-black uppercase text-red-500 tracking-tighter">TEAM CAPTAIN</p>
+            <p className="text-[min(2.8vw,16px)] font-black text-white truncate drop-shadow-lg mt-0.5">
               {leaderName}
             </p>
           </div>
 
           {/* Members */}
           <div className="h-[7%] flex flex-col justify-center mt-[22%]">
-            <p className="text-[min(1.8vw,10px)] font-black uppercase text-red-500 tracking-tighter opacity-0">MEMBERS</p>
-            <p className="text-[min(2.8vw,16px)] font-black text-white drop-shadow-lg">
+            <p className="text-[min(1.8vw,10px)] font-black uppercase text-red-500 tracking-tighter">MEMBERS</p>
+            <p className="text-[min(2.8vw,16px)] font-black text-white drop-shadow-lg mt-0.5">
               {members?.length || 1} {members?.length === 1 ? 'PERSON' : 'PEOPLE'}
             </p>
           </div>
