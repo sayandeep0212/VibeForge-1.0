@@ -3,93 +3,83 @@
 import React, { useRef } from 'react';
 import { motion } from 'framer-motion';
 import { QRCodeSVG } from 'qrcode.react';
-import { Download, Shield, Users, Trophy } from 'lucide-react';
+import { Download, Loader2, Info } from 'lucide-react';
 import * as htmlToImage from 'html-to-image';
 
 interface EventPassProps {
-  passId: string;
-  bookingId?: string;
   teamName: string;
-  type: 'individual' | 'team';
-  members: Array<{
-    firebaseId: string;
-    uid: string;
-    name: string;
-    email: string;
-  }>;
   leaderName: string;
+  bookingId: string;
+  passId: string;
+  type: 'individual' | 'team';
+  members: any[];
 }
 
-export default function EventPass({ 
-  passId, 
-  bookingId, 
-  teamName, 
-  type, 
-  members, 
-  leaderName 
-}: EventPassProps) {
+const EventPass: React.FC<EventPassProps> = ({
+  teamName,
+  leaderName,
+  bookingId,
+  passId,
+  type,
+  members
+}) => {
   const passRef = useRef<HTMLDivElement>(null);
+  const [downloading, setDownloading] = React.useState(false);
 
   const handleDownload = async () => {
     if (!passRef.current) return;
+    setDownloading(true);
     try {
-      // Small delay to ensure any pending renders are settled
-      await new Promise(resolve => setTimeout(resolve, 100));
-
       const dataUrl = await htmlToImage.toPng(passRef.current, {
-        quality: 1.0,
         pixelRatio: 3,
-        skipFonts: false,
-        cacheBust: true,
-        // Force the element to be captured at its intended size
-        style: {
-          width: '500px',
-          height: '700px',
-          transform: 'none',
-          margin: '0',
-        }
+        quality: 1,
       });
-      
+
       const link = document.createElement('a');
-      link.download = `VibeForge_Pass_${teamName.replace(/\s+/g, '_')}.png`;
+      link.download = `VibeForge-Pass-${bookingId || passId}.png`;
       link.href = dataUrl;
       link.click();
     } catch (err) {
       console.error('Error generating pass image:', err);
-      alert('Failed to download pass. Please try using a screenshot instead.');
+    } finally {
+      setDownloading(false);
     }
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-bold text-white flex items-center gap-2">
-          <Trophy className="w-5 h-5 text-yellow-300" />
-          Official Event Pass
-        </h3>
-        <button
-          onClick={handleDownload}
-          className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-xs font-bold uppercase tracking-widest text-neutral-400 hover:text-white transition-all"
-        >
-          <Download className="w-4 h-4" /> Download Pass
-        </button>
+    <div className="flex flex-col items-center gap-6">
+      <div className="flex items-center gap-3 bg-blue-500/10 border border-blue-500/20 p-4 rounded-2xl max-w-md">
+        <Info className="w-5 h-5 text-blue-400 shrink-0" />
+        <p className="text-blue-200 text-xs leading-relaxed">
+          Your official event pass is ready. Show this QR code at the entry gate for check-in.
+        </p>
       </div>
 
-      <div
-        className="relative w-full max-w-[500px] mx-auto aspect-[3/4.2] overflow-hidden rounded-[2rem] shadow-2xl bg-black"
-        ref={passRef}
-        id="event-pass-card"
+      <button
+        onClick={handleDownload}
+        disabled={downloading}
+        className="w-full bg-red-600 hover:bg-red-700 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-sm transition-all shadow-[0_0_20px_rgba(220,38,38,0.3)] disabled:opacity-50 flex items-center justify-center gap-2"
       >
-        {/* Background Image */}
-        <div 
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: "url('/media/eventpass.png')" }}
+        {downloading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Download className="w-5 h-5" />}
+        {downloading ? 'GENERATING...' : 'SAVE TO GALLERY'}
+      </button>
+
+      {/* Actual Pass for Capture */}
+      <div
+        ref={passRef}
+        className="relative w-[400px] h-[560px] bg-black overflow-hidden select-none"
+      >
+        {/* Physical Card Background */}
+        <img
+          src="/media/eventpass.png"
+          alt="Event Pass Background"
+          className="absolute inset-0 w-full h-full object-cover"
         />
 
-        {/* QR Code Area (Top Left White Box) */}
-        <div className="absolute top-[8.5%] left-[5.5%] w-[33.5%] aspect-square bg-white flex items-center justify-center p-[2%] rounded-lg">
-          <QRCodeSVG 
-            value={bookingId || passId} 
+        {/* QR Code Container - Matches Reference Image Exactly */}
+        <div className="absolute left-[6%] top-[10%] w-[30%] aspect-square bg-white p-[6px] rounded-[5px]">
+          <QRCodeSVG
+            value={bookingId || passId}
             size={512}
             level="H"
             includeMargin={false}
@@ -97,47 +87,39 @@ export default function EventPass({
           />
         </div>
 
-        {/* Left Side Content - Labels Area */}
-        <div className="absolute left-[14.5%] top-[44.5%] w-[28%] space-y-[10.5%]">
-          {/* Team Name */}
-          <div className="h-[7%] flex flex-col justify-center">
-            <p className="text-[10px] font-black uppercase text-red-500 tracking-tighter opacity-0">TEAM NAME</p>
-            <p className="text-[16px] font-black text-white truncate drop-shadow-lg leading-tight">
+        {/* Dynamic Values Overlay - Mapped to your visual guide */}
+        <div className="absolute left-[14.5%] top-[42.2%] w-[32%]">
+          {/* Team Name Slot */}
+          <div className="h-[48px] flex flex-col justify-end pb-1">
+            <p className="text-white text-[12.5px] font-black uppercase tracking-tight leading-none drop-shadow-lg truncate">
               {teamName}
             </p>
           </div>
 
-          {/* Team ID */}
-          <div className="h-[7%] flex flex-col justify-center mt-[22%]">
-            <p className="text-[10px] font-black uppercase text-red-500 tracking-tighter opacity-0">TEAM ID</p>
-            <p className="text-[13px] font-mono font-bold text-white truncate drop-shadow-lg leading-tight">
+          {/* Team ID Slot */}
+          <div className="h-[48px] mt-[4px] flex flex-col justify-end pb-1">
+            <p className="text-white text-[12px] font-bold font-mono tracking-widest leading-none drop-shadow-lg truncate">
               {bookingId || passId}
             </p>
           </div>
 
-          {/* Team Captain */}
-          <div className="h-[7%] flex flex-col justify-center mt-[22%]">
-            <p className="text-[10px] font-black uppercase text-red-500 tracking-tighter opacity-0">TEAM CAPTAIN</p>
-            <p className="text-[16px] font-black text-white truncate drop-shadow-lg leading-tight mt-[3px]">
+          {/* Team Captain Slot */}
+          <div className="h-[55px] mt-[7px] flex flex-col justify-end pb-1">
+            <p className="text-white text-[12.5px] font-black uppercase tracking-tight leading-none drop-shadow-lg truncate">
               {leaderName}
             </p>
           </div>
 
-          {/* Members */}
-          <div className="h-[7%] flex flex-col justify-center mt-[22%]">
-            <p className="text-[10px] font-black uppercase text-red-500 tracking-tighter opacity-0">MEMBERS</p>
-            <p className="text-[16px] font-black text-white drop-shadow-lg leading-tight mt-[3px]">
-              {members?.length || 1} {members?.length === 1 ? 'PERSON' : 'PEOPLE'}
+          {/* Members Slot */}
+          <div className="h-[50px] mt-[7px] flex flex-col justify-end pb-1">
+            <p className="text-white text-[12.5px] font-black uppercase tracking-tight leading-none drop-shadow-lg">
+              {type === 'team' ? `${members?.length || 1} MEMBERS` : '1 MEMBER'}
             </p>
           </div>
-        </div>
-
-        {/* Bottom Status (Optional Overlay) */}
-        <div className="absolute top-[2%] right-[5%] flex items-center gap-1 px-3 py-1 bg-black/60 border border-green-500/40 rounded-full scale-75 origin-right">
-          <div className="w-2 h-2 bg-green-400 rounded-full" />
-          <span className="text-green-400 text-[10px] font-black uppercase tracking-wider">Verified Pass</span>
         </div>
       </div>
     </div>
   );
-}
+};
+
+export default EventPass;
