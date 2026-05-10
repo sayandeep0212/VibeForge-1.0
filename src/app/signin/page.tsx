@@ -8,6 +8,7 @@ import { Mail, Lock, AlertCircle, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
+import { auth } from '@/lib/firebase';
 
 function SignInContent() {
   const [email, setEmail] = useState('');
@@ -85,8 +86,8 @@ function SignInContent() {
       await signInWithGoogle();
       handleRedirect();
     } catch (err: unknown) {
-      // If the user is actually signed in (onAuthStateChanged fired), ignore the error
-      if (auth.currentUser) {
+      // Check if user is actually signed in despite the reported error
+      if (auth && auth.currentUser) {
         handleRedirect();
       } else {
         setError(getFriendlyErrorMessage(err));
@@ -103,7 +104,7 @@ function SignInContent() {
       await signInWithGitHub();
       handleRedirect();
     } catch (err: unknown) {
-      if (auth.currentUser) {
+      if (auth && auth.currentUser) {
         handleRedirect();
       } else {
         setError(getFriendlyErrorMessage(err));

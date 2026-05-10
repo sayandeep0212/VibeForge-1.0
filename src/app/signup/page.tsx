@@ -8,6 +8,7 @@ import { Mail, Lock, User, AlertCircle, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
+import { auth } from '@/lib/firebase';
 
 function SignUpContent() {
   const [name, setName] = useState('');
@@ -89,7 +90,7 @@ function SignUpContent() {
       await signInWithGoogle();
       handleRedirect();
     } catch (err: unknown) {
-      if (auth.currentUser) {
+      if (auth && auth.currentUser) {
         handleRedirect();
       } else {
         setError(getFriendlyErrorMessage(err));
@@ -106,7 +107,7 @@ function SignUpContent() {
       await signInWithGitHub();
       handleRedirect();
     } catch (err: unknown) {
-      if (auth.currentUser) {
+      if (auth && auth.currentUser) {
         handleRedirect();
       } else {
         setError(getFriendlyErrorMessage(err));
