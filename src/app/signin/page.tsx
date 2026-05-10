@@ -50,6 +50,34 @@ function SignInContent() {
     }
   };
 
+  const getFriendlyErrorMessage = (err: any) => {
+    const code = err.code;
+    const message = err.message || '';
+    
+    if (code === 'auth/popup-closed-by-user') {
+      return 'The sign-in popup was closed before completion. Please try again.';
+    }
+    if (code === 'auth/cancelled-popup-request') {
+      return 'Only one sign-in popup can be open at a time.';
+    }
+    if (code === 'auth/unauthorized-domain') {
+      return 'This domain is not authorized for authentication. Please contact the administrator.';
+    }
+    if (code === 'auth/internal-error' || message.includes('DynamicConfigService')) {
+      return 'Authentication service is temporarily blocked. Please refresh and try again.';
+    }
+    if (code === 'auth/user-not-found') {
+      return 'No account found with this email.';
+    }
+    if (code === 'auth/wrong-password') {
+      return 'Incorrect password.';
+    }
+    if (code === 'auth/invalid-credential') {
+      return 'Invalid email or password.';
+    }
+    return 'An unexpected error occurred. Please try again.';
+  };
+
   const handleGoogleSignIn = async () => {
     setError('');
     setLoading(true);
@@ -57,8 +85,12 @@ function SignInContent() {
       await signInWithGoogle();
       handleRedirect();
     } catch (err: unknown) {
-      const firebaseError = err as { message?: string };
-      setError(firebaseError.message || 'Failed to sign in with Google.');
+      // If the user is actually signed in (onAuthStateChanged fired), ignore the error
+      if (auth.currentUser) {
+        handleRedirect();
+      } else {
+        setError(getFriendlyErrorMessage(err));
+      }
     } finally {
       setLoading(false);
     }
@@ -71,8 +103,11 @@ function SignInContent() {
       await signInWithGitHub();
       handleRedirect();
     } catch (err: unknown) {
-      const firebaseError = err as { message?: string };
-      setError(firebaseError.message || 'Failed to sign in with GitHub.');
+      if (auth.currentUser) {
+        handleRedirect();
+      } else {
+        setError(getFriendlyErrorMessage(err));
+      }
     } finally {
       setLoading(false);
     }

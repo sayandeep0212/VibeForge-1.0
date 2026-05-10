@@ -57,6 +57,31 @@ function SignUpContent() {
     }
   };
 
+  const getFriendlyErrorMessage = (err: any) => {
+    const code = err.code;
+    const message = err.message || '';
+    
+    if (code === 'auth/popup-closed-by-user') {
+      return 'The sign-in popup was closed before completion. Please try again.';
+    }
+    if (code === 'auth/cancelled-popup-request') {
+      return 'Only one sign-in popup can be open at a time.';
+    }
+    if (code === 'auth/unauthorized-domain') {
+      return 'This domain is not authorized for authentication. Please contact the administrator.';
+    }
+    if (code === 'auth/internal-error' || message.includes('DynamicConfigService')) {
+      return 'Authentication service is temporarily blocked. Please refresh and try again.';
+    }
+    if (code === 'auth/email-already-in-use') {
+      return 'An account with this email already exists.';
+    }
+    if (code === 'auth/weak-password') {
+      return 'Password should be at least 6 characters.';
+    }
+    return 'An unexpected error occurred. Please try again.';
+  };
+
   const handleGoogleSignUp = async () => {
     setError('');
     setLoading(true);
@@ -64,8 +89,11 @@ function SignUpContent() {
       await signInWithGoogle();
       handleRedirect();
     } catch (err: unknown) {
-      const firebaseError = err as { message?: string };
-      setError(firebaseError.message || 'Failed to sign up with Google.');
+      if (auth.currentUser) {
+        handleRedirect();
+      } else {
+        setError(getFriendlyErrorMessage(err));
+      }
     } finally {
       setLoading(false);
     }
@@ -78,8 +106,11 @@ function SignUpContent() {
       await signInWithGitHub();
       handleRedirect();
     } catch (err: unknown) {
-      const firebaseError = err as { message?: string };
-      setError(firebaseError.message || 'Failed to sign up with GitHub.');
+      if (auth.currentUser) {
+        handleRedirect();
+      } else {
+        setError(getFriendlyErrorMessage(err));
+      }
     } finally {
       setLoading(false);
     }
