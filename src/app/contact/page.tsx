@@ -22,6 +22,7 @@ const ContactPage = () => {
     setError('');
 
     try {
+      // 1. Save to Firebase
       const inquiryRef = ref(getDb(), 'inquiries');
       const newInquiryRef = push(inquiryRef);
       await set(newInquiryRef, {
@@ -31,6 +32,22 @@ const ContactPage = () => {
         status: 'new',
         createdAt: Date.now()
       });
+
+      // 2. Trigger Automated Email Reply
+      try {
+        await fetch('/api/contact/autoreply', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            name: name.trim(), 
+            email: email.trim().toLowerCase(),
+            message: message.trim()
+          }),
+        });
+      } catch (emailErr) {
+        console.error('Failed to send automated reply:', emailErr);
+        // We don't show an error to the user here because the inquiry is already saved
+      }
 
       setSuccess(true);
       setName('');
