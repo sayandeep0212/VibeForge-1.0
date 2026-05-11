@@ -41,3 +41,28 @@ export async function GET() {
     return NextResponse.json([], { status: 200 }); // Return empty array on error to prevent UI crash
   }
 }
+
+export async function DELETE(request: Request) {
+  const session = await getSession();
+  if (!session.user?.isLoggedIn) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  try {
+    const { id } = await request.json();
+    if (!id) {
+      return NextResponse.json({ error: 'Missing ID' }, { status: 400 });
+    }
+
+    await adminDb.ref(`registrations/${id}`).update({
+      checkedIn: false,
+      checkedInAt: null,
+      checkedInBy: null
+    });
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Delete check-in log error:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  }
+}

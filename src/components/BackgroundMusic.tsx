@@ -27,48 +27,47 @@ const BackgroundMusic: React.FC<BackgroundMusicProps> = ({ audioUrl }) => {
     const isMuted = savedMuteStatus === 'true';
     setUserMuted(isMuted);
 
-    // 2. Initialize Audio Instance
+    // 2. Initialize or Update Audio Instance
     if (!audioRef.current) {
       audioRef.current = new Audio(audioUrl);
       audioRef.current.loop = true;
       audioRef.current.volume = 0.3;
-    } else {
+    } else if (audioRef.current.src !== new URL(audioUrl, window.location.href).href) {
       audioRef.current.src = audioUrl;
     }
 
     const audio = audioRef.current;
 
     // 3. Play Logic
-    const attemptPlay = () => {
-      // Don't play if user manually muted in previous session
+    const startAudio = () => {
       if (localStorage.getItem('bg-music-muted') === 'true') {
         setIsPlaying(false);
         return;
       }
 
       audio.play()
-        .then(() => setIsPlaying(true))
+        .then(() => {
+          setIsPlaying(true);
+          // Cleanup listeners once playing
+          document.removeEventListener('click', startAudio);
+          document.removeEventListener('touchstart', startAudio);
+          document.removeEventListener('scroll', startAudio);
+        })
         .catch(() => {
           // Autoplay blocked: wait for interaction
           setIsPlaying(false);
-          const handleInteraction = () => {
-            if (localStorage.getItem('bg-music-muted') !== 'true') {
-              audio.play().then(() => {
-                setIsPlaying(true);
-                document.removeEventListener('click', handleInteraction);
-                document.removeEventListener('touchstart', handleInteraction);
-              }).catch(e => console.log("Interaction play failed:", e));
-            }
-          };
-          document.addEventListener('click', handleInteraction);
-          document.addEventListener('touchstart', handleInteraction); // Better for mobile
+          document.addEventListener('click', startAudio, { once: true });
+          document.addEventListener('touchstart', startAudio, { once: true });
+          document.addEventListener('scroll', startAudio, { once: true });
         });
     };
 
-    attemptPlay();
+    startAudio();
 
     return () => {
-      if (audio) audio.pause();
+      document.removeEventListener('click', startAudio);
+      document.removeEventListener('touchstart', startAudio);
+      document.removeEventListener('scroll', startAudio);
     };
   }, [audioUrl]);
 

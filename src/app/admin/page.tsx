@@ -19,8 +19,9 @@ export default function AdminLoginPage() {
     const checkSession = async () => {
       try {
         const res = await fetch('/api/admin/session');
+        if (!res.ok) return;
         const data = await res.json();
-        if (data.isLoggedIn) {
+        if (data && data.isLoggedIn) {
           router.push('/admin/dashboard');
         }
       } catch (err) {

@@ -104,8 +104,9 @@ function DashboardContent() {
     setMerchLoading(true);
     try {
       const res = await fetch(`/api/user/merch-orders?uid=${userProfile.uid}`);
+      if (!res.ok) throw new Error('Could not fetch merch orders');
       const data = await res.json();
-      if (!data.error) setMerchOrders(data);
+      if (data && !data.error) setMerchOrders(data);
     } catch (error) {
       console.error('Error fetching merch orders:', error);
     } finally {

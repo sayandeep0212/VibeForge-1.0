@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Shield, Search, Download, CheckCircle, 
   Clock, Users, User, FileText, Table as TableIcon,
-  Loader2, Filter, ChevronDown, ChevronUp, ExternalLink
+  Loader2, Filter, ChevronDown, ChevronUp, ExternalLink, Trash2
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import * as XLSX from 'xlsx';
@@ -96,6 +96,29 @@ export default function AdminEntriesPage() {
     if (newExpanded.has(id)) newExpanded.delete(id);
     else newExpanded.add(id);
     setExpandedRows(newExpanded);
+  };
+
+  const handleDelete = async (e: React.MouseEvent, id: string, teamName: string) => {
+    e.stopPropagation();
+    if (!confirm(`Are you sure you want to delete the entry for "${teamName}"? This will reset their check-in status.`)) return;
+
+    try {
+      const res = await fetch('/api/admin/check-in/logs', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id })
+      });
+
+      if (res.ok) {
+        setLogs(prev => prev.filter(log => log.id !== id));
+      } else {
+        const data = await res.json();
+        alert(data.error || 'Failed to delete entry');
+      }
+    } catch (err) {
+      console.error('Delete error:', err);
+      alert('An error occurred while deleting');
+    }
   };
 
   const exportData = (format: 'excel' | 'csv' | 'json', mode: 'team' | 'individual') => {
@@ -304,7 +327,16 @@ export default function AdminEntriesPage() {
                           </div>
                         </td>
                         <td className="p-4">
-                          {expandedRows.has(log.id) ? <ChevronUp className="w-4 h-4 text-neutral-500" /> : <ChevronDown className="w-4 h-4 text-neutral-500" />}
+                          <div className="flex items-center gap-4">
+                            <button
+                              onClick={(e) => handleDelete(e, log.id, log.teamName)}
+                              className="p-2 text-neutral-500 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all"
+                              title="Delete Entry"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                            {expandedRows.has(log.id) ? <ChevronUp className="w-4 h-4 text-neutral-500" /> : <ChevronDown className="w-4 h-4 text-neutral-500" />}
+                          </div>
                         </td>
                       </tr>
                       

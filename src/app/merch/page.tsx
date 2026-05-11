@@ -85,8 +85,9 @@ function MerchContent() {
   const fetchOrder = async (id: string) => {
     try {
       const res = await fetch(`/api/merch/order?id=${id}`);
+      if (!res.ok) throw new Error('Order not found');
       const data = await res.json();
-      if (!data.error) {
+      if (data && !data.error) {
         setSuccessOrder({
           id: data.id,
           name: data.name,
@@ -108,8 +109,9 @@ function MerchContent() {
   const fetchPrices = async () => {
     try {
       const res = await fetch('/api/merch/settings');
+      if (!res.ok) throw new Error('Settings not available');
       const data = await res.json();
-      if (!data.error) setPrices(data);
+      if (data && !data.error) setPrices(data);
     } catch (err) {
       console.error('Error fetching prices:', err);
     }
