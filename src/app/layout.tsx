@@ -31,7 +31,7 @@ const casualPassion = localFont({
 export const metadata: Metadata = {
   metadataBase: new URL("https://vibeforge-1-0.tech"),
   title: "VibeForge 1.0 | 12-Hour Intercollege Hackathon by GameLiminals",
-  description: "Join VibeForge 1.0, an epic 12-hour intercollege hackathon experience featuring a 5-hour intense vibe coding phase. Presented by GameLiminals at Adamas University.",
+  description: "Join VibeForge 1.0, an epic 12-hour intercollege hackathon experience. Presented by GameLiminals at Adamas University.",
   keywords: [
     "VibeForge 1.0",
     "GameLiminals",
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
     "university clubs",
     "event related inquiries",
     "12hrs inter college hackathon",
-    "5-hour coding phase",
+    "12-hour coding phase",
     "vibe coding hackathon",
     "game development club Kolkata",
     "game development club West Bengal",
@@ -55,7 +55,7 @@ export const metadata: Metadata = {
   authors: [{ name: "GameLiminals" }],
   openGraph: {
     title: "VibeForge 1.0 | 12-Hour Intercollege Hackathon Experience",
-    description: "12 hours of networking, learning, and 5 hours of intense coding. Join VibeForge 1.0 by GameLiminals at Adamas University.",
+    description: "12 hours of networking, learning, and intense coding. Join VibeForge 1.0 by GameLiminals at Adamas University.",
     url: "https://vibeforge-1-0.tech",
     siteName: "VibeForge 1.0",
     locale: "en_US",
@@ -72,7 +72,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "VibeForge 1.0 | 12-Hour Intercollege Hackathon Experience",
-    description: "Join VibeForge 1.0, a 12-hour intercollege event featuring a 5-hour coding phase by GameLiminals.",
+    description: "Join VibeForge 1.0, a 12-hour intercollege event by GameLiminals.",
     images: ["/images/vibeforge-banner.png"],
     creator: "@GameLiminals",
   },

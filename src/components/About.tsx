@@ -97,7 +97,7 @@ export default function About() {
 
                 <div className="p-4 bg-white/5 rounded-xl border border-white/10">
                   <p className="text-sm text-cyan-400 font-sans font-bold italic">
-                    "People will vibe-code working websites and deploy in a timeframe of 5 hours."
+                    "People will vibe-code working websites and deploy in a timeframe of 12 hours."
                   </p>
                 </div>
 
