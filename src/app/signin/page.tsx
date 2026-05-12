@@ -76,33 +76,6 @@ function SignInContent() {
     }
   };
 
-  const getFriendlyErrorMessage = (err: any) => {
-    const code = err.code;
-    const message = err.message || '';
-    
-    if (code === 'auth/popup-closed-by-user') {
-      return 'The sign-in popup was closed before completion. Please try again.';
-    }
-    if (code === 'auth/cancelled-popup-request') {
-      return 'Only one sign-in popup can be open at a time.';
-    }
-    if (code === 'auth/unauthorized-domain') {
-      return 'This domain is not authorized for authentication. Please contact the administrator.';
-    }
-    if (code === 'auth/internal-error' || message.includes('DynamicConfigService')) {
-      return 'Authentication service is temporarily blocked. Please refresh and try again.';
-    }
-    if (code === 'auth/user-not-found') {
-      return 'No account found with this email.';
-    }
-    if (code === 'auth/wrong-password') {
-      return 'Incorrect password.';
-    }
-    if (code === 'auth/invalid-credential') {
-      return 'Invalid email or password.';
-    }
-    return 'An unexpected error occurred. Please try again.';
-  };
 
   const handleGoogleSignIn = async () => {
     setError('');
@@ -111,11 +84,22 @@ function SignInContent() {
       await signInWithGoogle();
       await redirectAfterOAuth();
     } catch (err: unknown) {
-      // Check if user is actually signed in despite the reported error
+      const e = err as { code?: string; message?: string };
+      const code = e?.code;
+      // Silently ignore popup lifecycle events — not real errors
+      if (code === 'auth/cancelled-popup-request' || code === 'auth/popup-closed-by-user') {
+        setLoading(false);
+        return;
+      }
+      // Check if user actually signed in despite a non-auth error
       if (auth && auth.currentUser) {
         await redirectAfterOAuth();
+      } else if (code === 'auth/unauthorized-domain') {
+        setError('This domain is not authorized. Please contact the administrator.');
+      } else if (code === 'auth/internal-error' || (e?.message || '').includes('DynamicConfigService')) {
+        setError('Authentication service temporarily unavailable. Please refresh and try again.');
       } else {
-        setError(getFriendlyErrorMessage(err));
+        setError('Sign-in failed. Please try again.');
       }
     } finally {
       setLoading(false);
@@ -129,10 +113,18 @@ function SignInContent() {
       await signInWithGitHub();
       await redirectAfterOAuth();
     } catch (err: unknown) {
+      const e = err as { code?: string; message?: string };
+      const code = e?.code;
+      if (code === 'auth/cancelled-popup-request' || code === 'auth/popup-closed-by-user') {
+        setLoading(false);
+        return;
+      }
       if (auth && auth.currentUser) {
         await redirectAfterOAuth();
+      } else if (code === 'auth/unauthorized-domain') {
+        setError('This domain is not authorized. Please contact the administrator.');
       } else {
-        setError(getFriendlyErrorMessage(err));
+        setError('Sign-in failed. Please try again.');
       }
     } finally {
       setLoading(false);
