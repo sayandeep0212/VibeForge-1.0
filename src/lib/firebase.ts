@@ -8,7 +8,6 @@ import {
   browserLocalPersistence
 } from 'firebase/auth';
 import { getDatabase, Database } from 'firebase/database';
-import { getAnalytics, Analytics } from 'firebase/analytics';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -18,7 +17,6 @@ const firebaseConfig = {
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
   databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL,
-  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
 // Check if Firebase config is available
@@ -28,7 +26,6 @@ const isConfigured = !!firebaseConfig.apiKey;
 let app: FirebaseApp | null = null;
 let auth: Auth | null = null;
 let db: Database | null = null;
-let analytics: Analytics | null = null;
 
 if (isConfigured) {
   app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
@@ -40,15 +37,6 @@ if (isConfigured) {
   }
   
   db = getDatabase(app);
-  
-  // Analytics only works in the browser — fail silently if blocked (ad blockers, API key restrictions)
-  if (typeof window !== 'undefined') {
-    try {
-      analytics = getAnalytics(app);
-    } catch {
-      // Analytics blocked or unavailable — not critical
-    }
-  }
 }
 
 // OAuth Providers
@@ -66,4 +54,4 @@ function getFirebaseAuth(): Auth {
   return auth;
 }
 
-export { app, auth, db, analytics, googleProvider, githubProvider, isConfigured, getDb, getFirebaseAuth };
+export { app, auth, db, googleProvider, githubProvider, isConfigured, getDb, getFirebaseAuth };
