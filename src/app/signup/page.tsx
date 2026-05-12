@@ -8,6 +8,8 @@ import { User, Mail, Lock, AlertCircle, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
+import { auth, db } from '@/lib/firebase';
+import { ref, get } from 'firebase/database';
 
 export default function SignupPage() {
   const [name, setName] = useState('');
@@ -39,14 +41,48 @@ export default function SignupPage() {
     }
   };
 
+  // After OAuth sign-in, check if user has a completed profile
+  const redirectAfterOAuth = async () => {
+    const currentUser = auth?.currentUser;
+    if (!currentUser) {
+      router.push('/profile/setup');
+      return;
+    }
+    try {
+      const snapshot = await get(ref(db!, `users/${currentUser.uid}`));
+      if (snapshot.exists() && snapshot.val().profileComplete) {
+        router.push('/dashboard');
+      } else {
+        router.push('/profile/setup');
+      }
+    } catch {
+      router.push('/profile/setup');
+    }
+  };
+
+  const getFriendlyErrorMessage = (err: any) => {
+    const code = err?.code;
+    const message = err?.message || '';
+    if (code === 'auth/popup-closed-by-user') return 'The sign-in popup was closed. Please try again.';
+    if (code === 'auth/cancelled-popup-request') return 'Only one sign-in popup can be open at a time.';
+    if (code === 'auth/unauthorized-domain') return 'This domain is not authorized. Please contact the administrator.';
+    if (code === 'auth/internal-error' || message.includes('DynamicConfigService')) return 'Authentication service is temporarily blocked. Please refresh and try again.';
+    return 'An unexpected error occurred. Please try again.';
+  };
+
   const handleGoogleSignIn = async () => {
     setError('');
     setLoading(true);
     try {
       await signInWithGoogle();
-      router.push('/dashboard');
+      await redirectAfterOAuth();
     } catch (err: any) {
-      setError('Google sign-in failed. Please try again.');
+      // Check if the user actually signed in despite an analytics/non-auth error
+      if (auth?.currentUser) {
+        await redirectAfterOAuth();
+      } else {
+        setError(getFriendlyErrorMessage(err));
+      }
     } finally {
       setLoading(false);
     }
@@ -57,9 +93,13 @@ export default function SignupPage() {
     setLoading(true);
     try {
       await signInWithGitHub();
-      router.push('/dashboard');
+      await redirectAfterOAuth();
     } catch (err: any) {
-      setError('GitHub sign-in failed. Please try again.');
+      if (auth?.currentUser) {
+        await redirectAfterOAuth();
+      } else {
+        setError(getFriendlyErrorMessage(err));
+      }
     } finally {
       setLoading(false);
     }

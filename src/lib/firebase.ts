@@ -41,9 +41,13 @@ if (isConfigured) {
   
   db = getDatabase(app);
   
-  // Analytics only works in the browser
+  // Analytics only works in the browser — fail silently if blocked (ad blockers, API key restrictions)
   if (typeof window !== 'undefined') {
-    analytics = getAnalytics(app);
+    try {
+      analytics = getAnalytics(app);
+    } catch {
+      // Analytics blocked or unavailable — not critical
+    }
   }
 }
 
