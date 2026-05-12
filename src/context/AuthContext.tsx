@@ -5,7 +5,8 @@ import {
   onAuthStateChanged,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   signOut as firebaseSignOut,
   updateProfile,
   User,
@@ -80,6 +81,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
+    // Handle the result when user returns from Google/GitHub redirect sign-in.
+    // Must be called before onAuthStateChanged to ensure the redirect credential
+    // is processed and the resulting auth state change is captured.
+    getRedirectResult(auth).catch(() => {
+      // Redirect was cancelled or failed — onAuthStateChanged handles the user state
+    });
+
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setUser(firebaseUser);
       if (firebaseUser) {
@@ -104,14 +112,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await signInWithEmailAndPassword(auth, email, password);
   };
 
+  // Uses signInWithRedirect instead of signInWithPopup.
+  // Eliminates the "INTERNAL ASSERTION FAILED: Pending promise was never set"
+  // Firebase SDK bug caused by the popup-to-iframe messaging race condition.
   const signInWithGoogle = async () => {
     if (!auth) throw new Error('Firebase not configured');
-    await signInWithPopup(auth, googleProvider);
+    await signInWithRedirect(auth, googleProvider);
   };
 
   const signInWithGitHub = async () => {
     if (!auth) throw new Error('Firebase not configured');
-    await signInWithPopup(auth, githubProvider);
+    await signInWithRedirect(auth, githubProvider);
   };
 
   const signOutUser = async () => {

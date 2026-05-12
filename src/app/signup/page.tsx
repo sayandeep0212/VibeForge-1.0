@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { motion } from 'framer-motion';
@@ -8,8 +8,6 @@ import { User, Mail, Lock, AlertCircle, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { auth, db } from '@/lib/firebase';
-import { ref, get } from 'firebase/database';
 
 export default function SignupPage() {
   const [name, setName] = useState('');
@@ -18,7 +16,31 @@ export default function SignupPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { signUp, signInWithGoogle, signInWithGitHub } = useAuth();
+  const {
+    signUp,
+    signInWithGoogle,
+    signInWithGitHub,
+    user,
+    userProfile,
+    loading: authLoading,
+    profileLoading,
+  } = useAuth();
+
+  // After OAuth redirect back to app: user & profile are set by AuthContext.
+  // Route to dashboard or profile setup depending on profile completeness.
+  useEffect(() => {
+    if (authLoading || profileLoading) return;
+    if (!user) return;
+    if (typeof window === 'undefined') return;
+    const pending = sessionStorage.getItem('oauth_redirect_pending');
+    if (!pending) return;
+    sessionStorage.removeItem('oauth_redirect_pending');
+    if (userProfile?.profileComplete) {
+      router.push('/dashboard');
+    } else {
+      router.push('/profile/setup');
+    }
+  }, [user, userProfile, authLoading, profileLoading, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,54 +63,16 @@ export default function SignupPage() {
     }
   };
 
-  // After OAuth sign-in, check if user has a completed profile
-  const redirectAfterOAuth = async () => {
-    const currentUser = auth?.currentUser;
-    if (!currentUser) {
-      router.push('/profile/setup');
-      return;
-    }
-    try {
-      const snapshot = await get(ref(db!, `users/${currentUser.uid}`));
-      if (snapshot.exists() && snapshot.val().profileComplete) {
-        router.push('/dashboard');
-      } else {
-        router.push('/profile/setup');
-      }
-    } catch {
-      router.push('/profile/setup');
-    }
-  };
-
   const handleGoogleSignIn = async () => {
     setError('');
     setLoading(true);
     try {
+      sessionStorage.setItem('oauth_redirect_pending', '1');
       await signInWithGoogle();
-      await redirectAfterOAuth();
+      // Page redirects to Google — nothing below runs
     } catch (err: any) {
-      const code = err?.code;
-      // Silently ignore popup lifecycle events — not real errors:
-      // cancelled-popup-request = Firebase cancelled a stale popup to open a new one
-      // popup-closed-by-user = user dismissed without signing in (self-explanatory, no message needed)
-      if (code === 'auth/cancelled-popup-request' || code === 'auth/popup-closed-by-user') {
-        setLoading(false);
-        return;
-      }
-      // Check if the user actually signed in despite a non-auth error
-      if (auth?.currentUser) {
-        await redirectAfterOAuth();
-      } else {
-        const message = err?.message || '';
-        if (code === 'auth/unauthorized-domain') {
-          setError('This domain is not authorized. Please contact the administrator.');
-        } else if (code === 'auth/internal-error' || message.includes('DynamicConfigService')) {
-          setError('Authentication service temporarily unavailable. Please refresh and try again.');
-        } else {
-          setError('Sign-in failed. Please try again.');
-        }
-      }
-    } finally {
+      sessionStorage.removeItem('oauth_redirect_pending');
+      setError('Failed to initiate Google sign-in. Please try again.');
       setLoading(false);
     }
   };
@@ -97,27 +81,12 @@ export default function SignupPage() {
     setError('');
     setLoading(true);
     try {
+      sessionStorage.setItem('oauth_redirect_pending', '1');
       await signInWithGitHub();
-      await redirectAfterOAuth();
+      // Page redirects to GitHub — nothing below runs
     } catch (err: any) {
-      const code = err?.code;
-      if (code === 'auth/cancelled-popup-request' || code === 'auth/popup-closed-by-user') {
-        setLoading(false);
-        return;
-      }
-      if (auth?.currentUser) {
-        await redirectAfterOAuth();
-      } else {
-        const message = err?.message || '';
-        if (code === 'auth/unauthorized-domain') {
-          setError('This domain is not authorized. Please contact the administrator.');
-        } else if (code === 'auth/internal-error' || message.includes('DynamicConfigService')) {
-          setError('Authentication service temporarily unavailable. Please refresh and try again.');
-        } else {
-          setError('Sign-in failed. Please try again.');
-        }
-      }
-    } finally {
+      sessionStorage.removeItem('oauth_redirect_pending');
+      setError('Failed to initiate GitHub sign-in. Please try again.');
       setLoading(false);
     }
   };

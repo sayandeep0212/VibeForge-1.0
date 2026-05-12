@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, Suspense } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { motion } from 'framer-motion';
@@ -8,8 +8,6 @@ import { Mail, Lock, AlertCircle, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { auth, db } from '@/lib/firebase';
-import { ref, get } from 'firebase/database';
 
 function SignInContent() {
   const [email, setEmail] = useState('');
@@ -18,40 +16,41 @@ function SignInContent() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { signIn, signInWithGoogle, signInWithGitHub } = useAuth();
+  const {
+    signIn,
+    signInWithGoogle,
+    signInWithGitHub,
+    user,
+    userProfile,
+    loading: authLoading,
+    profileLoading,
+  } = useAuth();
 
+  // Email/password redirect (synchronous — user stays on page)
   const handleRedirect = () => {
     const redirect = searchParams.get('redirect');
-    if (redirect) {
-      router.push(redirect);
-    } else {
-      router.push('/dashboard');
-    }
+    router.push(redirect || '/dashboard');
   };
 
-  // Profile-aware redirect for OAuth sign-ins
-  const redirectAfterOAuth = async () => {
-    const redirect = searchParams.get('redirect');
-    if (redirect) {
-      router.push(redirect);
-      return;
-    }
-    const currentUser = auth?.currentUser;
-    if (!currentUser) {
-      router.push('/profile/setup');
-      return;
-    }
-    try {
-      const snapshot = await get(ref(db!, `users/${currentUser.uid}`));
-      if (snapshot.exists() && snapshot.val().profileComplete) {
-        router.push('/dashboard');
-      } else {
-        router.push('/profile/setup');
-      }
-    } catch {
+  // After OAuth redirect back to app: route based on profile completeness.
+  // Respects ?redirect= query param for protected page redirects.
+  useEffect(() => {
+    if (authLoading || profileLoading) return;
+    if (!user) return;
+    if (typeof window === 'undefined') return;
+    const pending = sessionStorage.getItem('oauth_redirect_pending');
+    if (!pending) return;
+    sessionStorage.removeItem('oauth_redirect_pending');
+    const redirectTarget = sessionStorage.getItem('oauth_redirect_target');
+    sessionStorage.removeItem('oauth_redirect_target');
+    if (redirectTarget) {
+      router.push(redirectTarget);
+    } else if (userProfile?.profileComplete) {
       router.push('/dashboard');
+    } else {
+      router.push('/profile/setup');
     }
-  };
+  }, [user, userProfile, authLoading, profileLoading, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,32 +75,19 @@ function SignInContent() {
     }
   };
 
-
   const handleGoogleSignIn = async () => {
     setError('');
     setLoading(true);
     try {
+      const redirect = searchParams.get('redirect');
+      if (redirect) sessionStorage.setItem('oauth_redirect_target', redirect);
+      sessionStorage.setItem('oauth_redirect_pending', '1');
       await signInWithGoogle();
-      await redirectAfterOAuth();
-    } catch (err: unknown) {
-      const e = err as { code?: string; message?: string };
-      const code = e?.code;
-      // Silently ignore popup lifecycle events — not real errors
-      if (code === 'auth/cancelled-popup-request' || code === 'auth/popup-closed-by-user') {
-        setLoading(false);
-        return;
-      }
-      // Check if user actually signed in despite a non-auth error
-      if (auth && auth.currentUser) {
-        await redirectAfterOAuth();
-      } else if (code === 'auth/unauthorized-domain') {
-        setError('This domain is not authorized. Please contact the administrator.');
-      } else if (code === 'auth/internal-error' || (e?.message || '').includes('DynamicConfigService')) {
-        setError('Authentication service temporarily unavailable. Please refresh and try again.');
-      } else {
-        setError('Sign-in failed. Please try again.');
-      }
-    } finally {
+      // Page redirects to Google — nothing below runs
+    } catch (err: any) {
+      sessionStorage.removeItem('oauth_redirect_pending');
+      sessionStorage.removeItem('oauth_redirect_target');
+      setError('Failed to initiate Google sign-in. Please try again.');
       setLoading(false);
     }
   };
@@ -110,23 +96,15 @@ function SignInContent() {
     setError('');
     setLoading(true);
     try {
+      const redirect = searchParams.get('redirect');
+      if (redirect) sessionStorage.setItem('oauth_redirect_target', redirect);
+      sessionStorage.setItem('oauth_redirect_pending', '1');
       await signInWithGitHub();
-      await redirectAfterOAuth();
-    } catch (err: unknown) {
-      const e = err as { code?: string; message?: string };
-      const code = e?.code;
-      if (code === 'auth/cancelled-popup-request' || code === 'auth/popup-closed-by-user') {
-        setLoading(false);
-        return;
-      }
-      if (auth && auth.currentUser) {
-        await redirectAfterOAuth();
-      } else if (code === 'auth/unauthorized-domain') {
-        setError('This domain is not authorized. Please contact the administrator.');
-      } else {
-        setError('Sign-in failed. Please try again.');
-      }
-    } finally {
+      // Page redirects to GitHub — nothing below runs
+    } catch (err: any) {
+      sessionStorage.removeItem('oauth_redirect_pending');
+      sessionStorage.removeItem('oauth_redirect_target');
+      setError('Failed to initiate GitHub sign-in. Please try again.');
       setLoading(false);
     }
   };
