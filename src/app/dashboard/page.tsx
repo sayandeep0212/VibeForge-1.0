@@ -499,17 +499,24 @@ function DashboardContent() {
                 </div>
               )}
 
-              {/* Event Pass - Only show to Leader if approved */}
-              {isLeader && currentRegistration?.status === 'approved' && currentRegistration.passId && (
-                <EventPass
-                  passId={currentRegistration.passId}
-                  bookingId={currentRegistration.bookingId}
-                  teamName={currentRegistration.teamName}
-                  type={currentRegistration.type}
-                  members={currentRegistration.members}
-                  leaderName={userProfile?.name || ''}
-                />
-              )}
+              {/* Event Pass - Show to all registered members when approved */}
+              {isRegistered && currentRegistration?.status === 'approved' && currentRegistration.passId && (() => {
+                // Find the leader's name from the members list (correct for both leader & non-leader views)
+                const leaderMember = currentRegistration.members?.find(
+                  (m) => m.firebaseId === currentRegistration.leaderId
+                );
+                const leaderName = leaderMember?.name || userProfile?.name || '';
+                return (
+                  <EventPass
+                    passId={currentRegistration.passId!}
+                    bookingId={currentRegistration.bookingId}
+                    teamName={currentRegistration.teamName}
+                    type={currentRegistration.type}
+                    members={currentRegistration.members}
+                    leaderName={leaderName}
+                  />
+                );
+              })()}
             </motion.div>
           </div>
         </div>
