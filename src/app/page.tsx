@@ -52,12 +52,12 @@ export default function Home() {
           {/* Event Date */}
           <div className="mb-6">
             <span className="text-xl md:text-3xl font-orbitron font-black italic text-red-500 tracking-widest uppercase">
-              21-ST AUGUST
+              22nd AUGUST
             </span>
           </div>
 
           {/* Countdown Timer */}
-          <CountdownTimer targetDate="2026-08-21T09:00:00" />
+          <CountdownTimer targetDate="2026-08-22T09:00:00" />
 
           <div className="flex flex-wrap gap-6 justify-start mt-4">
             <Link href="/arena" className="group relative px-10 py-5 rounded-2xl font-black tracking-[0.2em] text-yellow-300 transition-all duration-500 hover:scale-105 active:scale-95">

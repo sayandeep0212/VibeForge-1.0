@@ -25,7 +25,7 @@ const JudgeCard = ({ judge }: { judge: Judge }) => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       whileHover={{ scale: 1.05 }}
-      className="relative w-full max-w-[320px] aspect-[3/4] p-1 group"
+      className="relative w-full max-w-[160px] xs:max-w-[200px] sm:max-w-[280px] md:max-w-[320px] aspect-[3/4] p-0.5 sm:p-1 group"
     >
       {/* Glow Effect */}
       <div className="absolute inset-0 bg-magenta-500/10 blur-3xl group-hover:bg-magenta-500/20 transition-all duration-500" />
@@ -48,8 +48,8 @@ const JudgeCard = ({ judge }: { judge: Judge }) => {
         <div className="absolute top-[12%] left-0 w-[2px] h-[76%] bg-magenta-500 shadow-[0_0_15px_#d946ef]" />
 
         {/* Content Container */}
-        <div className="absolute inset-0 flex flex-col items-center pt-8">
-          <div className="relative w-40 h-40">
+        <div className="absolute inset-0 flex flex-col items-center pt-4 sm:pt-8">
+          <div className="relative w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40">
             <div className="absolute inset-0 bg-cyan-500/10 blur-xl rounded-full scale-125" />
             <div className="relative w-full h-full rounded-full p-[2px] bg-gradient-to-tr from-cyan-400 to-magenta-500 shadow-2xl">
               <div className="w-full h-full rounded-full bg-neutral-900 overflow-hidden">
@@ -67,18 +67,18 @@ const JudgeCard = ({ judge }: { judge: Judge }) => {
               <div className="absolute inset-0 bg-neutral-800 border border-white/5 rounded-xl" />
               <div className="absolute bottom-0 left-0 w-full h-[3px] bg-yellow-300 shadow-[0_0_15px_#fde047]" />
 
-              <div className="relative py-3 px-4 text-center">
-                <h3 className="text-lg font-black font-sans tracking-widest text-white uppercase leading-none">
+              <div className="relative py-2 sm:py-3 px-2 sm:px-4 text-center">
+                <h3 className="text-xs sm:text-sm md:text-lg font-black font-sans tracking-widest text-white uppercase leading-none">
                   {judge.name}
                 </h3>
               </div>
             </div>
 
-            <p className="mt-4 text-yellow-300 font-medium text-xs tracking-[0.2em] uppercase text-center">
+            <p className="mt-2 sm:mt-4 text-yellow-300 font-medium text-[8px] sm:text-xs tracking-[0.1em] sm:tracking-[0.2em] uppercase text-center line-clamp-1">
               {judge.role}
             </p>
             
-            <div className="relative z-10 flex gap-4 mt-4">
+            <div className="relative z-10 flex gap-2 sm:gap-4 mt-2 sm:mt-4">
               {judge.socials?.linkedin && (
                 <a href={judge.socials.linkedin} target="_blank" rel="noopener noreferrer" className="p-2 bg-white/5 rounded-full border border-white/10 hover:border-cyan-400 hover:text-cyan-400 transition-all">
                   <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
@@ -149,7 +149,7 @@ const Judges = () => {
             <Loader2 className="w-10 h-10 text-yellow-300 animate-spin" />
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 justify-items-center">
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8 md:gap-12 justify-items-center">
             {judges.map((judge, i) => (
               <JudgeCard key={i} judge={judge} />
             ))}

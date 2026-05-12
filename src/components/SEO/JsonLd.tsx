@@ -22,8 +22,8 @@ const JsonLd = () => {
     "@type": "Event",
     "name": "VibeForge 1.0",
     "description": "A 12-hour intercollege vibe coding hackathon experience presented by GameLiminals.",
-    "startDate": "2026-08-21T09:00:00+05:30",
-    "endDate": "2026-08-21T21:00:00+05:30",
+    "startDate": "2026-08-22T09:00:00+05:30",
+    "endDate": "2026-08-22T21:00:00+05:30",
     "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
     "eventStatus": "https://schema.org/EventScheduled",
     "location": {
