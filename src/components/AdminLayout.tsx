@@ -6,6 +6,8 @@ import { usePathname } from 'next/navigation';
 import { 
   LayoutDashboard, Users, ClipboardList, Settings, LogOut, Shield, MessageSquare, Image as ImageIcon, Scan, Menu, X, ShoppingBag
 } from 'lucide-react';
+import { getFirebaseAuth } from '@/lib/firebase';
+import { signOut } from 'firebase/auth';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -32,6 +34,11 @@ export default function AdminLayout({ children, onLogout, adminName, photoURL }:
 
   const handleLogout = async () => {
     try {
+      // Sign out from Firebase Auth on the client side
+      const auth = getFirebaseAuth();
+      await signOut(auth);
+      
+      // Clear the admin session cookie
       await fetch('/api/admin/logout', { method: 'POST' });
       onLogout();
     } catch (err) {

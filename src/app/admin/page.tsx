@@ -59,6 +59,8 @@ export default function AdminLoginPage() {
       // Sign into Firebase Auth on the client side
       if (data.token) {
         const auth = getFirebaseAuth();
+        // Clear any existing session first to prevent conflicts
+        await auth.signOut();
         await signInWithCustomToken(auth, data.token);
       }
 
