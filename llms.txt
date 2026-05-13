@@ -1,0 +1,37 @@
+# VibeForge 1.0
+> 12-Hour Intercollege Hackathon Platform by GameLiminals
+
+VibeForge 1.0 is a comprehensive platform built for a 12-hour intercollege hackathon organized by GameLiminals at Adamas University. It handles registrations, team management, payments, and event scheduling.
+
+## Tech Stack
+- **Framework**: Next.js 16.2.4 (App Router)
+- **Runtime**: React 19.2.4
+- **Styling**: Tailwind CSS 4.0
+- **Database/Auth**: Firebase & Firebase Admin
+- **Payments**: Razorpay
+- **Email**: Resend & React Email
+- **Graphics**: Three.js & Framer Motion
+- **Icons**: Lucide React
+- **Session Management**: iron-session
+
+## Project Structure
+- `src/app/`: Next.js App Router pages, layouts, and API routes.
+- `src/components/`: UI components, including 3D elements and SEO components.
+- `src/context/`: Global state providers (e.g., `AuthContext`).
+- `src/lib/`: Service initializations (Firebase, Razorpay, Resend) and core utilities.
+- `src/hooks/`: Custom React hooks.
+- `public/`: Static assets, fonts, and media.
+
+## Key Features
+- **Authentication**: Firebase Authentication integrated with custom session management for enhanced security.
+- **Registrations**: Team-based registration flow with Razorpay payment integration.
+- **Admin Portal**: Internal dashboard for managing inquiries, team approvals, and data exports.
+- **User Dashboard**: Personalized dashboard for participants to manage their teams and view event details.
+- **SEO & Analytics**: Fully optimized for search engines with JSON-LD, Google Analytics, and dynamic meta tags.
+- **Immersive UI**: Features background music, 3D graphics (Three.js), and smooth animations (Framer Motion).
+
+## Developer Guidelines
+- **Modern React**: Leverage React 19 features like the `use` hook and improved server actions.
+- **Tailwind CSS 4**: Adhere to Tailwind 4 conventions; avoid deprecated Tailwind 3 patterns.
+- **Server-Side Logic**: Use server components and API routes for sensitive operations (Firebase Admin, Razorpay).
+- **Breaking Changes**: Be aware that Next.js 16 may have breaking changes compared to older versions. Consult `node_modules/next/dist/docs/` if needed.
