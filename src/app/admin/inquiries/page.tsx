@@ -5,6 +5,8 @@ import { motion } from 'framer-motion';
 import { Mail, User, Clock, Search, Filter, Trash2, CheckCircle, MessageSquare } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import AdminLayout from '@/components/AdminLayout';
+import { getFirebaseAuth } from '@/lib/firebase';
+import { signInWithCustomToken } from 'firebase/auth';
 
 interface Inquiry {
   id: string;
@@ -33,6 +35,17 @@ export default function AdminInquiriesPage() {
           router.push('/admin');
           return;
         }
+
+        // Ensure Firebase Auth is synced with the session
+        const auth = getFirebaseAuth();
+        if (!auth.currentUser && data.token) {
+          try {
+            await signInWithCustomToken(auth, data.token);
+          } catch (signInErr) {
+            console.error('Firebase sync error:', signInErr);
+          }
+        }
+
         setAdminName(data.user.name);
         setPhotoURL(data.user.photoURL);
         fetchInquiries();

@@ -4,7 +4,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Plus, Trash2, Camera, Loader2, Users, Star, Box, Edit3, X, Save, ArrowUp, ArrowDown } from 'lucide-react';
 import { ref, get, push, set, remove, update } from 'firebase/database';
-import { getDb } from '@/lib/firebase';
+import { getDb, getFirebaseAuth } from '@/lib/firebase';
+import { signInWithCustomToken } from 'firebase/auth';
 import { uploadToImgBB } from '@/lib/imgbb';
 import { useRouter } from 'next/navigation';
 import AdminLayout from '@/components/AdminLayout';
@@ -43,11 +44,28 @@ export default function AdminContentPage() {
       try {
         const res = await fetch('/api/admin/session');
         const data = await res.json();
-        if (!data.isLoggedIn) { router.push('/admin'); return; }
+        if (!data.isLoggedIn) {
+          router.push('/admin');
+          return;
+        }
+
+        // Ensure Firebase Auth is synced with the session
+        const auth = getFirebaseAuth();
+        if (!auth.currentUser && data.token) {
+          try {
+            await signInWithCustomToken(auth, data.token);
+          } catch (signInErr) {
+            console.error('Firebase sync error:', signInErr);
+          }
+        }
+
         setAdminName(data.user.name);
         setPhotoURL(data.user.photoURL);
         fetchItems(activeTab);
-      } catch { router.push('/admin'); }
+      } catch (err) {
+        console.error('Session error:', err);
+        router.push('/admin'); 
+      }
     };
     checkSession();
   }, [router, activeTab]);

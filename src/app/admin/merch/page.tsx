@@ -12,6 +12,8 @@ import {
 import { useRouter } from 'next/navigation';
 import * as XLSX from 'xlsx';
 import { Parser } from 'json2csv';
+import { getFirebaseAuth } from '@/lib/firebase';
+import { signInWithCustomToken } from 'firebase/auth';
 
 interface MerchOrder {
   id: string;
@@ -86,8 +88,22 @@ export default function AdminMerchPage() {
     try {
       const res = await fetch('/api/admin/session');
       const data = await res.json();
-      if (!data.isLoggedIn) router.push('/admin');
-      else setAdminSession(data.user);
+      if (!data.isLoggedIn) {
+        router.push('/admin');
+        return;
+      }
+
+      // Ensure Firebase Auth is synced with the session
+      const auth = getFirebaseAuth();
+      if (!auth.currentUser && data.token) {
+        try {
+          await signInWithCustomToken(auth, data.token);
+        } catch (signInErr) {
+          console.error('Firebase sync error:', signInErr);
+        }
+      }
+
+      setAdminSession(data.user);
     } catch (err) {
       router.push('/admin');
     }

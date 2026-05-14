@@ -5,6 +5,8 @@ import { motion } from 'framer-motion';
 import { Users, ClipboardList, CheckCircle, Clock, Building2, MessageSquare } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import AdminLayout from '@/components/AdminLayout';
+import { getFirebaseAuth } from '@/lib/firebase';
+import { signInWithCustomToken } from 'firebase/auth';
 
 interface AdminSession {
   id: string;
@@ -46,6 +48,16 @@ export default function AdminDashboardPage() {
           return;
         }
         
+        // Ensure Firebase Auth is synced with the session
+        const auth = getFirebaseAuth();
+        if (!auth.currentUser && data.token) {
+          try {
+            await signInWithCustomToken(auth, data.token);
+          } catch (signInErr) {
+            console.error('Firebase sync error:', signInErr);
+          }
+        }
+
         setAdminSession(data.user);
         fetchStats();
       } catch (err) {

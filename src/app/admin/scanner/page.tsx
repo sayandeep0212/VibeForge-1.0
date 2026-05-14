@@ -1,14 +1,15 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Camera, Scan, Search, User, Shield, Users, 
   CheckCircle, AlertCircle, Loader2, X, RefreshCw
 } from 'lucide-react';
-import { Html5QrcodeScanner } from 'html5-qrcode';
 import AdminLayout from '@/components/AdminLayout';
 import { useRouter } from 'next/navigation';
+import { getFirebaseAuth } from '@/lib/firebase';
+import { signInWithCustomToken } from 'firebase/auth';
 
 interface Member {
   name: string;
@@ -41,71 +42,145 @@ export default function AdminScannerPage() {
   const [searching, setSearching] = useState(false);
   const [checkInLoading, setCheckInLoading] = useState(false);
   const [isCameraActive, setIsCameraActive] = useState(false);
+
+  // Refs for scanner lifecycle management
   const scannerRef = useRef<any>(null);
+  const isProcessingRef = useRef(false);
+  const lastScannedRef = useRef<string>('');
+  const mountedRef = useRef(true);
 
   useEffect(() => {
-    fetch('/api/admin/session')
-      .then(res => res.json())
-      .then(data => {
+    mountedRef.current = true;
+
+    const checkSession = async () => {
+      try {
+        const res = await fetch('/api/admin/session');
+        const data = await res.json();
+        
         if (!data.isLoggedIn) {
           router.push('/admin');
           return;
         }
-        setAdminName(data.user.name);
-        setPhotoURL(data.user.photoURL);
-        setLoading(false);
-      });
+
+        // Ensure Firebase Auth is synced with the session
+        const auth = getFirebaseAuth();
+        if (!auth.currentUser && data.token) {
+          try {
+            await signInWithCustomToken(auth, data.token);
+          } catch (signInErr) {
+            console.error('Firebase sync error:', signInErr);
+          }
+        }
+
+        if (mountedRef.current) {
+          setAdminName(data.user.name);
+          setPhotoURL(data.user.photoURL);
+        }
+      } catch (err) {
+        console.error('Session check error:', err);
+        if (mountedRef.current) router.push('/admin');
+      } finally {
+        if (mountedRef.current) setLoading(false);
+      }
+    };
+
+    checkSession();
 
     return () => {
-      if (scannerRef.current) {
-        scannerRef.current.stop().catch(() => {});
-      }
+      mountedRef.current = false;
+      cleanupScanner();
     };
   }, [router]);
 
-  const startCamera = async () => {
-    try {
-      import('html5-qrcode').then(({ Html5Qrcode }) => {
-        const scanner = new Html5Qrcode("reader");
-        scannerRef.current = scanner;
-        
-        scanner.start(
-          { facingMode: "environment" },
-          { fps: 10, qrbox: { width: 250, height: 250 } },
-          onScanSuccess,
-          onScanFailure
-        );
-        setIsCameraActive(true);
-      });
-    } catch (err) {
-      console.error("Failed to start camera", err);
-      setError("Could not access camera. Please ensure you have given permission.");
-    }
-  };
+  // Safe scanner cleanup that never throws
+  const cleanupScanner = useCallback(() => {
+    const scanner = scannerRef.current;
+    if (!scanner) return;
 
-  const stopCamera = async () => {
-    if (scannerRef.current) {
-      try {
-        await scannerRef.current.stop();
+    try {
+      // Html5Qrcode states: NOT_STARTED=0, SCANNING=2, PAUSED=3
+      const state = scanner.getState?.();
+      if (state === 2 || state === 3) {
+        scanner.stop().catch(() => {});
+      }
+    } catch {
+      // getState() itself can throw if scanner is in a bad state — ignore
+    }
+
+    try {
+      scanner.clear?.();
+    } catch {
+      // clear() can throw if DOM element is already gone — ignore
+    }
+
+    scannerRef.current = null;
+  }, []);
+
+  const startCamera = useCallback(async () => {
+    // Clean up any existing scanner first
+    cleanupScanner();
+
+    try {
+      const { Html5Qrcode } = await import('html5-qrcode');
+      
+      // Ensure the DOM element exists
+      const readerEl = document.getElementById('reader');
+      if (!readerEl || !mountedRef.current) return;
+
+      const scanner = new Html5Qrcode('reader');
+      scannerRef.current = scanner;
+
+      await scanner.start(
+        { facingMode: 'environment' },
+        { 
+          fps: 10, 
+          qrbox: { width: 250, height: 250 },
+          aspectRatio: 1.777,
+        },
+        (decodedText: string) => {
+          // Prevent duplicate scans of the same code
+          if (isProcessingRef.current) return;
+          if (decodedText === lastScannedRef.current) return;
+
+          isProcessingRef.current = true;
+          lastScannedRef.current = decodedText;
+          
+          handleSearch(decodedText);
+        },
+        () => {
+          // Scan failure fires every frame — intentionally silent
+        }
+      );
+
+      if (mountedRef.current) {
+        setIsCameraActive(true);
+        setError('');
+      }
+    } catch (err: any) {
+      console.error('Failed to start camera:', err);
+      if (mountedRef.current) {
+        if (err?.message?.includes('Permission')) {
+          setError('Camera permission denied. Please allow camera access and try again.');
+        } else if (err?.message?.includes('NotFound') || err?.message?.includes('Requested device not found')) {
+          setError('No camera found. Please connect a camera or use manual entry.');
+        } else {
+          setError('Could not access camera. Please check permissions or try manual entry.');
+        }
         setIsCameraActive(false);
-      } catch (err) {
-        console.error("Failed to stop camera", err);
       }
     }
-  };
+  }, [cleanupScanner]);
 
-  async function onScanSuccess(decodedText: string) {
-    if (searching) return;
-    handleSearch(decodedText);
-  }
-
-  function onScanFailure(error: any) {
-    // Quietly handle scan failure (it fires every frame if no QR is found)
-  }
+  const stopCamera = useCallback(async () => {
+    cleanupScanner();
+    if (mountedRef.current) {
+      setIsCameraActive(false);
+    }
+  }, [cleanupScanner]);
 
   const handleSearch = async (id: string) => {
-    const searchId = id || manualId;
-    if (!searchId.trim()) return;
+    const searchId = (id || manualId).trim();
+    if (!searchId) return;
 
     setSearching(true);
     setError('');
@@ -119,19 +194,28 @@ export default function AdminScannerPage() {
         throw new Error(data.error || 'Pass not found');
       }
 
-      setScanResult(data);
+      if (mountedRef.current) {
+        setScanResult(data);
 
-      // AUTOMATIC CHECK-IN: If it's a scan (id is provided) and NOT already checked in
-      if (id && !data.checkedIn && data.status === 'approved') {
-        // We use a small delay to let the UI update first
-        setTimeout(() => {
-          autoCheckIn(data.id);
-        }, 500);
+        // AUTOMATIC CHECK-IN: If it's a QR scan (not manual) and not already checked in
+        if (id && !data.checkedIn && data.status === 'approved') {
+          setTimeout(() => {
+            autoCheckIn(data.id);
+          }, 500);
+        }
       }
     } catch (err: any) {
-      setError(err.message);
+      if (mountedRef.current) {
+        setError(err.message || 'Something went wrong');
+      }
     } finally {
-      setSearching(false);
+      if (mountedRef.current) {
+        setSearching(false);
+      }
+      // Allow scanning a new QR after a cooldown
+      setTimeout(() => {
+        isProcessingRef.current = false;
+      }, 3000);
     }
   };
 
@@ -144,13 +228,13 @@ export default function AdminScannerPage() {
         body: JSON.stringify({ regId })
       });
 
-      if (res.ok) {
+      if (res.ok && mountedRef.current) {
         setScanResult(prev => prev ? { ...prev, checkedIn: true, checkedInAt: Date.now(), checkedInBy: adminName } : null);
       }
     } catch (err) {
-      console.error("Auto check-in failed", err);
+      console.error('Auto check-in failed:', err);
     } finally {
-      setCheckInLoading(false);
+      if (mountedRef.current) setCheckInLoading(false);
     }
   };
 
@@ -166,15 +250,17 @@ export default function AdminScannerPage() {
       });
 
       if (res.ok) {
-        setScanResult(prev => prev ? { ...prev, checkedIn: true, checkedInAt: Date.now() } : null);
+        if (mountedRef.current) {
+          setScanResult(prev => prev ? { ...prev, checkedIn: true, checkedInAt: Date.now() } : null);
+        }
       } else {
         const data = await res.json();
         throw new Error(data.error || 'Check-in failed');
       }
     } catch (err: any) {
-      setError(err.message);
+      if (mountedRef.current) setError(err.message);
     } finally {
-      setCheckInLoading(false);
+      if (mountedRef.current) setCheckInLoading(false);
     }
   };
 
@@ -182,6 +268,9 @@ export default function AdminScannerPage() {
     setScanResult(null);
     setError('');
     setManualId('');
+    // Reset scan lock so the same QR can be scanned again
+    lastScannedRef.current = '';
+    isProcessingRef.current = false;
   };
 
   if (loading) return null;
@@ -267,7 +356,7 @@ export default function AdminScannerPage() {
                 animate={{ opacity: 1, y: 0 }}
                 className="bg-red-500/10 border border-red-500/30 p-4 rounded-2xl flex items-center gap-3 text-red-400"
               >
-                <AlertCircle className="w-5 h-5" />
+                <AlertCircle className="w-5 h-5 shrink-0" />
                 <p className="text-sm font-bold uppercase tracking-tight">{error}</p>
               </motion.div>
             )}

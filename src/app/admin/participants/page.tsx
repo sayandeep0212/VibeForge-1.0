@@ -11,6 +11,8 @@ import { getDb } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import AdminLayout from '@/components/AdminLayout';
 import * as XLSX from 'xlsx';
+import { getFirebaseAuth } from '@/lib/firebase';
+import { signInWithCustomToken } from 'firebase/auth';
 
 interface UserProfile {
   uid: string;
@@ -69,7 +71,21 @@ export default function ParticipantsPage() {
         const res = await fetch('/api/admin/session');
         const data = await res.json();
         if (!mounted) return;
-        if (!data.isLoggedIn) { router.push('/admin'); return; }
+        if (!data.isLoggedIn) {
+          router.push('/admin');
+          return;
+        }
+
+        // Ensure Firebase Auth is synced with the session
+        const auth = getFirebaseAuth();
+        if (!auth.currentUser && data.token) {
+          try {
+            await signInWithCustomToken(auth, data.token);
+          } catch (signInErr) {
+            console.error('Firebase sync error:', signInErr);
+          }
+        }
+
         setAdminSession(data.user);
         fetchUsers();
       } catch (err) {

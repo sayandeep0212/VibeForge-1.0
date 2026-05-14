@@ -7,7 +7,8 @@ import {
   User as UserIcon, CreditCard, Shield, Star, Trash2, Edit3, X, Save, Building2, RefreshCw
 } from 'lucide-react';
 import { ref, get, update, remove } from 'firebase/database';
-import { getDb } from '@/lib/firebase';
+import { getDb, getFirebaseAuth } from '@/lib/firebase';
+import { signInWithCustomToken } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import AdminLayout from '@/components/AdminLayout';
 import { nanoid } from 'nanoid';
@@ -68,10 +69,25 @@ export default function RegistrationsPage() {
         const res = await fetch('/api/admin/session');
         const data = await res.json();
         if (!data.isLoggedIn) { router.push('/admin'); return; }
+        
         setAdminName(data.user.name);
         setPhotoURL(data.user.photoURL);
+
+        // Ensure Firebase Auth is synced with the session
+        const auth = getFirebaseAuth();
+        if (!auth.currentUser && data.token) {
+          try {
+            await signInWithCustomToken(auth, data.token);
+          } catch (signInErr) {
+            console.error('Firebase sync error:', signInErr);
+          }
+        }
+
         fetchData();
-      } catch { router.push('/admin'); }
+      } catch (err) { 
+        console.error('Session error:', err);
+        router.push('/admin'); 
+      }
     };
     checkSession();
   }, [router]);

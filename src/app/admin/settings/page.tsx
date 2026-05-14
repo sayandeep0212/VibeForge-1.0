@@ -10,7 +10,8 @@ import { uploadToImgBB } from '@/lib/imgbb';
 import { useRouter } from 'next/navigation';
 import AdminLayout from '@/components/AdminLayout';
 import { ref, get, set } from 'firebase/database';
-import { getDb } from '@/lib/firebase';
+import { getDb, getFirebaseAuth } from '@/lib/firebase';
+import { signInWithCustomToken } from 'firebase/auth';
 
 interface AdminSession {
   id: string;
@@ -59,23 +60,38 @@ export default function AdminSettingsPage() {
   const [regDeadline, setRegDeadline] = useState('');
   const [regSaving, setRegSaving] = useState(false);
   const [regSuccess, setRegSuccess] = useState(false);
-
   useEffect(() => {
-    fetch('/api/admin/session')
-      .then(res => res.json())
-      .then(data => {
+    const checkSession = async () => {
+      try {
+        const res = await fetch('/api/admin/session');
+        const data = await res.json();
+        
         if (!data.isLoggedIn) {
           router.push('/admin');
           return;
         }
+
+        // Ensure Firebase Auth is synced with the session
+        const auth = getFirebaseAuth();
+        if (!auth.currentUser && data.token) {
+          try {
+            await signInWithCustomToken(auth, data.token);
+          } catch (signInErr) {
+            console.error('Firebase sync error:', signInErr);
+          }
+        }
+
         setAdminSession(data.user);
         setProfileName(data.user.name || '');
         setProfilePhone(data.user.phone || '');
         setProfilePhoto(data.user.photoURL || '');
-      })
-      .catch(() => {
+      } catch (err) {
+        console.error('Session error:', err);
         router.push('/admin');
-      });
+      }
+    };
+
+    checkSession();
     // Fetch registration settings
     fetchRegSettings();
     fetchAdmins();

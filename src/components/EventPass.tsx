@@ -83,6 +83,8 @@ const EventPass: React.FC<EventPassProps> = ({
             size={512}
             level="H"
             includeMargin={false}
+            fgColor="#000000"
+            bgColor="#ffffff"
             className="w-full h-full"
           />
         </div>
