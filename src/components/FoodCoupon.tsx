@@ -21,13 +21,11 @@ export default function FoodCoupon({ userName, userUid }: FoodCouponProps) {
     try {
       const dataUrl = await htmlToImage.toPng(couponRef.current, {
         quality: 1.0,
-        pixelRatio: 3,
-        width: 1000,
-        height: 500,
+        pixelRatio: 2,
+        cacheBust: true,
         style: {
-          width: '1000px',
-          height: '500px',
           transform: 'none',
+          borderRadius: '0',
         }
       });
       
