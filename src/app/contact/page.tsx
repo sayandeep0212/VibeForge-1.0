@@ -5,8 +5,6 @@ import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, Globe, Send, User, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { ref, push, set } from 'firebase/database';
-import { getDb } from '@/lib/firebase';
 
 const ContactPage = () => {
   const [name, setName] = useState('');
@@ -22,31 +20,19 @@ const ContactPage = () => {
     setError('');
 
     try {
-      // 1. Save to Firebase
-      const inquiryRef = ref(getDb(), 'inquiries');
-      const newInquiryRef = push(inquiryRef);
-      await set(newInquiryRef, {
-        name: name.trim(),
-        email: email.trim().toLowerCase(),
-        message: message.trim(),
-        status: 'new',
-        createdAt: Date.now()
+      const response = await fetch('/api/contact/autoreply', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: name.trim(),
+          email: email.trim().toLowerCase(),
+          message: message.trim()
+        }),
       });
 
-      // 2. Trigger Automated Email Reply
-      try {
-        await fetch('/api/contact/autoreply', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            name: name.trim(),
-            email: email.trim().toLowerCase(),
-            message: message.trim()
-          }),
-        });
-      } catch (emailErr) {
-        console.error('Failed to send automated reply:', emailErr);
-        // We don't show an error to the user here because the inquiry is already saved
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to send message');
       }
 
       setSuccess(true);
@@ -55,7 +41,7 @@ const ContactPage = () => {
       setMessage('');
     } catch (err: any) {
       console.error('Inquiry submission error:', err);
-      setError('Failed to send message. Please try again later.');
+      setError(err.message || 'Failed to send message. Please try again later.');
     } finally {
       setLoading(false);
     }
