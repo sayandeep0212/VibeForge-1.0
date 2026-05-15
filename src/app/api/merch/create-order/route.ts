@@ -31,8 +31,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
+    // Apply Razorpay processing fee: charge user extra so full amount reaches us
+    const baseAmount = amount;
+    const totalAmount = Math.ceil(baseAmount / 0.9764);
+    const processingFee = totalAmount - baseAmount;
+
     const options = {
-      amount: Math.round(amount * 100), // Amount in paise
+      amount: Math.round(totalAmount * 100), // Amount in paise (total with processing fee)
       currency: 'INR',
       receipt: `MERCH-${Date.now()}-${Math.random().toString(36).substring(2, 7).toUpperCase()}`,
       notes: {
@@ -42,7 +47,7 @@ export async function POST(req: Request) {
 
     const rzp = getRazorpay();
     const order = await rzp.orders.create(options);
-    return NextResponse.json(order);
+    return NextResponse.json({ ...order, baseAmount, totalAmount, processingFee });
   } catch (error) {
     console.error('Error creating merch order:', error);
     return NextResponse.json({ error: 'Failed to create payment order' }, { status: 500 });

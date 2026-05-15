@@ -303,15 +303,15 @@ function RegisterContent() {
       }
 
       // Pricing: Adamas Team = 150 (Total), Non-Adamas Team = 250 (Total)
-      const amount = userProfile?.isAdamas ? 150 : 250;
+      const baseAmount = userProfile?.isAdamas ? 150 : 250;
 
       const receipt = `RCPT-${nanoid(8).toUpperCase()}`;
 
-      // 1. Create order on server
+      // 1. Create order on server (server applies processing fee)
       const orderRes = await fetch('/api/register/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount }),
+        body: JSON.stringify({ amount: baseAmount }),
       });
 
       if (!orderRes.ok) {
@@ -326,11 +326,11 @@ function RegisterContent() {
         amount: orderData.amount,
         currency: orderData.currency,
         name: 'VibeForge 1.0',
-        description: `Event Registration - ${participationType === 'team' ? 'Team' : 'Individual'}`,
+        description: `Event Registration - ${participationType === 'team' ? 'Team' : 'Individual'} (incl. processing fee)`,
         order_id: orderData.id,
         handler: async function (response: any) {
           // 2. Verify on server and save
-          await verifyAndSave(response, amount, receipt);
+          await verifyAndSave(response, orderData.baseAmount, orderData.totalAmount, orderData.processingFee, receipt);
         },
         prefill: {
           name: userProfile?.name,
@@ -356,7 +356,7 @@ function RegisterContent() {
     }
   };
 
-  const verifyAndSave = async (razorpayResponse: any, amount: number, receipt: string) => {
+  const verifyAndSave = async (razorpayResponse: any, baseAmount: number, totalAmount: number, processingFee: number, receipt: string) => {
     if (!user || !userProfile) return;
 
     try {
@@ -388,7 +388,9 @@ function RegisterContent() {
         leaderId: user.uid,
         leaderUid: userProfile.uid,
         members,
-        amount,
+        amount: baseAmount,
+        totalAmount,
+        processingFee,
         receipt,
       };
 
@@ -771,16 +773,37 @@ function RegisterContent() {
                       )}
 
                       {/* Pricing Summary */}
-                      <div className="p-4 bg-white/5 rounded-2xl border border-white/10 space-y-2">
-                        <div className="flex justify-between items-center text-sm">
-                          <span className="text-neutral-400">Team Type</span>
-                          <span className="text-white">{userProfile?.isAdamas ? 'Adamas University' : 'External Team'}</span>
-                        </div>
-                        <div className="pt-2 border-t border-white/10 flex justify-between items-center">
-                          <span className="text-yellow-300 font-bold uppercase tracking-widest text-xs">Flat Registration Fee</span>
-                          <span className="text-2xl font-black text-white">₹{userProfile?.isAdamas ? 150 : 250}</span>
-                        </div>
-                      </div>
+                      {(() => {
+                        const basePrice = userProfile?.isAdamas ? 150 : 250;
+                        const totalPrice = Math.ceil(basePrice / 0.9764);
+                        const fee = totalPrice - basePrice;
+                        return (
+                          <div className="p-4 bg-white/5 rounded-2xl border border-white/10 space-y-2">
+                            <div className="flex justify-between items-center text-sm">
+                              <span className="text-neutral-400">Team Type</span>
+                              <span className="text-white">{userProfile?.isAdamas ? 'Adamas University' : 'External Team'}</span>
+                            </div>
+                            <div className="flex justify-between items-center text-sm">
+                              <span className="text-neutral-400">Registration Fee</span>
+                              <span className="text-white">₹{basePrice}</span>
+                            </div>
+                            <div className="flex justify-between items-center text-sm">
+                              <span className="text-neutral-400 flex items-center gap-1">
+                                Payment Processing Fee
+                                <Info className="w-3 h-3 text-neutral-500" />
+                              </span>
+                              <span className="text-neutral-300">+ ₹{fee}</span>
+                            </div>
+                            <div className="pt-2 border-t border-white/10 flex justify-between items-center">
+                              <span className="text-yellow-300 font-bold uppercase tracking-widest text-xs">Total Payable</span>
+                              <span className="text-2xl font-black text-white">₹{totalPrice}</span>
+                            </div>
+                            <p className="text-[9px] text-neutral-500 leading-relaxed">
+                              A small processing fee is added to cover payment gateway charges by Razorpay, so the full registration amount reaches the organizers.
+                            </p>
+                          </div>
+                        );
+                      })()}
 
                       {userProfile?.isAdamas && participationType === 'team' && (
                         <div className="p-3 bg-cyan-500/10 border border-cyan-500/20 rounded-xl flex items-start gap-2">
@@ -792,23 +815,29 @@ function RegisterContent() {
                       )}
 
                       {/* Payment Button */}
-                      <button
-                        onClick={handlePayment}
-                        disabled={loading}
-                        className="w-full bg-yellow-300 hover:bg-gradient-to-r hover:from-yellow-300 hover:to-red-400 text-black py-4 rounded-xl font-bold tracking-widest transition-all hover:scale-[1.02] active:scale-[0.98] shadow-[0_0_20px_rgba(253,224,71,0.4)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-lg"
-                      >
-                        {loading ? (
-                          <>
-                            <Loader2 className="w-5 h-5 animate-spin" />
-                            PROCESSING...
-                          </>
-                        ) : (
-                          <>
-                            <CreditCard className="w-5 h-5" />
-                            PAY ₹{userProfile?.isAdamas ? 150 : 250} & REGISTER
-                          </>
-                        )}
-                      </button>
+                      {(() => {
+                        const basePrice = userProfile?.isAdamas ? 150 : 250;
+                        const totalPrice = Math.ceil(basePrice / 0.9764);
+                        return (
+                          <button
+                            onClick={handlePayment}
+                            disabled={loading}
+                            className="w-full bg-yellow-300 hover:bg-gradient-to-r hover:from-yellow-300 hover:to-red-400 text-black py-4 rounded-xl font-bold tracking-widest transition-all hover:scale-[1.02] active:scale-[0.98] shadow-[0_0_20px_rgba(253,224,71,0.4)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-lg"
+                          >
+                            {loading ? (
+                              <>
+                                <Loader2 className="w-5 h-5 animate-spin" />
+                                PROCESSING...
+                              </>
+                            ) : (
+                              <>
+                                <CreditCard className="w-5 h-5" />
+                                PAY ₹{totalPrice} & REGISTER
+                              </>
+                            )}
+                          </button>
+                        );
+                      })()}
                     </motion.div>
                   )}
                 </AnimatePresence>

@@ -23,6 +23,8 @@ const registrationSchema = z.object({
       email: z.string().email(),
     })),
     amount: z.number(),
+    totalAmount: z.number().optional(),
+    processingFee: z.number().optional(),
     receipt: z.string(),
   }),
 });
@@ -58,6 +60,8 @@ export async function POST(req: Request) {
         razorpayId: razorpay_payment_id,
         orderId: razorpay_order_id,
         amount: registrationData.amount,
+        totalAmount: registrationData.totalAmount || registrationData.amount,
+        processingFee: registrationData.processingFee || 0,
         status: 'paid',
         receipt: registrationData.receipt,
         paidAt: Date.now(),

@@ -97,6 +97,8 @@ function MerchContent() {
           color: data.color,
           size: data.size,
           amount: data.amount,
+          totalAmount: data.totalAmount || data.payment?.totalAmount || data.amount,
+          processingFee: data.processingFee || data.payment?.processingFee || 0,
           paymentId: data.payment.razorpayId,
           date: new Date(data.createdAt).toLocaleString(),
         });
@@ -155,12 +157,12 @@ function MerchContent() {
         throw new Error('Failed to load payment gateway');
       }
 
-      const amount = activeTab === 't-shirt' ? prices.tshirtPrice : prices.capPrice;
+      const baseAmount = activeTab === 't-shirt' ? prices.tshirtPrice : prices.capPrice;
 
       const orderRes = await fetch('/api/merch/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount, productType: activeTab }),
+        body: JSON.stringify({ amount: baseAmount, productType: activeTab }),
       });
 
       if (!orderRes.ok) throw new Error('Failed to create order');
@@ -171,10 +173,10 @@ function MerchContent() {
         amount: orderData.amount,
         currency: orderData.currency,
         name: 'VibeForge Merch',
-        description: `Buying ${activeTab} (${selectedColor}${activeTab === 't-shirt' ? `, ${selectedSize}` : ''})`,
+        description: `Buying ${activeTab} (${selectedColor}${activeTab === 't-shirt' ? `, ${selectedSize}` : ''}) — incl. processing fee`,
         order_id: orderData.id,
         handler: async function (response: any) {
-          await verifyPayment(response, orderData, amount);
+          await verifyPayment(response, orderData, orderData.baseAmount, orderData.totalAmount, orderData.processingFee);
         },
         prefill: {
           name: userData.name,
@@ -195,7 +197,7 @@ function MerchContent() {
     }
   };
 
-  const verifyPayment = async (rzpResponse: any, orderData: any, amount: number) => {
+  const verifyPayment = async (rzpResponse: any, orderData: any, baseAmount: number, totalAmount: number, processingFee: number) => {
     try {
       const res = await fetch('/api/merch/verify', {
         method: 'POST',
@@ -209,7 +211,9 @@ function MerchContent() {
             productType: activeTab,
             color: selectedColor,
             size: activeTab === 't-shirt' ? selectedSize : undefined,
-            amount,
+            amount: baseAmount,
+            totalAmount,
+            processingFee,
             receipt: orderData.receipt,
             uid: userProfile?.uid,
           },
@@ -225,7 +229,9 @@ function MerchContent() {
         productType: activeTab,
         color: selectedColor,
         size: activeTab === 't-shirt' ? selectedSize : undefined,
-        amount,
+        amount: baseAmount,
+        totalAmount,
+        processingFee,
         paymentId: rzpResponse.razorpay_payment_id,
         date: new Date().toLocaleString(),
       });
@@ -343,17 +349,27 @@ function MerchContent() {
                   </div>
 
                   <div style={{ borderTop: '1px solid #262626', borderBottom: '1px solid #262626', padding: '20px 0' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                       <div>
                         <p style={{ fontWeight: 'bold', fontSize: '18px', textTransform: 'uppercase', margin: 0 }}>{successOrder.productType}</p>
                         <p style={{ fontSize: '12px', color: '#a3a3a3', margin: '5px 0 0 0' }}>Color: {successOrder.color} {successOrder.size ? `| Size: ${successOrder.size}` : ''}</p>
                       </div>
-                      <p style={{ fontSize: '20px', fontWeight: '900', color: '#fde047', margin: 0 }}>₹{successOrder.amount}</p>
+                      <p style={{ fontSize: '18px', fontWeight: 'bold', color: '#ffffff', margin: 0 }}>₹{successOrder.amount}</p>
+                    </div>
+                    {successOrder.processingFee > 0 && (
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                        <p style={{ fontSize: '12px', color: '#a3a3a3', margin: 0 }}>Payment Processing Fee (Razorpay)</p>
+                        <p style={{ fontSize: '14px', color: '#a3a3a3', margin: 0 }}>+ ₹{successOrder.processingFee}</p>
+                      </div>
+                    )}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px dashed #333', paddingTop: '12px' }}>
+                      <p style={{ fontSize: '14px', fontWeight: 'bold', textTransform: 'uppercase', margin: 0, color: '#fde047' }}>Total Paid</p>
+                      <p style={{ fontSize: '20px', fontWeight: '900', color: '#fde047', margin: 0 }}>₹{successOrder.totalAmount || successOrder.amount}</p>
                     </div>
                   </div>
                 </div>
 
-                <div style={{ backgroundColor: '#171717', padding: '16px', borderRadius: '12px', marginBottom: '40px' }}>
+                <div style={{ backgroundColor: '#171717', padding: '16px', borderRadius: '12px', marginBottom: '20px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '8px' }}>
                     <span style={{ color: '#737373' }}>Payment ID</span>
                     <span style={{ fontFamily: 'monospace' }}>{successOrder.paymentId}</span>
@@ -363,6 +379,14 @@ function MerchContent() {
                     <span style={{ color: '#4ade80', fontWeight: 'bold', textTransform: 'uppercase' }}>Paid</span>
                   </div>
                 </div>
+
+                {successOrder.processingFee > 0 && (
+                  <div style={{ backgroundColor: '#1a1a1a', padding: '12px 16px', borderRadius: '8px', marginBottom: '20px', border: '1px solid #262626' }}>
+                    <p style={{ fontSize: '9px', color: '#737373', margin: 0, lineHeight: '1.5', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      Note: A processing fee of ₹{successOrder.processingFee} was added to cover Razorpay payment gateway charges. The item price of ₹{successOrder.amount} goes to the organizers.
+                    </p>
+                  </div>
+                )}
 
                 <div style={{ textAlign: 'center' }}>
                   <p style={{ fontSize: '10px', color: '#525252', textTransform: 'uppercase', letterSpacing: '3px' }}>GameLiminals &copy; 2026</p>
@@ -651,10 +675,39 @@ function MerchContent() {
                     </>
                   ) : (
                     <>
-                      <CreditCard className="w-5 h-5" /> PAY NOW ₹{activeTab === 't-shirt' ? prices.tshirtPrice : prices.capPrice}
+                      <CreditCard className="w-5 h-5" /> PAY NOW ₹{Math.ceil((activeTab === 't-shirt' ? prices.tshirtPrice : prices.capPrice) / 0.9764)}
                     </>
                   )}
                 </button>
+
+                {/* Fee Breakdown */}
+                {user && (() => {
+                  const base = activeTab === 't-shirt' ? prices.tshirtPrice : prices.capPrice;
+                  const total = Math.ceil(base / 0.9764);
+                  const fee = total - base;
+                  return (
+                    <div className="p-4 bg-white/5 rounded-2xl border border-white/5 space-y-2">
+                      <div className="flex justify-between items-center text-xs">
+                        <span className="text-neutral-500">Item Price</span>
+                        <span className="text-white">₹{base}</span>
+                      </div>
+                      <div className="flex justify-between items-center text-xs">
+                        <span className="text-neutral-500 flex items-center gap-1">
+                          Processing Fee
+                          <Info className="w-3 h-3" />
+                        </span>
+                        <span className="text-neutral-400">+ ₹{fee}</span>
+                      </div>
+                      <div className="pt-2 border-t border-white/5 flex justify-between items-center text-xs">
+                        <span className="text-yellow-300 font-bold uppercase tracking-widest">Total</span>
+                        <span className="text-white font-black text-base">₹{total}</span>
+                      </div>
+                      <p className="text-[8px] text-neutral-600 leading-relaxed">
+                        A small fee covers Razorpay payment gateway charges so the full item price reaches us.
+                      </p>
+                    </div>
+                  );
+                })()}
 
                 <div className="flex items-center gap-3 p-4 bg-white/5 rounded-2xl border border-white/5">
                   <Info className="w-5 h-5 text-neutral-500 shrink-0" />

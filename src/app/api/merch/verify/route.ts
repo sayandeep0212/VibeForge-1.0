@@ -18,6 +18,8 @@ const merchOrderSchema = z.object({
     color: z.string(),
     size: z.string().optional(),
     amount: z.number(),
+    totalAmount: z.number().optional(),
+    processingFee: z.number().optional(),
     receipt: z.string(),
     uid: z.string().optional(),
   }),
@@ -53,6 +55,8 @@ export async function POST(req: Request) {
       payment: {
         razorpayId: razorpay_payment_id,
         orderId: razorpay_order_id,
+        totalAmount: orderData.totalAmount || orderData.amount,
+        processingFee: orderData.processingFee || 0,
         status: 'paid',
         paidAt: Date.now(),
       },
