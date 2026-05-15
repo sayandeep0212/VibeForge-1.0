@@ -7,6 +7,7 @@ import { AuthProvider } from "@/context/AuthContext";
 import Preloader from "@/components/Preloader";
 import JsonLd from "@/components/SEO/JsonLd";
 import { GoogleAnalytics, GoogleTagManager } from '@next/third-parties/google';
+import { Analytics } from "@vercel/analytics/next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -110,6 +111,7 @@ export default function RootLayout({
         </AuthProvider>
         {/* Background Music Player */}
         <BackgroundMusic audioUrl="/media/music.mp3" />
+        <Analytics />
       </body>
     </html>
   );
