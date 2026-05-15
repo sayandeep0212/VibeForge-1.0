@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Plus, Trash2, Camera, Loader2, Users, Star, Box, Edit3, X, Save, ArrowUp, ArrowDown } from 'lucide-react';
+import { Plus, Trash2, Camera, Loader2, Users, Star, Box, Edit3, X, Save, ArrowUp, ArrowDown, Trophy } from 'lucide-react';
 import { ref, get, push, set, remove, update } from 'firebase/database';
 import { getDb, getFirebaseAuth } from '@/lib/firebase';
 import { signInWithCustomToken } from 'firebase/auth';
@@ -10,7 +10,7 @@ import { uploadToImgBB } from '@/lib/imgbb';
 import { useRouter } from 'next/navigation';
 import AdminLayout from '@/components/AdminLayout';
 
-type Tab = 'judges' | 'faculty' | 'coreTeam' | 'sponsors';
+type Tab = 'judges' | 'faculty' | 'coreTeam' | 'sponsors' | 'winners';
 
 export default function AdminContentPage() {
   const router = useRouter();
@@ -36,7 +36,8 @@ export default function AdminContentPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState({
     name: '', role: '', displayOrder: 0,
-    imageURL: '', linkedin: '', facebook: '', instagram: ''
+    imageURL: '', linkedin: '', facebook: '', instagram: '',
+    college: '', members: ''
   });
   const [editPhotoFile, setEditPhotoFile] = useState<File | null>(null);
   const [editPhotoPreview, setEditPhotoPreview] = useState('');
@@ -120,6 +121,13 @@ export default function AdminContentPage() {
       const payload: any = { name: name.trim(), image: finalImageUrl, displayOrder };
       if (activeTab === 'sponsors') {
         payload.brandingType = role.trim();
+      } else if (activeTab === 'winners') {
+        payload.title = role.trim(); // Using role input for award title
+        payload.rank = linkedin.trim(); // Using linkedin input for rank string
+        payload.teamName = name.trim();
+        payload.college = facebook.trim(); // Using facebook input for college
+        payload.members = instagram.split(',').map(m => m.trim()).filter(Boolean); // Using instagram input for comma-separated members
+        payload.imageUrl = finalImageUrl;
       } else {
         payload.role = role.trim();
         payload.socials = { linkedin: linkedin.trim(), facebook: facebook.trim(), instagram: instagram.trim() };
@@ -154,13 +162,15 @@ export default function AdminContentPage() {
   const startEdit = (item: any) => {
     setEditingId(item.id);
     setEditForm({
-      name: item.name || '',
-      role: item.role || item.brandingType || '',
+      name: item.name || item.teamName || '',
+      role: item.role || item.brandingType || item.title || '',
       displayOrder: item.displayOrder || 0,
-      imageURL: item.image || '',
-      linkedin: item.socials?.linkedin || '',
-      facebook: item.socials?.facebook || '',
-      instagram: item.socials?.instagram || '',
+      imageURL: item.image || item.imageUrl || '',
+      linkedin: item.socials?.linkedin || item.rank || '',
+      facebook: item.socials?.facebook || item.college || '',
+      instagram: item.socials?.instagram || (item.members ? item.members.join(', ') : '') || '',
+      college: '', 
+      members: ''
     });
     setEditPhotoFile(null);
     setEditPhotoPreview('');
@@ -191,6 +201,13 @@ export default function AdminContentPage() {
       };
       if (activeTab === 'sponsors') {
         updates.brandingType = editForm.role.trim();
+      } else if (activeTab === 'winners') {
+        updates.title = editForm.role.trim();
+        updates.rank = editForm.linkedin.trim();
+        updates.teamName = editForm.name.trim();
+        updates.college = editForm.facebook.trim();
+        updates.members = editForm.instagram.split(',').map(m => m.trim()).filter(Boolean);
+        updates.imageUrl = finalImage;
       } else {
         updates.role = editForm.role.trim();
         updates.socials = {
@@ -225,7 +242,7 @@ export default function AdminContentPage() {
   };
 
   const getTabLabel = (tab: Tab) => {
-    const map: Record<Tab, string> = { judges: 'Judge', faculty: 'Spectator', coreTeam: 'Team Member', sponsors: 'Sponsor' };
+    const map: Record<Tab, string> = { judges: 'Judge', faculty: 'Spectator', coreTeam: 'Team Member', sponsors: 'Sponsor', winners: 'Winner' };
     return map[tab];
   };
 
@@ -246,6 +263,7 @@ export default function AdminContentPage() {
             { key: 'faculty' as Tab, label: 'The Spectator', icon: Users },
             { key: 'coreTeam' as Tab, label: 'Core Team', icon: Users },
             { key: 'sponsors' as Tab, label: 'Sponsors', icon: Box },
+            { key: 'winners' as Tab, label: 'Winners', icon: Trophy },
           ]).map(tab => (
             <button key={tab.key} onClick={() => setActiveTab(tab.key)}
               className={`flex items-center gap-2 px-4 sm:px-6 py-3 rounded-t-xl font-bold uppercase tracking-widest text-xs sm:text-sm transition-all whitespace-nowrap ${activeTab === tab.key ? 'bg-yellow-300/10 text-yellow-300 border-b-2 border-yellow-300' : 'text-neutral-500 hover:text-white'}`}>
@@ -276,9 +294,9 @@ export default function AdminContentPage() {
 
               <input type="text" placeholder="Or Paste Image URL" value={imageURL} onChange={(e) => setImageURL(e.target.value)}
                 className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-yellow-300 transition-all text-xs" />
-              <input type="text" placeholder={activeTab === 'sponsors' ? "Brand Name" : "Full Name"} value={name} onChange={(e) => setName(e.target.value)} required
+              <input type="text" placeholder={activeTab === 'sponsors' ? "Brand Name" : activeTab === 'winners' ? "Team Name" : "Full Name"} value={name} onChange={(e) => setName(e.target.value)} required
                 className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-yellow-300 transition-all text-sm" />
-              <input type="text" placeholder={activeTab === 'judges' || activeTab === 'faculty' ? "Designation" : activeTab === 'coreTeam' ? "Role" : "Branding Type (e.g. Platinum, Gold)"}
+              <input type="text" placeholder={activeTab === 'judges' || activeTab === 'faculty' ? "Designation" : activeTab === 'coreTeam' ? "Role" : activeTab === 'winners' ? "Award Title (e.g. Champions)" : "Branding Type (e.g. Platinum, Gold)"}
                 value={role} onChange={(e) => setRole(e.target.value)} required
                 className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-yellow-300 transition-all text-sm" />
 
@@ -290,11 +308,11 @@ export default function AdminContentPage() {
 
               {activeTab !== 'sponsors' && (
                 <>
-                  <input type="url" placeholder="LinkedIn URL (optional)" value={linkedin} onChange={(e) => setLinkedin(e.target.value)}
+                  <input type="text" placeholder={activeTab === 'winners' ? "Rank (e.g. 1st Place)" : "LinkedIn URL (optional)"} value={linkedin} onChange={(e) => setLinkedin(e.target.value)} required={activeTab === 'winners'}
                     className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-yellow-300 transition-all text-sm" />
-                  <input type="url" placeholder="Facebook URL (optional)" value={facebook} onChange={(e) => setFacebook(e.target.value)}
+                  <input type="text" placeholder={activeTab === 'winners' ? "College/University Name" : "Facebook URL (optional)"} value={facebook} onChange={(e) => setFacebook(e.target.value)} required={activeTab === 'winners'}
                     className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-yellow-300 transition-all text-sm" />
-                  <input type="url" placeholder="Instagram URL (optional)" value={instagram} onChange={(e) => setInstagram(e.target.value)}
+                  <input type="text" placeholder={activeTab === 'winners' ? "Team Members (comma separated)" : "Instagram URL (optional)"} value={instagram} onChange={(e) => setInstagram(e.target.value)} required={activeTab === 'winners'}
                     className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-yellow-300 transition-all text-sm" />
                 </>
               )}
@@ -334,14 +352,21 @@ export default function AdminContentPage() {
 
                     {/* Info */}
                     <div className="flex-1 overflow-hidden">
-                      <h3 className="text-white font-bold truncate" style={{ fontFamily: 'var(--font-orbitron), sans-serif' }}>{item.name}</h3>
-                      <p className="text-yellow-300/80 text-xs uppercase tracking-widest truncate">{item.role || item.brandingType}</p>
-                      {item.socials && (item.socials.linkedin || item.socials.instagram) && (
-                        <div className="flex gap-2 mt-1">
-                          {item.socials.linkedin && <span className="text-[10px] text-blue-400">LinkedIn</span>}
-                          {item.socials.instagram && <span className="text-[10px] text-pink-400">Instagram</span>}
-                          {item.socials.facebook && <span className="text-[10px] text-blue-300">Facebook</span>}
+                      <h3 className="text-white font-bold truncate" style={{ fontFamily: 'var(--font-orbitron), sans-serif' }}>{item.name || item.teamName}</h3>
+                      <p className="text-yellow-300/80 text-xs uppercase tracking-widest truncate">{item.role || item.brandingType || item.title}</p>
+                      {activeTab === 'winners' ? (
+                        <div className="flex flex-col gap-1 mt-1">
+                          <span className="text-[10px] text-cyan-400">{item.college}</span>
+                          <span className="text-[10px] text-neutral-400 truncate">{item.members?.join(', ')}</span>
                         </div>
+                      ) : (
+                        item.socials && (item.socials.linkedin || item.socials.instagram) && (
+                          <div className="flex gap-2 mt-1">
+                            {item.socials.linkedin && <span className="text-[10px] text-blue-400">LinkedIn</span>}
+                            {item.socials.instagram && <span className="text-[10px] text-pink-400">Instagram</span>}
+                            {item.socials.facebook && <span className="text-[10px] text-blue-300">Facebook</span>}
+                          </div>
+                        )
                       )}
                     </div>
 
@@ -395,14 +420,14 @@ export default function AdminContentPage() {
 
                 {/* Name */}
                 <div>
-                  <label className="text-neutral-500 text-xs uppercase tracking-wider block mb-1">{activeTab === 'sponsors' ? 'Brand Name' : 'Full Name'}</label>
+                  <label className="text-neutral-500 text-xs uppercase tracking-wider block mb-1">{activeTab === 'sponsors' ? 'Brand Name' : activeTab === 'winners' ? 'Team Name' : 'Full Name'}</label>
                   <input type="text" value={editForm.name} onChange={e => setEditForm(p => ({ ...p, name: e.target.value }))}
                     className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-300/50" />
                 </div>
 
                 {/* Role / Branding Type */}
                 <div>
-                  <label className="text-neutral-500 text-xs uppercase tracking-wider block mb-1">{activeTab === 'sponsors' ? 'Branding Type' : 'Designation / Role'}</label>
+                  <label className="text-neutral-500 text-xs uppercase tracking-wider block mb-1">{activeTab === 'sponsors' ? 'Branding Type' : activeTab === 'winners' ? 'Award Title' : 'Designation / Role'}</label>
                   <input type="text" value={editForm.role} onChange={e => setEditForm(p => ({ ...p, role: e.target.value }))}
                     className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-300/50" />
                 </div>
@@ -414,19 +439,19 @@ export default function AdminContentPage() {
                     className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-300/50" />
                 </div>
 
-                {/* Social URLs (non-sponsors only) */}
+                {/* Social URLs or Winner Details */}
                 {activeTab !== 'sponsors' && (
                   <>
                     <div className="border-t border-white/5 pt-4">
-                      <label className="text-neutral-500 text-xs uppercase tracking-wider block mb-3">Social Links</label>
+                      <label className="text-neutral-500 text-xs uppercase tracking-wider block mb-3">{activeTab === 'winners' ? 'Team Details' : 'Social Links'}</label>
                       <div className="space-y-3">
-                        <input type="url" placeholder="LinkedIn URL" value={editForm.linkedin}
+                        <input type="text" placeholder={activeTab === 'winners' ? "Rank (e.g. 1st Place)" : "LinkedIn URL"} value={editForm.linkedin}
                           onChange={e => setEditForm(p => ({ ...p, linkedin: e.target.value }))}
                           className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-300/50" />
-                        <input type="url" placeholder="Facebook URL" value={editForm.facebook}
+                        <input type="text" placeholder={activeTab === 'winners' ? "College/University" : "Facebook URL"} value={editForm.facebook}
                           onChange={e => setEditForm(p => ({ ...p, facebook: e.target.value }))}
                           className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-300/50" />
-                        <input type="url" placeholder="Instagram URL" value={editForm.instagram}
+                        <input type="text" placeholder={activeTab === 'winners' ? "Members (comma separated)" : "Instagram URL"} value={editForm.instagram}
                           onChange={e => setEditForm(p => ({ ...p, instagram: e.target.value }))}
                           className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-300/50" />
                       </div>

@@ -13,6 +13,7 @@ const Footer = () => {
       title: "Quick Links",
       links: [
         { name: "Home", href: "/" },
+        { name: "Winners", href: "/winners" },
         { name: "Schedule", href: "/schedule" },
         { name: "Team", href: "/team" },
         { name: "Sponsors", href: "/sponsors" },
@@ -166,7 +167,14 @@ const Footer = () => {
             <p className="text-neutral-500 text-[10px] uppercase tracking-[0.2em]">
               &copy; {currentYear} GameLiminals • Established 2026
             </p>
-            <p className="text-neutral-500 text-[10px] uppercase tracking-[0.2em]">
+            <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mt-1 font-sans">
+              <Link href="/terms" className="text-neutral-500 hover:text-yellow-300 transition-colors text-[10px] uppercase tracking-[0.1em] font-sans">Terms & Conditions</Link>
+              <span className="text-neutral-700 text-[10px]">|</span>
+              <Link href="/privacy" className="text-neutral-500 hover:text-yellow-300 transition-colors text-[10px] uppercase tracking-[0.1em] font-sans">Privacy Policy</Link>
+              <span className="text-neutral-700 text-[10px]">|</span>
+              <Link href="/refund" className="text-neutral-500 hover:text-yellow-300 transition-colors text-[10px] uppercase tracking-[0.1em] font-sans">Refund & Cancellation</Link>
+            </div>
+            <p className="text-neutral-500 text-[10px] uppercase tracking-[0.2em] mt-2">
               Website developed by <a href="https://www.linkedin.com/in/sayandeep0212/" target="_blank" rel="noopener noreferrer" className="text-red-500 hover:text-red-400 font-bold transition-colors">Sayandeep Pradhan</a>
             </p>
           </div>
