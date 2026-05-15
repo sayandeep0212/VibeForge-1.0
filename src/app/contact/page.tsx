@@ -46,6 +46,7 @@ const ContactPage = () => {
       setLoading(false);
     }
   };
+
   return (
     <main className="relative min-h-screen bg-black text-white selection:bg-yellow-300 selection:text-black overflow-x-hidden">
       {/* Navigation */}
