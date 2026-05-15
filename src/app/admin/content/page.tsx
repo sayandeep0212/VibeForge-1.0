@@ -34,10 +34,16 @@ export default function AdminContentPage() {
 
   // Edit modal
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [editForm, setEditForm] = useState({ name: '', role: '', displayOrder: 0 });
+  const [editForm, setEditForm] = useState({
+    name: '', role: '', displayOrder: 0,
+    imageURL: '', linkedin: '', facebook: '', instagram: ''
+  });
+  const [editPhotoFile, setEditPhotoFile] = useState<File | null>(null);
+  const [editPhotoPreview, setEditPhotoPreview] = useState('');
   const [editSaving, setEditSaving] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const editFileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const checkSession = async () => {
@@ -147,21 +153,63 @@ export default function AdminContentPage() {
 
   const startEdit = (item: any) => {
     setEditingId(item.id);
-    setEditForm({ name: item.name, role: item.role || item.brandingType || '', displayOrder: item.displayOrder || 0 });
+    setEditForm({
+      name: item.name || '',
+      role: item.role || item.brandingType || '',
+      displayOrder: item.displayOrder || 0,
+      imageURL: item.image || '',
+      linkedin: item.socials?.linkedin || '',
+      facebook: item.socials?.facebook || '',
+      instagram: item.socials?.instagram || '',
+    });
+    setEditPhotoFile(null);
+    setEditPhotoPreview('');
+  };
+
+  const handleEditPhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setEditPhotoFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => setEditPhotoPreview(reader.result as string);
+      reader.readAsDataURL(file);
+    }
   };
 
   const saveEdit = async () => {
     if (!editingId) return;
     setEditSaving(true);
     try {
-      const updates: any = { name: editForm.name.trim(), displayOrder: editForm.displayOrder };
-      if (activeTab === 'sponsors') { updates.brandingType = editForm.role.trim(); }
-      else { updates.role = editForm.role.trim(); }
+      // Resolve image
+      let finalImage = editForm.imageURL.trim();
+      if (editPhotoFile) finalImage = await uploadToImgBB(editPhotoFile);
+
+      const updates: any = {
+        name: editForm.name.trim(),
+        displayOrder: editForm.displayOrder,
+        image: finalImage,
+      };
+      if (activeTab === 'sponsors') {
+        updates.brandingType = editForm.role.trim();
+      } else {
+        updates.role = editForm.role.trim();
+        updates.socials = {
+          linkedin: editForm.linkedin.trim(),
+          facebook: editForm.facebook.trim(),
+          instagram: editForm.instagram.trim(),
+        };
+      }
       await update(ref(getDb(), `${activeTab}/${editingId}`), updates);
       setEditingId(null);
+      setEditPhotoFile(null);
+      setEditPhotoPreview('');
       fetchItems(activeTab);
-    } catch (err) { console.error('Error editing:', err); }
-    finally { setEditSaving(false); }
+    } catch (err) {
+      console.error('Error editing:', err);
+      alert(`Failed to save: ${err instanceof Error ? err.message : 'Unknown error'}`);
+    } finally {
+      setEditSaving(false);
+    }
   };
 
   const moveItem = async (id: string, direction: 'up' | 'down') => {
@@ -316,27 +364,76 @@ export default function AdminContentPage() {
         {/* Edit Modal */}
         {editingId && (
           <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setEditingId(null)}>
-            <div className="bg-neutral-900 border border-white/10 rounded-2xl p-6 w-full max-w-md" onClick={e => e.stopPropagation()}>
+            <div className="bg-neutral-900 border border-white/10 rounded-2xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-white font-bold font-sans">Edit {getTabLabel(activeTab)}</h3>
                 <button onClick={() => setEditingId(null)} className="text-neutral-500 hover:text-white"><X className="w-5 h-5" /></button>
               </div>
               <div className="space-y-4">
+                {/* Image Upload */}
                 <div>
-                  <label className="text-neutral-500 text-xs uppercase tracking-wider block mb-1">Name</label>
+                  <label className="text-neutral-500 text-xs uppercase tracking-wider block mb-2">Photo</label>
+                  <div className="flex items-center gap-4">
+                    <div onClick={() => editFileInputRef.current?.click()}
+                      className="relative w-20 h-20 rounded-xl border-2 border-dashed border-white/20 hover:border-yellow-300/50 transition-colors cursor-pointer group overflow-hidden bg-black/40 flex-shrink-0">
+                      {editPhotoPreview ? (
+                        <img src={editPhotoPreview} alt="Preview" className="w-full h-full object-cover" />
+                      ) : editForm.imageURL ? (
+                        <img src={editForm.imageURL} alt="Current" className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full flex flex-col items-center justify-center">
+                          <Camera className="w-5 h-5 text-neutral-500 group-hover:text-yellow-300 transition-colors" />
+                        </div>
+                      )}
+                    </div>
+                    <input ref={editFileInputRef} type="file" accept="image/*" onChange={handleEditPhotoChange} className="hidden" />
+                    <input type="text" placeholder="Or paste image URL" value={editForm.imageURL}
+                      onChange={e => { setEditForm(p => ({ ...p, imageURL: e.target.value })); setEditPhotoFile(null); setEditPhotoPreview(''); }}
+                      className="flex-1 bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-xs focus:outline-none focus:border-yellow-300/50" />
+                  </div>
+                </div>
+
+                {/* Name */}
+                <div>
+                  <label className="text-neutral-500 text-xs uppercase tracking-wider block mb-1">{activeTab === 'sponsors' ? 'Brand Name' : 'Full Name'}</label>
                   <input type="text" value={editForm.name} onChange={e => setEditForm(p => ({ ...p, name: e.target.value }))}
                     className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-300/50" />
                 </div>
+
+                {/* Role / Branding Type */}
                 <div>
                   <label className="text-neutral-500 text-xs uppercase tracking-wider block mb-1">{activeTab === 'sponsors' ? 'Branding Type' : 'Designation / Role'}</label>
                   <input type="text" value={editForm.role} onChange={e => setEditForm(p => ({ ...p, role: e.target.value }))}
                     className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-300/50" />
                 </div>
+
+                {/* Display Order */}
                 <div>
                   <label className="text-neutral-500 text-xs uppercase tracking-wider block mb-1">Display Order</label>
                   <input type="number" value={editForm.displayOrder} onChange={e => setEditForm(p => ({ ...p, displayOrder: parseInt(e.target.value) || 0 }))}
                     className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-300/50" />
                 </div>
+
+                {/* Social URLs (non-sponsors only) */}
+                {activeTab !== 'sponsors' && (
+                  <>
+                    <div className="border-t border-white/5 pt-4">
+                      <label className="text-neutral-500 text-xs uppercase tracking-wider block mb-3">Social Links</label>
+                      <div className="space-y-3">
+                        <input type="url" placeholder="LinkedIn URL" value={editForm.linkedin}
+                          onChange={e => setEditForm(p => ({ ...p, linkedin: e.target.value }))}
+                          className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-300/50" />
+                        <input type="url" placeholder="Facebook URL" value={editForm.facebook}
+                          onChange={e => setEditForm(p => ({ ...p, facebook: e.target.value }))}
+                          className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-300/50" />
+                        <input type="url" placeholder="Instagram URL" value={editForm.instagram}
+                          onChange={e => setEditForm(p => ({ ...p, instagram: e.target.value }))}
+                          className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-300/50" />
+                      </div>
+                    </div>
+                  </>
+                )}
+
                 <button onClick={saveEdit} disabled={editSaving}
                   className="w-full bg-yellow-300 hover:bg-yellow-400 text-black py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 disabled:opacity-50">
                   {editSaving ? <><Loader2 className="w-4 h-4 animate-spin" /> Saving...</> : <><Save className="w-4 h-4" /> Save Changes</>}
