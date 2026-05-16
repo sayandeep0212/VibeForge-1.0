@@ -64,7 +64,15 @@ div.text-red-500, div.text-red-600 {
   font-weight: bold;
 }
 
-/* Marquee Animation */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite;
+}
+
 @keyframes marquee {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
