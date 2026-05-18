@@ -46,8 +46,6 @@ function RegisterContent() {
   const { user, userProfile } = useAuth();
   const router = useRouter();
 
-  const MAX_TEAMS = 150;
-
   const [participationType, setParticipationType] = useState<'individual' | 'team' | ''>('');
   const [teamName, setTeamName] = useState('');
   const [memberUIDs, setMemberUIDs] = useState<string[]>(['']);
@@ -60,8 +58,6 @@ function RegisterContent() {
   const [isMemberOfTeam, setIsMemberOfTeam] = useState(false);
   const [checkingStatus, setCheckingStatus] = useState(true);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
-  const [registrationsFull, setRegistrationsFull] = useState(false);
-  const [totalTeams, setTotalTeams] = useState(0);
   const [registrationClosed, setRegistrationClosed] = useState(false);
   const [closedReason, setClosedReason] = useState('');
 
@@ -117,13 +113,6 @@ function RegisterContent() {
       const allRegsSnap = await get(ref(db!, 'registrations'));
       if (allRegsSnap.exists()) {
         const allRegs = allRegsSnap.val();
-        const regCount = Object.keys(allRegs).length;
-        setTotalTeams(regCount);
-
-        // Check 150 team limit
-        if (regCount >= MAX_TEAMS) {
-          setRegistrationsFull(true);
-        }
 
         for (const regId in allRegs) {
           const reg = allRegs[regId];
@@ -517,33 +506,8 @@ function RegisterContent() {
               </motion.div>
             )}
 
-            {/* Registrations Full - 150 team cap */}
-            {registrationsFull && !alreadyRegistered && !paymentSuccess && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="bg-red-500/10 border border-red-500/30 rounded-3xl p-8 text-center"
-              >
-                <XCircle className="w-16 h-16 text-red-400 mx-auto mb-4" />
-                <h2 className="text-xl font-bold text-white mb-2">REGISTRATIONS FULL</h2>
-                <p className="text-neutral-400 text-sm mb-2">
-                  All <span className="text-white font-bold">{MAX_TEAMS}</span> team slots have been filled.
-                  Registration is now closed.
-                </p>
-                <p className="text-neutral-500 text-xs mb-4">
-                  {totalTeams} / {MAX_TEAMS} teams registered
-                </p>
-                <button
-                  onClick={() => router.push('/')}
-                  className="px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-xl font-bold transition-all"
-                >
-                  Back to Home
-                </button>
-              </motion.div>
-            )}
-
             {/* Registration Closed by Admin or Deadline */}
-            {registrationClosed && !registrationsFull && !alreadyRegistered && !paymentSuccess && (
+            {registrationClosed && !alreadyRegistered && !paymentSuccess && (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -567,7 +531,7 @@ function RegisterContent() {
             )}
 
             {/* Registration Form */}
-            {!alreadyRegistered && !paymentSuccess && !registrationsFull && !registrationClosed && (
+            {!alreadyRegistered && !paymentSuccess && !registrationClosed && (
               <div className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl p-6 md:p-8 relative overflow-hidden">
                 {/* Warning Banner */}
                 <div className="mb-6 p-4 bg-yellow-300/5 border border-yellow-300/20 rounded-xl flex items-start gap-3">

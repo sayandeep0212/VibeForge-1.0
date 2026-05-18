@@ -4,9 +4,9 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import {
   Search, Download, CheckCircle, XCircle, Clock, Users,
-  User as UserIcon, CreditCard, Shield, Star, Trash2, Edit3, X, Save, Building2, RefreshCw
+  User as UserIcon, CreditCard, Shield, Star, Trash2, Edit3, X, Save, Building2, RefreshCw, Plus
 } from 'lucide-react';
-import { ref, get, update, remove } from 'firebase/database';
+import { ref, get, update, remove, push, set } from 'firebase/database';
 import { getDb, getFirebaseAuth } from '@/lib/firebase';
 import { signInWithCustomToken } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
@@ -63,6 +63,18 @@ export default function RegistrationsPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState({ teamName: '', status: '' as string });
 
+  // Manual Registration Modal State
+  const [showManualModal, setShowManualModal] = useState(false);
+  const [manualForm, setManualForm] = useState({
+    teamName: '',
+    type: 'individual' as 'individual' | 'team',
+    leaderUid: '',
+    memberUids: [''] as string[],
+    amount: 150
+  });
+  const [manualError, setManualError] = useState('');
+  const [isSubmittingManual, setIsSubmittingManual] = useState(false);
+
   useEffect(() => {
     const checkSession = async () => {
       try {
@@ -113,6 +125,94 @@ export default function RegistrationsPage() {
     if (reg.isAdamas !== undefined) return reg.isAdamas;
     const leaderProfile = Object.values(userProfiles).find((u: any) => u.uid === reg.leaderUid);
     return leaderProfile?.isAdamas || false;
+  };
+
+  const findUserByUid = (uid: string) => {
+    const entry = Object.entries(userProfiles).find(([_, profile]) => profile.uid === uid);
+    if (entry) {
+      return { firebaseId: entry[0], ...entry[1] };
+    }
+    return null;
+  };
+
+  const handleManualSubmit = async () => {
+    setManualError('');
+    if (!manualForm.teamName) return setManualError('Team Name is required');
+    if (!manualForm.leaderUid) return setManualError('Leader UID is required');
+
+    const leaderUser = findUserByUid(manualForm.leaderUid);
+    if (!leaderUser) return setManualError(`User with UID ${manualForm.leaderUid} not found`);
+
+    const members = [{
+      firebaseId: leaderUser.firebaseId,
+      uid: leaderUser.uid,
+      name: leaderUser.name,
+      email: leaderUser.email,
+    }];
+
+    if (manualForm.type === 'team') {
+      const validMemberUids = manualForm.memberUids.filter(uid => uid.trim() !== '');
+      if (validMemberUids.length === 0) return setManualError('At least one valid member UID is required for a team');
+      
+      for (const uid of validMemberUids) {
+        if (uid === manualForm.leaderUid) return setManualError('Leader cannot be added as a member again');
+        const memberUser = findUserByUid(uid);
+        if (!memberUser) return setManualError(`Member with UID ${uid} not found`);
+        members.push({
+          firebaseId: memberUser.firebaseId,
+          uid: memberUser.uid,
+          name: memberUser.name,
+          email: memberUser.email,
+        });
+      }
+    }
+
+    setIsSubmittingManual(true);
+    try {
+      const newRegData = {
+        teamName: manualForm.teamName,
+        type: manualForm.type,
+        leaderId: leaderUser.firebaseId,
+        leaderUid: leaderUser.uid,
+        isAdamas: leaderUser.isAdamas || false,
+        members,
+        payment: {
+          razorpayId: 'OFFLINE_PAYMENT',
+          amount: manualForm.amount,
+          status: 'paid',
+          receipt: `RCPT-${nanoid(8).toUpperCase()}`,
+          paidAt: Date.now(),
+        },
+        status: 'pending_approval',
+        passId: '',
+        bookingId: '',
+        createdAt: Date.now(),
+      };
+
+      const newRegRef = push(ref(getDb(), 'registrations'));
+      await set(newRegRef, newRegData);
+
+      // Now approve it to generate passes and send emails
+      const res = await fetch('/api/admin/registrations/approve', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ registrationId: newRegRef.key }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || 'Failed to approve manual registration');
+      }
+
+      setShowManualModal(false);
+      setManualForm({ teamName: '', type: 'individual', leaderUid: '', memberUids: [''], amount: 150 });
+      fetchData(); // refresh data
+    } catch (err: any) {
+      console.error(err);
+      setManualError(err.message || 'Failed to create manual registration');
+    } finally {
+      setIsSubmittingManual(false);
+    }
   };
 
   const filteredRegistrations = useMemo(() => {
@@ -327,6 +427,9 @@ export default function RegistrationsPage() {
             <button onClick={() => fetchData()} className="flex-1 md:flex-none justify-center flex items-center gap-1 px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/10 text-neutral-400 hover:text-white rounded-lg transition-all text-[10px] sm:text-xs font-medium">
               <RefreshCw className="w-3 h-3" /> Refresh
             </button>
+            <button onClick={() => setShowManualModal(true)} className="flex-1 md:flex-none justify-center flex items-center gap-1 px-3 py-2 bg-yellow-500/10 hover:bg-yellow-500/20 border border-yellow-500/20 text-yellow-400 rounded-lg transition-all text-[10px] sm:text-xs font-medium">
+              <Plus className="w-3 h-3" /> Offline Reg
+            </button>
             <button onClick={() => exportData('csv')} className="flex-1 md:flex-none justify-center flex items-center gap-1 px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/10 text-neutral-400 hover:text-white rounded-lg transition-all text-[10px] sm:text-xs font-medium">
               <Download className="w-3 h-3" /> CSV
             </button>
@@ -370,6 +473,88 @@ export default function RegistrationsPage() {
             </select>
           </div>
         </div>
+
+        {/* Manual Registration Modal */}
+        {showManualModal && (
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => !isSubmittingManual && setShowManualModal(false)}>
+            <div className="bg-neutral-900 border border-white/10 rounded-2xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-white font-bold">Add Offline Registration</h3>
+                <button onClick={() => setShowManualModal(false)} className="text-neutral-500 hover:text-white"><X className="w-5 h-5" /></button>
+              </div>
+              
+              {manualError && (
+                <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-xs">
+                  {manualError}
+                </div>
+              )}
+
+              <div className="space-y-4">
+                <div>
+                  <label className="text-neutral-500 text-xs uppercase tracking-wider block mb-1">Team Name</label>
+                  <input type="text" value={manualForm.teamName} onChange={e => setManualForm(p => ({ ...p, teamName: e.target.value }))}
+                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-300/50" />
+                </div>
+                
+                <div>
+                  <label className="text-neutral-500 text-xs uppercase tracking-wider block mb-1">Type</label>
+                  <select value={manualForm.type} onChange={e => setManualForm(p => ({ ...p, type: e.target.value as 'individual' | 'team' }))}
+                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-300/50">
+                    <option value="individual" className="bg-black">Individual</option>
+                    <option value="team" className="bg-black">Team</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="text-neutral-500 text-xs uppercase tracking-wider block mb-1">Leader UID</label>
+                  <input type="text" value={manualForm.leaderUid} onChange={e => setManualForm(p => ({ ...p, leaderUid: e.target.value.toUpperCase() }))}
+                    placeholder="GL-XXXXXX"
+                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-300/50 font-mono" />
+                </div>
+
+                {manualForm.type === 'team' && (
+                  <div>
+                    <label className="text-neutral-500 text-xs uppercase tracking-wider block mb-1">Member UIDs</label>
+                    <div className="space-y-2">
+                      {manualForm.memberUids.map((uid, idx) => (
+                        <div key={idx} className="flex gap-2">
+                          <input type="text" value={uid} onChange={e => {
+                            const newUids = [...manualForm.memberUids];
+                            newUids[idx] = e.target.value.toUpperCase();
+                            setManualForm(p => ({ ...p, memberUids: newUids }));
+                          }}
+                            placeholder="GL-XXXXXX"
+                            className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-yellow-300/50 font-mono" />
+                          {manualForm.memberUids.length > 1 && (
+                            <button onClick={() => {
+                              const newUids = manualForm.memberUids.filter((_, i) => i !== idx);
+                              setManualForm(p => ({ ...p, memberUids: newUids }));
+                            }} className="p-2 text-red-400 hover:bg-red-500/10 rounded-xl"><X className="w-4 h-4" /></button>
+                          )}
+                        </div>
+                      ))}
+                      {manualForm.memberUids.length < 3 && (
+                        <button onClick={() => setManualForm(p => ({ ...p, memberUids: [...p.memberUids, ''] }))}
+                          className="text-xs text-yellow-300 hover:text-yellow-400">+ Add Member UID</button>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                <div>
+                  <label className="text-neutral-500 text-xs uppercase tracking-wider block mb-1">Amount Paid</label>
+                  <input type="number" value={manualForm.amount} onChange={e => setManualForm(p => ({ ...p, amount: Number(e.target.value) }))}
+                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-300/50" />
+                </div>
+
+                <button onClick={handleManualSubmit} disabled={isSubmittingManual}
+                  className="w-full bg-yellow-300 hover:bg-yellow-400 text-black py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 disabled:opacity-50">
+                  {isSubmittingManual ? 'Processing...' : 'Submit Registration'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Edit Modal */}
         {editingId && (

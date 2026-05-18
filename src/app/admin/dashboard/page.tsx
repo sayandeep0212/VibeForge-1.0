@@ -68,11 +68,18 @@ export default function AdminDashboardPage() {
 
     const fetchStats = async () => {
       try {
-        const res = await fetch('/api/admin/stats');
-        const data = await res.json();
-        if (mounted && !data.error) {
-          setStats(data);
-          setLoading(false);
+        const res = await fetch('/api/admin/overview');
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        
+        const contentType = res.headers.get("content-type");
+        if (contentType && contentType.indexOf("application/json") !== -1) {
+          const data = await res.json();
+          if (mounted && !data.error) {
+            setStats(data);
+            setLoading(false);
+          }
+        } else {
+          throw new Error("Response was not JSON");
         }
       } catch (err) {
         console.error('Error fetching stats:', err);
