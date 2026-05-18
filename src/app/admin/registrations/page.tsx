@@ -47,6 +47,7 @@ interface Registration {
 type StatusFilter = 'all' | 'pending_approval' | 'approved' | 'rejected' | 'shortlisted';
 type TypeFilter = 'all' | 'individual' | 'team';
 type CollegeFilter = 'all' | 'adamas' | 'external';
+type PaymentModeFilter = 'all' | 'online' | 'offline';
 
 export default function RegistrationsPage() {
   const router = useRouter();
@@ -59,6 +60,7 @@ export default function RegistrationsPage() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const [typeFilter, setTypeFilter] = useState<TypeFilter>('all');
   const [collegeFilter, setCollegeFilter] = useState<CollegeFilter>('all');
+  const [paymentModeFilter, setPaymentModeFilter] = useState<PaymentModeFilter>('all');
 
   // Edit modal state
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -234,10 +236,13 @@ export default function RegistrationsPage() {
       const matchesType = typeFilter === 'all' || reg.type === typeFilter;
       const matchesCollege = collegeFilter === 'all' ||
         (collegeFilter === 'adamas' ? isAdamasTeam(reg) : !isAdamasTeam(reg));
+        
+      const matchesPaymentMode = paymentModeFilter === 'all' ||
+        (paymentModeFilter === 'offline' ? reg.payment?.razorpayId === 'OFFLINE_PAYMENT' : reg.payment?.razorpayId !== 'OFFLINE_PAYMENT');
 
-      return matchesSearch && matchesStatus && matchesType && matchesCollege;
+      return matchesSearch && matchesStatus && matchesType && matchesCollege && matchesPaymentMode;
     });
-  }, [registrations, userProfiles, searchQuery, statusFilter, typeFilter, collegeFilter]);
+  }, [registrations, userProfiles, searchQuery, statusFilter, typeFilter, collegeFilter, paymentModeFilter]);
 
   const toggleShortlist = async (regId: string) => {
     const current = registrations[regId]?.shortlisted || false;
@@ -469,10 +474,16 @@ export default function RegistrationsPage() {
               <option value="team" className="bg-black">Team</option>
             </select>
             <select value={collegeFilter} onChange={(e) => setCollegeFilter(e.target.value as CollegeFilter)}
-              className="bg-black/50 border border-white/10 text-white rounded-xl py-2 px-3 sm:py-2.5 sm:px-4 text-[10px] sm:text-sm cursor-pointer focus:outline-none focus:border-yellow-300/50 col-span-2 sm:col-auto">
+              className="bg-black/50 border border-white/10 text-white rounded-xl py-2 px-3 sm:py-2.5 sm:px-4 text-[10px] sm:text-sm cursor-pointer focus:outline-none focus:border-yellow-300/50">
               <option value="all" className="bg-black">All Colleges</option>
               <option value="adamas" className="bg-black">Adamas University</option>
               <option value="external" className="bg-black">External Colleges</option>
+            </select>
+            <select value={paymentModeFilter} onChange={(e) => setPaymentModeFilter(e.target.value as PaymentModeFilter)}
+              className="bg-black/50 border border-white/10 text-white rounded-xl py-2 px-3 sm:py-2.5 sm:px-4 text-[10px] sm:text-sm cursor-pointer focus:outline-none focus:border-yellow-300/50">
+              <option value="all" className="bg-black">All Modes</option>
+              <option value="online" className="bg-black">Online</option>
+              <option value="offline" className="bg-black">Offline</option>
             </select>
           </div>
         </div>
@@ -627,6 +638,10 @@ export default function RegistrationsPage() {
                         <span className="text-neutral-700 hidden sm:inline">•</span>
                         <span className={`text-[10px] sm:text-xs font-medium ${isAdamasTeam(reg) ? 'text-purple-400' : 'text-orange-400'}`}>
                           {isAdamasTeam(reg) ? '🎓 Adamas' : '🌐 External'}
+                        </span>
+                        <span className="text-neutral-700 hidden sm:inline">•</span>
+                        <span className={`text-[10px] sm:text-xs font-medium ${reg.payment?.razorpayId === 'OFFLINE_PAYMENT' ? 'text-yellow-400' : 'text-green-400'}`}>
+                          {reg.payment?.razorpayId === 'OFFLINE_PAYMENT' ? '🎟️ Offline' : '💳 Online'}
                         </span>
                         <span className="text-neutral-700 hidden sm:inline">•</span>
                         <span className="text-neutral-500 text-[10px] sm:text-xs">{new Date(reg.createdAt).toLocaleDateString()}</span>
