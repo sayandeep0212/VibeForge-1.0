@@ -19,6 +19,7 @@ interface Member {
   uid: string;
   name: string;
   email: string;
+  college?: string;
 }
 
 interface Registration {
@@ -148,6 +149,7 @@ export default function RegistrationsPage() {
       uid: leaderUser.uid,
       name: leaderUser.name,
       email: leaderUser.email,
+      college: leaderUser.college || '',
     }];
 
     if (manualForm.type === 'team') {
@@ -163,6 +165,7 @@ export default function RegistrationsPage() {
           uid: memberUser.uid,
           name: memberUser.name,
           email: memberUser.email,
+          college: memberUser.college || '',
         });
       }
     }
@@ -510,32 +513,46 @@ export default function RegistrationsPage() {
                   <input type="text" value={manualForm.leaderUid} onChange={e => setManualForm(p => ({ ...p, leaderUid: e.target.value.toUpperCase() }))}
                     placeholder="GL-XXXXXX"
                     className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-300/50 font-mono" />
+                  {manualForm.leaderUid && findUserByUid(manualForm.leaderUid) && (
+                    <p className="text-xs text-green-400 mt-1 pl-1">✓ {findUserByUid(manualForm.leaderUid)!.name} • {findUserByUid(manualForm.leaderUid)!.college}</p>
+                  )}
+                  {manualForm.leaderUid && !findUserByUid(manualForm.leaderUid) && manualForm.leaderUid.length > 5 && (
+                    <p className="text-xs text-red-400 mt-1 pl-1">✗ User not found</p>
+                  )}
                 </div>
 
                 {manualForm.type === 'team' && (
                   <div>
-                    <label className="text-neutral-500 text-xs uppercase tracking-wider block mb-1">Member UIDs</label>
+                    <label className="text-neutral-500 text-xs uppercase tracking-wider block mb-1">Member UIDs (Max 2)</label>
                     <div className="space-y-2">
                       {manualForm.memberUids.map((uid, idx) => (
-                        <div key={idx} className="flex gap-2">
-                          <input type="text" value={uid} onChange={e => {
-                            const newUids = [...manualForm.memberUids];
-                            newUids[idx] = e.target.value.toUpperCase();
-                            setManualForm(p => ({ ...p, memberUids: newUids }));
-                          }}
-                            placeholder="GL-XXXXXX"
-                            className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-yellow-300/50 font-mono" />
-                          {manualForm.memberUids.length > 1 && (
-                            <button onClick={() => {
-                              const newUids = manualForm.memberUids.filter((_, i) => i !== idx);
+                        <div key={idx} className="flex flex-col gap-1">
+                          <div className="flex gap-2">
+                            <input type="text" value={uid} onChange={e => {
+                              const newUids = [...manualForm.memberUids];
+                              newUids[idx] = e.target.value.toUpperCase();
                               setManualForm(p => ({ ...p, memberUids: newUids }));
-                            }} className="p-2 text-red-400 hover:bg-red-500/10 rounded-xl"><X className="w-4 h-4" /></button>
+                            }}
+                              placeholder="GL-XXXXXX"
+                              className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-yellow-300/50 font-mono" />
+                            {manualForm.memberUids.length > 1 && (
+                              <button onClick={() => {
+                                const newUids = manualForm.memberUids.filter((_, i) => i !== idx);
+                                setManualForm(p => ({ ...p, memberUids: newUids }));
+                              }} className="p-2 text-red-400 hover:bg-red-500/10 rounded-xl shrink-0"><X className="w-4 h-4" /></button>
+                            )}
+                          </div>
+                          {uid && findUserByUid(uid) && (
+                            <p className="text-xs text-green-400 pl-1">✓ {findUserByUid(uid)!.name} • {findUserByUid(uid)!.college}</p>
+                          )}
+                          {uid && !findUserByUid(uid) && uid.length > 5 && (
+                            <p className="text-xs text-red-400 pl-1">✗ User not found</p>
                           )}
                         </div>
                       ))}
-                      {manualForm.memberUids.length < 3 && (
+                      {manualForm.memberUids.length < 2 && (
                         <button onClick={() => setManualForm(p => ({ ...p, memberUids: [...p.memberUids, ''] }))}
-                          className="text-xs text-yellow-300 hover:text-yellow-400">+ Add Member UID</button>
+                          className="text-xs text-yellow-300 hover:text-yellow-400 mt-2 block">+ Add Member UID</button>
                       )}
                     </div>
                   </div>
@@ -689,6 +706,12 @@ export default function RegistrationsPage() {
                             <span className="text-neutral-500 font-mono">{member.uid}</span>
                             <span className="text-neutral-700 hidden sm:inline">•</span>
                             <span className="text-neutral-600 truncate max-w-[150px] sm:max-w-none">{member.email}</span>
+                            {member.college && (
+                              <>
+                                <span className="text-neutral-700 hidden sm:inline">•</span>
+                                <span className="text-neutral-500 truncate max-w-[150px] sm:max-w-none" title={member.college}>{member.college.length > 20 ? member.college.substring(0, 20) + '...' : member.college}</span>
+                              </>
+                            )}
                           </div>
                         </div>
                       ))}

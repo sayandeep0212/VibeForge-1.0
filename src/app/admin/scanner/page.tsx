@@ -15,6 +15,7 @@ interface Member {
   name: string;
   uid: string;
   email: string;
+  college?: string;
 }
 
 interface Registration {
@@ -415,7 +416,10 @@ export default function AdminScannerPage() {
                     <div className="space-y-2 max-h-[150px] overflow-y-auto pr-2 custom-scrollbar">
                       {scanResult.members.map((m, i) => (
                         <div key={i} className="bg-white/5 border border-white/5 rounded-xl p-3 flex justify-between items-center">
-                          <span className="text-white text-sm font-medium uppercase tracking-tight">{m.name}</span>
+                          <div className="flex flex-col">
+                            <span className="text-white text-sm font-medium uppercase tracking-tight">{m.name}</span>
+                            {m.college && <span className="text-neutral-500 text-[10px]">{m.college}</span>}
+                          </div>
                           <span className="text-neutral-500 text-[10px] font-mono">{m.uid}</span>
                         </div>
                       ))}
