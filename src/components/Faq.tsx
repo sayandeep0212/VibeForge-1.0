@@ -55,10 +55,6 @@ const Faq = () => {
       answer: "The registration is a flat fee per team: ₹150 for Adamas University Teams and ₹250 for External Teams. The leader pays this amount for the entire team."
     },
     {
-      question: "What if I don't have a team or an idea?",
-      answer: "No problem — you can still participate! Team formation and brainstorming sessions will be conducted at the start of the event. You can easily find partners and build something amazing together."
-    },
-    {
       question: "What are the prize categories?",
       answer: "1st, 2nd, and 3rd place winners receive official Trophies & Certificates. Additionally, the project with the 'Best UI/UX Design' will receive a special Certificate of Excellence."
     },
