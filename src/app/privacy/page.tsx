@@ -29,54 +29,33 @@ const PrivacyPage = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 md:p-12 space-y-8 text-neutral-300 leading-relaxed font-sans"
+          className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 md:p-12 text-neutral-300 leading-relaxed font-sans"
         >
-          <section>
-            <h2 className="text-2xl font-bold text-cyan-400 mb-4 uppercase tracking-wider font-sans">1. Information We Collect</h2>
-            <p>
-              When you register for VibeForge 1.0, we collect personal information that you voluntarily provide to us. This includes your name, email address, phone number, university/college name, course details, and any project-related information submitted during the event. For payments, we securely process transactions via Razorpay, but we do not store your sensitive financial details (like full credit card numbers) on our servers.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-bold text-cyan-400 mb-4 uppercase tracking-wider font-sans">2. How We Use Your Information</h2>
-            <p>We use the information we collect to:</p>
-            <ul className="list-disc pl-6 mt-2 space-y-2">
-              <li>Facilitate your registration and participation in VibeForge 1.0.</li>
-              <li>Communicate with you regarding event updates, schedules, and announcements.</li>
-              <li>Issue digital or physical passes and certificates.</li>
-              <li>Provide customer support and respond to your inquiries.</li>
-              <li>Analyze registration data to improve future events organized by GameLiminals.</li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-bold text-cyan-400 mb-4 uppercase tracking-wider font-sans">3. Information Sharing and Disclosure</h2>
-            <p>
-              We do not sell, trade, or rent your personal identification information to others. We may share generic aggregated demographic information not linked to any personal identification information with our university partners, sponsors, and affiliates for the purposes outlined above. We may also disclose information when legally required to do so to comply with applicable laws or valid legal processes.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-bold text-cyan-400 mb-4 uppercase tracking-wider font-sans">4. Data Security</h2>
-            <p>
-              We adopt appropriate data collection, storage, and processing practices and security measures to protect against unauthorized access, alteration, disclosure, or destruction of your personal information, username, password, transaction information, and data stored on our site.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-bold text-cyan-400 mb-4 uppercase tracking-wider font-sans">5. Third-Party Services</h2>
-            <p>
-              Our website may use third-party services like Firebase for database management and Resend for email communications. These services have their own privacy policies governing the use of the data they collect. We encourage you to review their policies if you have concerns about third-party data processing.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-bold text-cyan-400 mb-4 uppercase tracking-wider font-sans">6. Contact Us</h2>
-            <p>
-              If you have any questions about this Privacy Policy, the practices of this site, or your dealings with this site, please contact us at <strong>adamasgamingclub@gmail.com</strong>.
-            </p>
-          </section>
+          <div className="space-y-6">
+            {[
+              "GameLiminals may collect participant information including name, email address, phone number, college name, team details, and registration data for event management purposes.",
+              "Personal information collected during registration will be used for participant verification, communication, event coordination, certificate generation, and hackathon-related updates.",
+              "Participant data will not be sold to unauthorized third parties. However, limited information may be shared with official event partners, sponsors, or service providers strictly for operational and event-related activities.",
+              "By registering for VibeForge 1.0, participants consent to receive event announcements, schedules, sponsor communications, and important updates via email, phone, or social media platforms.",
+              "Photographs, videos, livestreams, and recordings captured during the event may be used by the organizers for promotional, marketing, documentation, and social media purposes.",
+              "Participants are responsible for ensuring that any project submissions, presentations, or uploaded materials do not violate copyright, intellectual property, or privacy laws.",
+              "Organizers will take reasonable measures to protect participant information but cannot guarantee absolute security of digital systems, platforms, or online communications.",
+              "The event may use third-party platforms or tools for registrations, submissions, communication, judging, or certifications. Use of such platforms may also be subject to their individual privacy policies and terms.",
+              "Participants may request corrections or updates to their registration information by contacting the organizing team before the event date.",
+              "Any misuse, unauthorized access attempt, fraudulent activity, or violation of platform security may result in disqualification and restriction from the event.",
+              "Organizers reserve the right to update or modify this Privacy Policy if required for operational, legal, or event-related reasons.",
+              "Participation in VibeForge 1.0 implies acceptance of this Privacy Policy and consent to the collection and use of information as described above."
+            ].map((policy, index) => (
+              <div key={index} className="flex gap-4 items-start">
+                <span className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-lg bg-cyan-500/10 text-cyan-400 font-bold border border-cyan-500/20 text-sm">
+                  {index + 1}
+                </span>
+                <p className="pt-1 text-neutral-300 font-sans text-base md:text-lg">
+                  {policy}
+                </p>
+              </div>
+            ))}
+          </div>
         </motion.div>
       </div>
 

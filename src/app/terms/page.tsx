@@ -29,52 +29,40 @@ const TermsPage = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 md:p-12 space-y-8 text-neutral-300 leading-relaxed font-sans"
+          className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 md:p-12 text-neutral-300 leading-relaxed font-sans"
         >
-          <section>
-            <h2 className="text-2xl font-bold text-red-400 mb-4 uppercase tracking-wider font-sans">1. Acceptance of Terms</h2>
-            <p>
-              By accessing and registering for VibeForge 1.0 (organized by GameLiminals, Adamas University), you accept and agree to be bound by the terms and provision of this agreement. Any participation in this event will constitute acceptance of this agreement. If you do not agree to abide by the above, please do not participate in this event.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-bold text-red-400 mb-4 uppercase tracking-wider font-sans">2. Event Registration and Participation</h2>
-            <ul className="list-disc pl-6 space-y-2">
-              <li>Registration is mandatory for all participants, whether as individuals or teams.</li>
-              <li>Participants must provide accurate and complete information during registration.</li>
-              <li>The organizing committee reserves the right to disqualify any team found violating the rules or engaging in unethical practices.</li>
-              <li>All participants must adhere to the event schedule. Late submissions or arrivals may lead to point deductions or disqualification.</li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-bold text-red-400 mb-4 uppercase tracking-wider font-sans">3. Intellectual Property</h2>
-            <p>
-              All assets, code, and concepts created during the hackathon/game jam remain the intellectual property of their respective creators. However, by participating, you grant GameLiminals and Adamas University a non-exclusive, royalty-free license to use, showcase, and promote your submissions for educational and promotional purposes.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-bold text-red-400 mb-4 uppercase tracking-wider font-sans">4. Code of Conduct</h2>
-            <p>
-              VibeForge is dedicated to providing a harassment-free experience for everyone. We do not tolerate harassment of participants in any form. Participants violating these rules may be sanctioned or expelled from the event without a refund at the discretion of the organizers.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-bold text-red-400 mb-4 uppercase tracking-wider font-sans">5. Liability</h2>
-            <p>
-              The organizers, sponsors, and Adamas University shall not be held responsible for any loss, damage, or injury sustained by participants during the event. Participants are responsible for their own equipment and personal belongings.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-bold text-red-400 mb-4 uppercase tracking-wider font-sans">6. Modifications</h2>
-            <p>
-              GameLiminals reserves the right to modify these terms, event rules, schedules, or prize distributions at any time without prior notice. Any significant changes will be communicated to registered participants via their provided contact details.
-            </p>
-          </section>
+          <div className="space-y-6">
+            {[
+              "VibeForge 1.0 is a 12-hour AI + Game Development Hackathon organized by GameLiminals at Adamas University.",
+              "All participants must complete the official registration process to enter the event.",
+              "Participants must carry a valid college ID card or government-issued ID for verification during check-in.",
+              "Team sizes and participation rules must follow the official event guidelines announced by the organizers.",
+              "Participants are expected to maintain professional and respectful behavior toward fellow participants, mentors, judges, sponsors, volunteers, and organizers throughout the event.",
+              "Any form of harassment, discrimination, abusive language, cheating, plagiarism, or misconduct may lead to immediate disqualification and removal from the event premises.",
+              "Projects must be developed primarily during the hackathon duration. Pre-built templates, assets, or frameworks may be used only if properly disclosed.",
+              "Use of illegal, harmful, offensive, or unethical content in projects is strictly prohibited.",
+              "Participants are responsible for the safety and security of their own devices, equipment, accounts, and personal belongings.",
+              "The organizing team will not be responsible for any loss, theft, damage, or technical failure during the event.",
+              "Internet access, power supply, and workspace facilities will be provided subject to venue limitations and availability.",
+              "Judges’ decisions regarding evaluation, rankings, prizes, and disqualifications will be final and binding.",
+              "Organizers reserve the right to modify schedules, rules, judging criteria, prizes, or event formats if required due to operational or unforeseen circumstances.",
+              "By participating, attendees grant the organizers permission to capture photographs, videos, and recordings for promotional, marketing, and social media purposes.",
+              "Sponsor branding, live announcements, digital promotions, and on-ground promotional activities may take place during the event.",
+              "Certificates will be provided only to eligible registered participants who successfully attend and comply with event requirements.",
+              "Winners and shortlisted teams may be required to provide additional verification before receiving prizes or rewards.",
+              "Any violation of these terms may result in warnings, disqualification, restricted access, or permanent removal from the event.",
+              "Participation in VibeForge 1.0 implies full acceptance of all rules, guidelines, and decisions made by the organizing committee."
+            ].map((term, index) => (
+              <div key={index} className="flex gap-4 items-start">
+                <span className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-lg bg-red-500/10 text-red-400 font-bold border border-red-500/20 text-sm">
+                  {index + 1}
+                </span>
+                <p className="pt-1 text-neutral-300 font-sans text-base md:text-lg">
+                  {term}
+                </p>
+              </div>
+            ))}
+          </div>
         </motion.div>
       </div>
 

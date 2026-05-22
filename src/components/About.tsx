@@ -16,7 +16,7 @@ export default function About() {
             className="space-y-8"
           >
             <div className="flex items-center gap-4 mb-4">
-              <div className="p-3 bg-cyan-500/10 rounded-xl border border-cyan-500/20">
+              <div className="p-3 bg-cyan-500/10 rounded-xl border border-cyan-500/20 flex-shrink-0">
                 <Users className="w-6 h-6 text-cyan-400" />
               </div>
               <h2 className="text-4xl md:text-5xl font-black italic text-yellow-300 uppercase tracking-wider">
@@ -72,14 +72,14 @@ export default function About() {
             className="relative"
           >
             <div className="absolute -inset-4 bg-gradient-to-br from-red-600/20 to-cyan-500/20 blur-3xl opacity-30" />
-            <div className="relative bg-neutral-900/40 backdrop-blur-3xl border border-white/10 rounded-[3rem] p-12 overflow-hidden group">
+            <div className="relative bg-neutral-900/40 backdrop-blur-3xl border border-white/10 rounded-[2rem] sm:rounded-[3rem] p-6 sm:p-12 overflow-hidden group">
               <div className="absolute top-0 right-0 w-32 h-32 bg-red-600/10 blur-3xl" />
 
               <div className="flex items-center gap-4 mb-8">
-                <div className="p-3 bg-red-500/10 rounded-xl border border-red-500/20">
+                <div className="p-3 bg-red-500/10 rounded-xl border border-red-500/20 flex-shrink-0">
                   <Info className="w-6 h-6 text-red-500" />
                 </div>
-                <h2 className="text-4xl font-black italic text-yellow-300 uppercase tracking-wider">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-black italic text-yellow-300 uppercase tracking-wider">
                   THE <span className="text-white">GAUNTLET</span>
                 </h2>
               </div>
