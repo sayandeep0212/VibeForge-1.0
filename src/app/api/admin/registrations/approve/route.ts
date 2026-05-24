@@ -31,14 +31,30 @@ export async function POST(req: Request) {
     const passId = registration.passId || `PASS-${nanoid(6).toUpperCase()}`;
     const bookingId = registration.bookingId || `BOOK-${nanoid(8).toUpperCase()}`;
 
-    // Update status
+    // Update status and auto-shortlist the registration
     await regRef.update({
       status: 'approved',
+      shortlisted: true,
       passId,
       bookingId,
       approvedAt: Date.now(),
       approvedBy: session.user.email
     });
+
+    // Auto-shortlist each team member's user profile
+    try {
+      const updates: Record<string, boolean> = {};
+      for (const member of registration.members) {
+        if (member.firebaseId) {
+          updates[`users/${member.firebaseId}/shortlisted`] = true;
+        }
+      }
+      if (Object.keys(updates).length > 0) {
+        await adminDb.ref('/').update(updates);
+      }
+    } catch (shortlistError) {
+      console.error('Error auto-shortlisting members:', shortlistError);
+    }
 
     // Send approval emails
     try {

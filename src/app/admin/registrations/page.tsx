@@ -77,6 +77,7 @@ export default function RegistrationsPage() {
   });
   const [manualError, setManualError] = useState('');
   const [isSubmittingManual, setIsSubmittingManual] = useState(false);
+  const [bulkProcessing, setBulkProcessing] = useState<string | null>(null);
 
   useEffect(() => {
     const checkSession = async () => {
@@ -271,6 +272,7 @@ export default function RegistrationsPage() {
         [regId]: { 
           ...prev[regId], 
           status: 'approved', 
+          shortlisted: true,
           passId: data.passId, 
           bookingId: data.bookingId 
         } 
@@ -286,6 +288,48 @@ export default function RegistrationsPage() {
       await update(ref(getDb(), `registrations/${regId}`), { status: 'rejected', passId: '' });
       setRegistrations(prev => ({ ...prev, [regId]: { ...prev[regId], status: 'rejected', passId: '' } }));
     } catch (err) { console.error('Error rejecting:', err); }
+  };
+
+  const handleBulkApproveAll = async () => {
+    const pendingIds = Object.entries(registrations)
+      .filter(([, reg]) => reg.status === 'pending_approval')
+      .map(([id]) => id);
+    if (pendingIds.length === 0) { alert('No pending teams to select.'); return; }
+    if (!confirm(`Select & approve all ${pendingIds.length} pending team(s)? This will generate passes and send emails for each.`)) return;
+    setBulkProcessing('approving');
+    let successCount = 0;
+    let failCount = 0;
+    for (const regId of pendingIds) {
+      try {
+        await handleApprove(regId);
+        successCount++;
+      } catch {
+        failCount++;
+      }
+    }
+    setBulkProcessing(null);
+    alert(`Bulk select complete: ${successCount} selected, ${failCount} failed.`);
+  };
+
+  const handleBulkRejectAll = async () => {
+    const pendingIds = Object.entries(registrations)
+      .filter(([, reg]) => reg.status === 'pending_approval')
+      .map(([id]) => id);
+    if (pendingIds.length === 0) { alert('No pending teams to eliminate.'); return; }
+    if (!confirm(`Eliminate all ${pendingIds.length} pending team(s)? They will NOT receive event passes.`)) return;
+    setBulkProcessing('rejecting');
+    let successCount = 0;
+    let failCount = 0;
+    for (const regId of pendingIds) {
+      try {
+        await handleReject(regId);
+        successCount++;
+      } catch {
+        failCount++;
+      }
+    }
+    setBulkProcessing(null);
+    alert(`Bulk eliminate complete: ${successCount} eliminated, ${failCount} failed.`);
   };
 
   const handleDelete = async (regId: string) => {
@@ -389,9 +433,9 @@ export default function RegistrationsPage() {
 
   const getStatusBadge = (status: string) => {
     const map: Record<string, { icon: React.ReactNode; cls: string; label: string }> = {
-      approved: { icon: <CheckCircle className="w-3 h-3" />, cls: 'bg-green-500/10 border-green-500/20 text-green-400', label: 'Approved' },
-      pending_approval: { icon: <Clock className="w-3 h-3" />, cls: 'bg-yellow-500/10 border-yellow-500/20 text-yellow-400', label: 'Pending' },
-      rejected: { icon: <XCircle className="w-3 h-3" />, cls: 'bg-red-500/10 border-red-500/20 text-red-400', label: 'Rejected' },
+      approved: { icon: <CheckCircle className="w-3 h-3" />, cls: 'bg-green-500/10 border-green-500/20 text-green-400', label: 'Selected' },
+      pending_approval: { icon: <Clock className="w-3 h-3" />, cls: 'bg-yellow-500/10 border-yellow-500/20 text-yellow-400', label: 'Pending Selection' },
+      rejected: { icon: <XCircle className="w-3 h-3" />, cls: 'bg-red-500/10 border-red-500/20 text-red-400', label: 'Eliminated' },
     };
     const s = map[status];
     if (!s) return null;
@@ -406,9 +450,9 @@ export default function RegistrationsPage() {
           {[
             { label: 'Teams', value: stats.total, color: 'text-white' },
             { label: 'Members', value: stats.totalMembers, color: 'text-blue-400' },
-            { label: 'Approved', value: stats.approved, color: 'text-green-400' },
+            { label: 'Selected', value: stats.approved, color: 'text-green-400' },
             { label: 'Pending', value: stats.pending, color: 'text-yellow-400' },
-            { label: 'Rejected', value: stats.rejected, color: 'text-red-400' },
+            { label: 'Eliminated', value: stats.rejected, color: 'text-red-400' },
             { label: 'Shortlisted', value: stats.shortlisted, color: 'text-cyan-400' },
             { label: 'Adamas', value: stats.adamas, color: 'text-purple-400' },
             { label: 'External', value: stats.external, color: 'text-orange-400' },
@@ -462,9 +506,9 @@ export default function RegistrationsPage() {
             <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}
               className="bg-black/50 border border-white/10 text-white rounded-xl py-2 px-3 sm:py-2.5 sm:px-4 text-[10px] sm:text-sm cursor-pointer focus:outline-none focus:border-yellow-300/50">
               <option value="all" className="bg-black">All Status</option>
-              <option value="pending_approval" className="bg-black">Pending</option>
-              <option value="approved" className="bg-black">Approved</option>
-              <option value="rejected" className="bg-black">Rejected</option>
+              <option value="pending_approval" className="bg-black">Pending Selection</option>
+              <option value="approved" className="bg-black">Selected</option>
+              <option value="rejected" className="bg-black">Eliminated</option>
               <option value="shortlisted" className="bg-black">Shortlisted</option>
             </select>
             <select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value as TypeFilter)}
@@ -487,6 +531,42 @@ export default function RegistrationsPage() {
             </select>
           </div>
         </div>
+
+        {/* Bulk Actions Bar */}
+        {stats.pending > 0 && (
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6 p-4 bg-white/[0.02] border border-white/5 rounded-2xl">
+            <div>
+              <p className="text-white text-sm font-bold">
+                {stats.pending} Pending Team{stats.pending !== 1 ? 's' : ''}
+              </p>
+              <p className="text-neutral-500 text-xs">Bulk actions for all teams in the Online Selection Round</p>
+            </div>
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <button
+                onClick={handleBulkApproveAll}
+                disabled={bulkProcessing !== null}
+                className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 py-2 bg-green-500/10 hover:bg-green-500/20 border border-green-500/20 text-green-400 rounded-xl transition-all text-xs font-bold disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {bulkProcessing === 'approving' ? (
+                  <><div className="w-3 h-3 border-2 border-green-400/30 border-t-green-400 rounded-full animate-spin" /> Processing...</>
+                ) : (
+                  <><CheckCircle className="w-3.5 h-3.5" /> Select All Pending</>
+                )}
+              </button>
+              <button
+                onClick={handleBulkRejectAll}
+                disabled={bulkProcessing !== null}
+                className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 py-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 rounded-xl transition-all text-xs font-bold disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {bulkProcessing === 'rejecting' ? (
+                  <><div className="w-3 h-3 border-2 border-red-400/30 border-t-red-400 rounded-full animate-spin" /> Processing...</>
+                ) : (
+                  <><XCircle className="w-3.5 h-3.5" /> Eliminate All Pending</>
+                )}
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Manual Registration Modal */}
         {showManualModal && (
@@ -602,9 +682,9 @@ export default function RegistrationsPage() {
                   <label className="text-neutral-500 text-xs uppercase tracking-wider block mb-1">Status</label>
                   <select value={editForm.status} onChange={e => setEditForm(p => ({ ...p, status: e.target.value }))}
                     className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-300/50">
-                    <option value="pending_approval" className="bg-black">Pending</option>
-                    <option value="approved" className="bg-black">Approved</option>
-                    <option value="rejected" className="bg-black">Rejected</option>
+                    <option value="pending_approval" className="bg-black">Pending Selection</option>
+                    <option value="approved" className="bg-black">Selected</option>
+                    <option value="rejected" className="bg-black">Eliminated</option>
                   </select>
                 </div>
                 <button onClick={saveEdit} className="w-full bg-yellow-300 hover:bg-yellow-400 text-black py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2">
@@ -657,8 +737,8 @@ export default function RegistrationsPage() {
                       {getStatusBadge(reg.status)}
                       {reg.status === 'pending_approval' && (
                         <div className="flex gap-1">
-                          <button onClick={() => handleApprove(regId)} className="px-2 sm:px-3 py-1 sm:py-1.5 bg-green-500/10 hover:bg-green-500/20 border border-green-500/20 text-green-400 rounded-lg transition-all text-[10px] sm:text-xs font-bold">Approve</button>
-                          <button onClick={() => handleReject(regId)} className="px-2 sm:px-3 py-1 sm:py-1.5 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 rounded-lg transition-all text-[10px] sm:text-xs font-bold">Reject</button>
+                          <button onClick={() => handleApprove(regId)} className="px-2 sm:px-3 py-1 sm:py-1.5 bg-green-500/10 hover:bg-green-500/20 border border-green-500/20 text-green-400 rounded-lg transition-all text-[10px] sm:text-xs font-bold">Select</button>
+                          <button onClick={() => handleReject(regId)} className="px-2 sm:px-3 py-1 sm:py-1.5 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 rounded-lg transition-all text-[10px] sm:text-xs font-bold">Eliminate</button>
                         </div>
                       )}
                       <button onClick={() => startEdit(regId)} className="p-1.5 sm:p-2 bg-white/5 hover:bg-white/10 text-neutral-500 hover:text-white rounded-lg transition-all" title="Edit">

@@ -344,10 +344,32 @@ function DashboardContent() {
                       {getStatusIcon(currentRegistration!.status)}
                       <span className="font-bold uppercase tracking-wider text-sm">
                         {currentRegistration!.status === 'pending_approval'
-                          ? 'Pending Approval'
+                          ? 'Online Selection Round'
+                          : currentRegistration!.status === 'approved'
+                          ? 'Selected & Approved'
+                          : currentRegistration!.status === 'rejected'
+                          ? 'Eliminated'
                           : currentRegistration!.status}
                       </span>
                     </div>
+
+                    {/* Selection Round Status Message */}
+                    {currentRegistration!.status === 'pending_approval' && (
+                      <div className="p-4 bg-yellow-300/5 border border-yellow-300/20 rounded-xl">
+                        <p className="text-yellow-300 text-sm font-bold mb-1">⏳ Under Evaluation</p>
+                        <p className="text-neutral-400 text-xs leading-relaxed">
+                          Your registration is complete and payment is verified. Your team is currently being evaluated in the Online Selection Round. If selected, you will receive your Event Pass and approval notification via email.
+                        </p>
+                      </div>
+                    )}
+                    {currentRegistration!.status === 'rejected' && (
+                      <div className="p-4 bg-red-500/5 border border-red-500/20 rounded-xl">
+                        <p className="text-red-400 text-sm font-bold mb-1">Not Selected</p>
+                        <p className="text-neutral-400 text-xs leading-relaxed">
+                          Unfortunately, your team was not selected in the Online Selection Round. You will not receive an event pass for the offline event. Thank you for participating — we hope to see you in future events!
+                        </p>
+                      </div>
+                    )}
 
                     {/* Team Info */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

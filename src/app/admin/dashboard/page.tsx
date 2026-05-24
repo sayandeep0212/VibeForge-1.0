@@ -106,8 +106,8 @@ export default function AdminDashboardPage() {
   const statCards = [
     { label: 'Total Profiles', value: stats.totalUsers, icon: Users, color: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20' },
     { label: 'Registrations', value: stats.totalRegistrations, icon: ClipboardList, color: 'text-purple-400', bg: 'bg-purple-500/10', border: 'border-purple-500/20' },
-    { label: 'Pending Approvals', value: stats.pendingApprovals, icon: Clock, color: 'text-yellow-400', bg: 'bg-yellow-500/10', border: 'border-yellow-500/20' },
-    { label: 'Approved', value: stats.approvedTeams, icon: CheckCircle, color: 'text-green-400', bg: 'bg-green-500/10', border: 'border-green-500/20' },
+    { label: 'Pending Selection', value: stats.pendingApprovals, icon: Clock, color: 'text-yellow-400', bg: 'bg-yellow-500/10', border: 'border-yellow-500/20' },
+    { label: 'Selected Teams', value: stats.approvedTeams, icon: CheckCircle, color: 'text-green-400', bg: 'bg-green-500/10', border: 'border-green-500/20' },
     { label: 'Adamas Students', value: stats.adamasStudents, icon: Building2, color: 'text-cyan-400', bg: 'bg-cyan-500/10', border: 'border-cyan-500/20' },
     { label: 'Other Colleges', value: stats.otherStudents, icon: Building2, color: 'text-orange-400', bg: 'bg-orange-500/10', border: 'border-orange-500/20' },
     { label: 'Shortlisted Users', value: stats.shortlistedUsers, icon: Users, color: 'text-yellow-300', bg: 'bg-yellow-300/10', border: 'border-yellow-300/20' },

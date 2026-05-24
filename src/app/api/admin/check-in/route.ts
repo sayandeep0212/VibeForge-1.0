@@ -52,6 +52,13 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: 'Pass not found' }, { status: 404 });
     }
 
+    // Only teams selected in the online round (status: approved) can check in
+    if (registration.status !== 'approved') {
+      return NextResponse.json({ 
+        error: 'This registration is not approved. Only teams selected in the online round can check in.' 
+      }, { status: 400 });
+    }
+
     return NextResponse.json({ id: regKey, ...registration });
   } catch (error: any) {
     console.error('Check-in search error:', error);

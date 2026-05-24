@@ -483,10 +483,10 @@ function RegisterContent() {
                 <CheckCircle className="w-16 h-16 text-green-400 mx-auto mb-4" />
                 <h2 className="text-xl font-bold text-white mb-2">Registration Successful!</h2>
                 <p className="text-neutral-400 text-sm mb-2">
-                  Your registration has been submitted. You&apos;ll receive a confirmation email shortly.
+                  You have successfully registered for VibeForge 1.0! You&apos;ll receive a confirmation email shortly.
                 </p>
                 <p className="text-yellow-300 text-sm mb-6">
-                  Your pass will be generated once an admin approves your registration.
+                  Your team is now entered into the Online Selection Round. If selected, your registration will be approved and you will receive your Event Pass.
                 </p>
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
                   <button
