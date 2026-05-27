@@ -23,66 +23,59 @@ const Schedule = () => {
       events: [
         {
           time: "08:00 AM - 10:00 AM",
-          title: "REPORTING & BREAKFAST",
-          desc: "Arrival, Pass Scanning, ID distribution, signature, and morning fuel.",
+          title: "CHECK-IN, REGISTRATION, KIT",
+          desc: "Gate Verification: Strict entry scanning of team passes at the main Adamas University Gate. Convention Centre Operations: On-site offline registration completion, distribution of participant identification materials/kits.",
           icon: <Coffee className="w-5 h-5" />,
           color: "blue"
         },
         {
           time: "10:00 AM - 11:00 AM",
-          title: "OPENING CEREMONY",
-          desc: "Felicitation ceremony & problem statement declaration.",
+          title: "OPENING CEREMONY & TOPIC REVELATION",
+          desc: "Official welcoming ceremony, key notes by dignitaries, guidelines briefing, and official revelation of the unannounced hackathon development theme.",
           icon: <Rocket className="w-5 h-5" />,
           color: "purple"
         },
         {
           time: "11:00 AM - 04:00 PM",
-          title: "BUILD & CODE",
-          desc: "5 Hours of non-stop development and deployment.",
+          title: "BUILD & CODE (5 HOURS)",
+          desc: "5 Hours of non-stop development and deployment. Uninterrupted development window utilizing prompt engineering and AI-agentic development platforms.",
           icon: <Code2 className="w-5 h-5" />,
           color: "cyan"
         },
         {
           time: "01:30 PM - 02:00 PM",
           title: "LUNCH BREAK",
-          desc: "Mid-day energy refill for all participants.",
+          desc: "Mid-day energy refill for all participants (integrated directly into the team project workflow).",
           icon: <Zap className="w-5 h-5" />,
           color: "orange"
         },
         {
           time: "04:00 PM - 05:15 PM",
-          title: "JUDGES WATCHING",
-          desc: "Project review and evaluation by the jury.",
+          title: "JUDGES WATCHING & REVIEWS",
+          desc: "Project review sessions where the live panel jury inspects deployed software architectures, evaluates prompt efficiency, and provides professional reviews.",
           icon: <Search className="w-5 h-5" />,
           color: "red"
         },
         {
           time: "05:15 PM - 05:30 PM",
-          title: "JUDGES DECISION",
-          desc: "Final deliberation and result compilation.",
+          title: "JUDGES' DECISIONS",
+          desc: "Private deliberation, score aggregation, and compilation of final results by the jury panel.",
           icon: <Terminal className="w-5 h-5" />,
           color: "yellow"
         },
         {
           time: "05:30 PM - 06:00 PM",
           title: "PRIZE DISTRIBUTION",
-          desc: "Crowning the champions of VibeForge 1.0.",
+          desc: "Crowning the champions of VibeForge 1.0, handing out awards, accolades, and closing remarks.",
           icon: <Trophy className="w-5 h-5" />,
           color: "green"
         },
         {
-          time: "06:30 PM",
-          title: "HALL VACATING",
-          desc: "Wrapping up and vacating the event hall.",
+          time: "06:30 PM Onwards",
+          title: "HALL VACATING & WRAPPING UP",
+          desc: "System tear-downs, wrapping up club property, technical asset recovery, and clearing out the Convention Centre main workspace.",
           icon: <MapPin className="w-5 h-5" />,
           color: "slate"
-        },
-        {
-          time: "07:30 PM",
-          title: "MISSION COMPLETE",
-          desc: "Official end of VibeForge 1.0 operations.",
-          icon: <Zap className="w-5 h-5" />,
-          color: "emerald"
         }
       ]
     }
@@ -101,6 +94,15 @@ const Schedule = () => {
       slate: "text-slate-400 border-slate-400/50 shadow-slate-500/20",
     };
     return colors[color] || colors.blue;
+  };
+
+  // Wrap numbers and signs with font-sans for proper rendering
+  const renderTitle = (text: string) => {
+    return text.split(/([\d&():;,.'"!?+\-/₹]+)/g).map((part, i) =>
+      /[\d&():;,.'"!?+\-/₹]/.test(part)
+        ? <span key={i} className="font-sans">{part}</span>
+        : part
+    );
   };
 
   return (
@@ -191,7 +193,7 @@ const Schedule = () => {
                       </span>
 
                       <h3 className="text-2xl md:text-3xl font-black italic text-white uppercase tracking-tight mb-3 group-hover:text-red-500 transition-colors">
-                        {event.title}
+                        {renderTitle(event.title)}
                       </h3>
 
                       <p className="text-neutral-400 font-medium leading-relaxed md:text-lg">

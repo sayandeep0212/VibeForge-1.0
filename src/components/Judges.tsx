@@ -162,11 +162,18 @@ const Judges = () => {
           <div className="flex items-center justify-center py-20">
             <Loader2 className="w-10 h-10 text-yellow-300 animate-spin" />
           </div>
-        ) : (
+        ) : judges.length > 0 ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-6 md:gap-10 max-w-5xl mx-auto">
             {judges.map((judge, i) => (
               <JudgeCard key={i} judge={judge} />
             ))}
+          </div>
+        ) : (
+          <div className="flex items-center justify-center py-16">
+            <div className="text-center p-10 bg-white/[0.03] border border-white/10 rounded-3xl backdrop-blur-md max-w-md">
+              <p className="text-2xl md:text-3xl font-black italic text-yellow-300 uppercase tracking-wider mb-2">To Be Revealed Soon</p>
+              <p className="text-neutral-500 text-sm font-sans">Stay tuned for the official announcement.</p>
+            </div>
           </div>
         )}
       </div>

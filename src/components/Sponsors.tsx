@@ -78,15 +78,24 @@ const Sponsors = () => {
           <div className="w-24 h-1 bg-red-400 mx-auto rounded-full" />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
-          {sponsors.map((sponsor, index) => (
-            <SponsorCard key={index} {...sponsor} />
-          ))}
-        </div>
+        {sponsors.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
+            {sponsors.map((sponsor, index) => (
+              <SponsorCard key={index} {...sponsor} />
+            ))}
+          </div>
+        ) : (
+          <div className="flex items-center justify-center py-16 mb-20">
+            <div className="text-center p-10 bg-white/[0.03] border border-white/10 rounded-3xl backdrop-blur-md max-w-md">
+              <p className="text-2xl md:text-3xl font-black italic text-yellow-300 uppercase tracking-wider mb-2">To Be Revealed Soon</p>
+              <p className="text-neutral-500 text-sm font-sans">Stay tuned for the official announcement.</p>
+            </div>
+          </div>
+        )}
 
         <div className="flex flex-col items-center gap-8 bg-gradient-to-b from-white/[0.05] to-transparent p-12 rounded-[3rem] border border-white/5 backdrop-blur-xl">
           <div className="text-center max-w-2xl">
-            <h3 className="text-3xl font-bold mb-4 italic uppercase">WANT TO EMPOWER THE FUTURE?</h3>
+            <h3 className="text-3xl font-bold mb-4 italic uppercase">WANT TO EMPOWER THE FUTURE<span className="font-sans">?</span></h3>
             <p className="text-neutral-400">Join the elite rank of organizations shaping the next generation of ninja developers. Partner with VIBEFORGE 1.0.</p>
           </div>
           <a href="mailto:adamasgamingclub@gmail.com?subject=Become a Sponsor for VibeForge 1.0">

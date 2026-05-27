@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Info, Users, Zap, Shield } from 'lucide-react';
+import { Info, Users, Zap, Shield, Radio, MapPin } from 'lucide-react';
 
 export default function About() {
   return (
@@ -95,9 +95,35 @@ export default function About() {
                   Participants will work individually or in teams to brainstorm concepts, design experiences, develop prototypes, and showcase their creativity through technology. It is a total <span className="text-white font-bold">web development and UI/UX hackathon</span> designed to push creative thinking and hands-on execution.
                 </p>
 
+                {/* Phase 1 */}
+                <div className="p-5 bg-cyan-500/5 rounded-2xl border border-cyan-500/20">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="p-2 bg-cyan-500/10 rounded-lg border border-cyan-500/20">
+                      <Radio className="w-4 h-4 text-cyan-400" />
+                    </div>
+                    <h4 className="text-white font-black italic uppercase tracking-wider text-sm">Phase <span className="font-sans">1</span> Preliminary Online Selection <span className="text-cyan-400 font-sans">(Round 1)</span></h4>
+                  </div>
+                  <p className="text-neutral-400 font-sans text-sm leading-relaxed">
+                    All details regarding the online selection round will be shared on <span className="text-cyan-400 font-bold">WhatsApp</span> and <span className="text-cyan-400 font-bold">Discord</span>. Stay tuned for updates!
+                  </p>
+                </div>
+
+                {/* Phase 2 */}
+                <div className="p-5 bg-red-500/5 rounded-2xl border border-red-500/20">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="p-2 bg-red-500/10 rounded-lg border border-red-500/20">
+                      <MapPin className="w-4 h-4 text-red-500" />
+                    </div>
+                    <h4 className="text-white font-black italic uppercase tracking-wider text-sm">Phase <span className="font-sans">2</span> On-Campus Grand Finale <span className="text-red-500 font-sans">(Round 2)</span></h4>
+                  </div>
+                  <p className="text-neutral-400 font-sans text-sm leading-relaxed">
+                    Selected teams from Phase 1 will compete in the <span className="text-white font-bold">on-campus grand finale</span> at Adamas University — a 5-hour intense vibe-coding battle to crown the champions.
+                  </p>
+                </div>
+
                 <div className="p-4 bg-white/5 rounded-xl border border-white/10">
                   <p className="text-sm text-cyan-400 font-sans font-bold italic">
-                    "People will vibe-code working websites and deploy in a timeframe of 12 hours."
+                    "People will vibe-code working websites and deploy in a timeframe of 5 hours."
                   </p>
                 </div>
 

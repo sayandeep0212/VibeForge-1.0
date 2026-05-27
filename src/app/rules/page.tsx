@@ -19,6 +19,7 @@ export default function RulesPage() {
     "Final project submission must include a working deployed link and a short project presentation/demo.",
     "The decision of the organizers and judges will be final and binding for all participants.",
     "Participants are expected to follow venue discipline and avoid any activity that disrupts the event environment.",
+    "During the hackathon, participants are strictly NOT allowed to leave the campus premises under any circumstances. Once checked in, you must remain on campus until the event officially concludes.",
     "By participating in VIBEFORGE 1.0, teams agree that their project showcases and photographs may be used for event highlights and promotions."
   ];
 
@@ -47,7 +48,7 @@ export default function RulesPage() {
               </div>
             </div>
             <h1 className="text-4xl md:text-7xl font-heading italic tracking-wider text-white uppercase mb-4">
-              Rules & <span className="text-yellow-300">Regulations</span>
+              Rules <span className="font-sans">&</span> <span className="text-yellow-300">Regulations</span>
             </h1>
             <p className="text-red-500 font-black italic tracking-widest text-xl uppercase">VIBEFORGE 1.0</p>
             <div className="h-1 w-24 bg-red-400 mx-auto mt-8 rounded-full" />

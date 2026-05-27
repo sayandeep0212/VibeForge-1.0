@@ -80,7 +80,7 @@ const Faq = () => {
             <HelpCircle className="w-8 h-8 text-black" />
           </div>
           <h2 className="text-3xl md:text-5xl font-black italic tracking-wider uppercase underline decoration-red-400 decoration-4 underline-offset-8 text-yellow-300">
-            MISSION <span className="text-white">DEBRIEF</span> (FAQ)
+            MISSION <span className="text-white">DEBRIEF</span> <span className="font-sans">(FAQ)</span>
           </h2>
         </div>
 

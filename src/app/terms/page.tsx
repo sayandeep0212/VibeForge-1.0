@@ -46,6 +46,7 @@ const TermsPage = () => {
               "Internet access, power supply, and workspace facilities will be provided subject to venue limitations and availability.",
               "Judges’ decisions regarding evaluation, rankings, prizes, and disqualifications will be final and binding.",
               "Organizers reserve the right to modify schedules, rules, judging criteria, prizes, or event formats if required due to operational or unforeseen circumstances.",
+              "During the hackathon, participants are strictly NOT allowed to leave the campus premises under any circumstances. Once checked in, you must remain on campus until the event officially concludes.",
               "By participating, attendees grant the organizers permission to capture photographs, videos, and recordings for promotional, marketing, and social media purposes.",
               "Sponsor branding, live announcements, digital promotions, and on-ground promotional activities may take place during the event.",
               "Certificates will be provided only to eligible registered participants who successfully attend and comply with event requirements.",
