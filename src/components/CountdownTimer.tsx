@@ -53,8 +53,8 @@ export default function CountdownTimer({ targetDate }: { targetDate: string }) {
     <div className="flex flex-col items-center">
       <div className="relative group">
         <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 to-red-500 rounded-lg blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
-        <div className="relative px-3 py-2 bg-black border border-white/10 rounded-lg min-w-[60px] md:min-w-[80px]">
-          <span className="text-2xl md:text-4xl font-black italic text-white block text-center">
+        <div className="relative px-2 py-1.5 sm:px-3 sm:py-2 bg-black border border-white/10 rounded-lg min-w-[48px] sm:min-w-[60px] md:min-w-[80px]">
+          <span className="text-xl sm:text-2xl md:text-4xl font-black italic text-white block text-center">
             {value.toString().padStart(2, '0')}
           </span>
         </div>
@@ -64,7 +64,7 @@ export default function CountdownTimer({ targetDate }: { targetDate: string }) {
   );
 
   return (
-    <div className="flex gap-4 md:gap-8 mt-6">
+    <div className="flex gap-2 sm:gap-4 md:gap-8 mt-6">
       <TimeUnit value={timeLeft.days} label="Days" />
       <TimeUnit value={timeLeft.hours} label="Hrs" />
       <TimeUnit value={timeLeft.minutes} label="Min" />

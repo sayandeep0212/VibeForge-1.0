@@ -149,10 +149,10 @@ const Schedule = () => {
           />
 
           {/* Vertical Line (Mobile) */}
-          <div className="absolute left-[31px] top-0 bottom-0 w-px bg-white/10 -translate-x-1/2 md:hidden" />
+          <div className="absolute left-[20px] sm:left-[31px] top-0 bottom-0 w-px bg-white/10 -translate-x-1/2 md:hidden" />
           <motion.div
             style={{ scaleY }}
-            className="absolute left-[31px] top-0 bottom-0 w-[2px] bg-gradient-to-b from-red-500 via-orange-500 to-cyan-500 origin-top -translate-x-1/2 md:hidden"
+            className="absolute left-[20px] sm:left-[31px] top-0 bottom-0 w-[2px] bg-gradient-to-b from-red-500 via-orange-500 to-cyan-500 origin-top -translate-x-1/2 md:hidden"
           />
 
           <div className="space-y-12 md:space-y-0">
@@ -160,12 +160,12 @@ const Schedule = () => {
               <div key={idx} className={`relative flex flex-col md:flex-row items-center ${idx % 2 === 0 ? 'md:flex-row-reverse' : ''} mb-12 md:mb-24 last:mb-0`}>
 
                 {/* Node */}
-                <div className="absolute left-[31px] md:left-1/2 top-0 md:top-1/2 -translate-x-1/2 -translate-y-0 md:-translate-y-1/2 z-20">
+                <div className="absolute left-[20px] sm:left-[31px] md:left-1/2 top-0 md:top-1/2 -translate-x-1/2 -translate-y-0 md:-translate-y-1/2 z-20">
                   <motion.div
                     initial={{ scale: 0, opacity: 0 }}
                     whileInView={{ scale: 1, opacity: 1 }}
                     transition={{ type: "spring", stiffness: 260, damping: 20, delay: 0.2 }}
-                    className={`w-16 h-16 rounded-full bg-black border-4 ${getColorClass(event.color)} flex items-center justify-center shadow-lg backdrop-blur-xl relative overflow-hidden group`}
+                    className={`w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-black border-4 ${getColorClass(event.color)} flex items-center justify-center shadow-lg backdrop-blur-xl relative overflow-hidden group`}
                   >
                     <div className="absolute inset-0 bg-white/5 group-hover:bg-white/10 transition-colors" />
                     <div className="relative z-10 transition-transform group-hover:scale-110 duration-300">
@@ -177,7 +177,7 @@ const Schedule = () => {
                 </div>
 
                 {/* Content Card */}
-                <div className={`w-full md:w-[45%] pl-20 md:pl-0 ${idx % 2 === 0 ? 'md:pr-20 md:text-right' : 'md:pl-20 md:text-left'}`}>
+                <div className={`w-full md:w-[45%] pl-[52px] sm:pl-[72px] md:pl-0 ${idx % 2 === 0 ? 'md:pr-20 md:text-right' : 'md:pl-20 md:text-left'}`}>
                   <motion.div
                     initial={{ opacity: 0, x: idx % 2 === 0 ? 50 : -50 }}
                     whileInView={{ opacity: 1, x: 0 }}
@@ -186,13 +186,13 @@ const Schedule = () => {
                     className="group relative"
                   >
                     <div className="absolute -inset-0.5 bg-gradient-to-r from-white/5 to-white/0 rounded-3xl blur opacity-0 group-hover:opacity-100 transition duration-500" />
-                    <div className="relative p-6 md:p-8 bg-white/[0.03] border border-white/10 rounded-3xl backdrop-blur-md hover:border-white/20 transition-all duration-300 hover:translate-y-[-4px]">
+                    <div className="relative p-4 sm:p-6 md:p-8 bg-white/[0.03] border border-white/10 rounded-3xl backdrop-blur-md hover:border-white/20 transition-all duration-300 hover:translate-y-[-4px] text-left">
                       {/* Time Badge */}
                       <span className={`inline-block px-3 py-1 rounded-full bg-white/5 text-[10px] font-black tracking-widest uppercase mb-4 ${getColorClass(event.color).split(' ')[0]}`}>
                         {event.time}
                       </span>
 
-                      <h3 className="text-2xl md:text-3xl font-black italic text-white uppercase tracking-tight mb-3 group-hover:text-red-500 transition-colors">
+                      <h3 className="text-lg sm:text-xl md:text-3xl font-black italic text-white uppercase tracking-tight mb-3 group-hover:text-red-500 transition-colors">
                         {renderTitle(event.title)}
                       </h3>
 

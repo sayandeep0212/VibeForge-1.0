@@ -33,6 +33,7 @@ const RefundPage = () => {
         >
           <div className="space-y-6">
             {[
+              "Registration is completely FREE for Adamas University teams. Since no payment is collected, no refund or payment receipt applies to Adamas University registrations.",
               "Registration fees, once paid, are generally non-refundable except in special cases approved by the organizing committee of GameLiminals.",
               "Participants who wish to cancel their registration must contact the organizing team through the official communication channels before the specified deadline, if applicable.",
               "Refund requests submitted after the official deadline may not be considered.",

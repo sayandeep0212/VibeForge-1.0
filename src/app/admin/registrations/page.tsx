@@ -47,7 +47,7 @@ interface Registration {
 type StatusFilter = 'all' | 'pending_approval' | 'approved' | 'rejected' | 'shortlisted';
 type TypeFilter = 'all' | 'individual' | 'team';
 type CollegeFilter = 'all' | 'adamas' | 'external';
-type PaymentModeFilter = 'all' | 'online' | 'offline';
+type PaymentModeFilter = 'all' | 'online' | 'offline' | 'free';
 
 export default function RegistrationsPage() {
   const router = useRouter();
@@ -73,7 +73,7 @@ export default function RegistrationsPage() {
     type: 'individual' as 'individual' | 'team',
     leaderUid: '',
     memberUids: [''] as string[],
-    amount: 150
+    amount: 0
   });
   const [manualError, setManualError] = useState('');
   const [isSubmittingManual, setIsSubmittingManual] = useState(false);
@@ -211,7 +211,7 @@ export default function RegistrationsPage() {
       }
 
       setShowManualModal(false);
-      setManualForm({ teamName: '', type: 'individual', leaderUid: '', memberUids: [''], amount: 150 });
+      setManualForm({ teamName: '', type: 'individual', leaderUid: '', memberUids: [''], amount: 0 });
       fetchData(); // refresh data
     } catch (err: any) {
       console.error(err);
@@ -239,7 +239,9 @@ export default function RegistrationsPage() {
         (collegeFilter === 'adamas' ? isAdamasTeam(reg) : !isAdamasTeam(reg));
         
       const matchesPaymentMode = paymentModeFilter === 'all' ||
-        (paymentModeFilter === 'offline' ? reg.payment?.razorpayId === 'OFFLINE_PAYMENT' : reg.payment?.razorpayId !== 'OFFLINE_PAYMENT');
+        (paymentModeFilter === 'offline' ? reg.payment?.razorpayId === 'OFFLINE_PAYMENT' : 
+         paymentModeFilter === 'free' ? reg.payment?.razorpayId === 'FREE-ADAMAS' :
+         reg.payment?.razorpayId !== 'OFFLINE_PAYMENT' && reg.payment?.razorpayId !== 'FREE-ADAMAS');
 
       return matchesSearch && matchesStatus && matchesType && matchesCollege && matchesPaymentMode;
     });
@@ -528,6 +530,7 @@ export default function RegistrationsPage() {
               <option value="all" className="bg-black">All Modes</option>
               <option value="online" className="bg-black">Online</option>
               <option value="offline" className="bg-black">Offline</option>
+              <option value="free" className="bg-black">Free (Adamas)</option>
             </select>
           </div>
         </div>
@@ -720,8 +723,8 @@ export default function RegistrationsPage() {
                           {isAdamasTeam(reg) ? '🎓 Adamas' : '🌐 External'}
                         </span>
                         <span className="text-neutral-700 hidden sm:inline">•</span>
-                        <span className={`text-[10px] sm:text-xs font-medium ${reg.payment?.razorpayId === 'OFFLINE_PAYMENT' ? 'text-yellow-400' : 'text-green-400'}`}>
-                          {reg.payment?.razorpayId === 'OFFLINE_PAYMENT' ? '🎟️ Offline' : '💳 Online'}
+                        <span className={`text-[10px] sm:text-xs font-medium ${reg.payment?.razorpayId === 'FREE-ADAMAS' ? 'text-green-400' : reg.payment?.razorpayId === 'OFFLINE_PAYMENT' ? 'text-yellow-400' : 'text-green-400'}`}>
+                          {reg.payment?.razorpayId === 'FREE-ADAMAS' ? '🆓 Free' : reg.payment?.razorpayId === 'OFFLINE_PAYMENT' ? '🎟️ Offline' : '💳 Online'}
                         </span>
                         <span className="text-neutral-700 hidden sm:inline">•</span>
                         <span className="text-neutral-500 text-[10px] sm:text-xs">{new Date(reg.createdAt).toLocaleDateString()}</span>
@@ -772,13 +775,19 @@ export default function RegistrationsPage() {
                   <div className="bg-white/[0.02] rounded-lg p-3">
                     <p className="text-neutral-600 text-[10px] uppercase tracking-wider mb-0.5">Payment</p>
                     <p className="text-white text-xs font-bold flex items-center gap-1">
-                      <CreditCard className="w-3 h-3 text-neutral-600" /> ₹{reg.payment?.amount || 0}
+                      {reg.payment?.razorpayId === 'FREE-ADAMAS' || reg.payment?.amount === 0 ? (
+                        <><CheckCircle className="w-3 h-3 text-green-400" /> FREE</>
+                      ) : (
+                        <><CreditCard className="w-3 h-3 text-neutral-600" /> ₹{reg.payment?.amount || 0}</>
+                      )}
                     </p>
                   </div>
+                  {reg.payment?.receipt && reg.payment.receipt !== 'N/A' && reg.payment?.razorpayId !== 'FREE-ADAMAS' && (
                   <div className="bg-white/[0.02] rounded-lg p-3">
                     <p className="text-neutral-600 text-[10px] uppercase tracking-wider mb-0.5">Receipt</p>
-                    <p className="text-neutral-300 text-xs font-mono">{reg.payment?.receipt || '—'}</p>
+                    <p className="text-neutral-300 text-xs font-mono">{reg.payment?.receipt}</p>
                   </div>
+                  )}
                 </div>
 
                 {/* Members */}

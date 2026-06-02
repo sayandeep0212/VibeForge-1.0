@@ -265,7 +265,7 @@ function RegisterContent() {
   };
 
 
-  const handlePayment = async () => {
+  const handleRegister = async () => {
     setError('');
 
     if (!teamName.trim()) {
@@ -284,6 +284,13 @@ function RegisterContent() {
     setLoading(true);
 
     try {
+      // Adamas teams register for FREE — no payment needed
+      if (userProfile?.isAdamas) {
+        await saveFreeRegistration();
+        return;
+      }
+
+      // Non-Adamas: proceed with Razorpay payment
       const scriptLoaded = await loadRazorpayScript();
       if (!scriptLoaded) {
         setError('Failed to load payment gateway. Please try again.');
@@ -291,8 +298,8 @@ function RegisterContent() {
         return;
       }
 
-      // Pricing: Adamas Team = 150 (Total), Non-Adamas Team = 250 (Total)
-      const baseAmount = userProfile?.isAdamas ? 150 : 250;
+      // Pricing: Non-Adamas Team = 250 (Total)
+      const baseAmount = 250;
 
       const receipt = `RCPT-${nanoid(8).toUpperCase()}`;
 
@@ -339,8 +346,66 @@ function RegisterContent() {
       const rzp = new window.Razorpay(options);
       rzp.open();
     } catch (err: any) {
-      console.error('Payment error:', err);
-      setError(err.message || 'Payment failed. Please try again.');
+      console.error('Registration error:', err);
+      setError(err.message || 'Registration failed. Please try again.');
+      setLoading(false);
+    }
+  };
+
+  // Free registration for Adamas University teams
+  const saveFreeRegistration = async () => {
+    if (!user || !userProfile) return;
+
+    try {
+      const members = [
+        {
+          firebaseId: user.uid,
+          uid: userProfile.uid,
+          name: userProfile.name,
+          email: userProfile.email,
+        },
+      ];
+
+      if (participationType === 'team') {
+        const validMembers = memberInfos.filter((m) => m !== null && m.valid) as MemberInfo[];
+        for (const member of validMembers) {
+          members.push({
+            firebaseId: member.firebaseId,
+            uid: member.uid,
+            name: member.name,
+            email: member.email,
+          });
+        }
+      }
+
+      const registrationRef = push(ref(db!, 'registrations'));
+      await set(registrationRef, {
+        teamName: teamName.trim(),
+        type: participationType,
+        leaderId: user.uid,
+        leaderUid: userProfile.uid,
+        members,
+        payment: {
+          method: 'free',
+          amount: 0,
+          status: 'free_adamas',
+          razorpayId: 'FREE-ADAMAS',
+          receipt: 'N/A',
+          paidAt: Date.now(),
+        },
+        status: 'pending_approval',
+        createdAt: Date.now(),
+      });
+
+      setPaymentSuccess(true);
+      setLoading(false);
+
+      setTimeout(() => {
+        router.push('/dashboard');
+      }, 3000);
+    } catch (err: any) {
+      console.error('Error saving free registration:', err);
+      setError(err.message || 'Registration failed. Please try again.');
       setLoading(false);
     }
   };
@@ -737,71 +802,86 @@ function RegisterContent() {
                       )}
 
                       {/* Pricing Summary */}
-                      {(() => {
-                        const basePrice = userProfile?.isAdamas ? 150 : 250;
-                        const totalPrice = Math.ceil(basePrice / 0.9764);
-                        const fee = totalPrice - basePrice;
-                        return (
-                          <div className="p-4 bg-white/5 rounded-2xl border border-white/10 space-y-2">
-                            <div className="flex justify-between items-center text-sm">
-                              <span className="text-neutral-400">Team Type</span>
-                              <span className="text-white">{userProfile?.isAdamas ? 'Adamas University' : 'External Team'}</span>
-                            </div>
-                            <div className="flex justify-between items-center text-sm">
-                              <span className="text-neutral-400">Registration Fee</span>
-                              <span className="text-white">₹{basePrice}</span>
-                            </div>
-                            <div className="flex justify-between items-center text-sm">
-                              <span className="text-neutral-400 flex items-center gap-1">
-                                Payment Processing Fee
-                                <Info className="w-3 h-3 text-neutral-500" />
-                              </span>
-                              <span className="text-neutral-300">+ ₹{fee}</span>
-                            </div>
-                            <div className="pt-2 border-t border-white/10 flex justify-between items-center">
-                              <span className="text-yellow-300 font-bold uppercase tracking-widest text-xs">Total Payable</span>
-                              <span className="text-2xl font-black text-white">₹{totalPrice}</span>
-                            </div>
-                            <p className="text-[9px] text-neutral-500 leading-relaxed">
-                              A small processing fee is added to cover payment gateway charges by Razorpay, so the full registration amount reaches the organizers.
-                            </p>
+                      {userProfile?.isAdamas ? (
+                        <div className="p-4 bg-green-500/10 rounded-2xl border border-green-500/20 space-y-2">
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="text-neutral-400">Team Type</span>
+                            <span className="text-white">Adamas University</span>
                           </div>
-                        );
-                      })()}
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="text-neutral-400">Registration Fee</span>
+                            <span className="text-green-400 font-black text-lg">FREE</span>
+                          </div>
+                          <p className="text-[10px] text-green-300/70 leading-relaxed">
+                            Adamas University students enjoy free event registration. No payment or payment receipt is required.
+                          </p>
+                        </div>
+                      ) : (
+                        (() => {
+                          const basePrice = 250;
+                          const totalPrice = Math.ceil(basePrice / 0.9764);
+                          const fee = totalPrice - basePrice;
+                          return (
+                            <div className="p-4 bg-white/5 rounded-2xl border border-white/10 space-y-2">
+                              <div className="flex justify-between items-center text-sm">
+                                <span className="text-neutral-400">Team Type</span>
+                                <span className="text-white">External Team</span>
+                              </div>
+                              <div className="flex justify-between items-center text-sm">
+                                <span className="text-neutral-400">Registration Fee</span>
+                                <span className="text-white">₹{basePrice}</span>
+                              </div>
+                              <div className="flex justify-between items-center text-sm">
+                                <span className="text-neutral-400 flex items-center gap-1">
+                                  Payment Processing Fee
+                                  <Info className="w-3 h-3 text-neutral-500" />
+                                </span>
+                                <span className="text-neutral-300">+ ₹{fee}</span>
+                              </div>
+                              <div className="pt-2 border-t border-white/10 flex justify-between items-center">
+                                <span className="text-yellow-300 font-bold uppercase tracking-widest text-xs">Total Payable</span>
+                                <span className="text-2xl font-black text-white">₹{totalPrice}</span>
+                              </div>
+                              <p className="text-[9px] text-neutral-500 leading-relaxed">
+                                A small processing fee is added to cover payment gateway charges by Razorpay, so the full registration amount reaches the organizers.
+                              </p>
+                            </div>
+                          );
+                        })()
+                      )}
 
-                      {userProfile?.isAdamas && participationType === 'team' && (
-                        <div className="p-3 bg-cyan-500/10 border border-cyan-500/20 rounded-xl flex items-start gap-2">
-                          <Info className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
-                          <p className="text-[10px] text-cyan-300 leading-relaxed font-orbitron">
-                            Adamas Team Special: Flat ₹150 for the entire team (all members must be from Adamas).
+                      {userProfile?.isAdamas && (
+                        <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-xl flex items-start gap-2">
+                          <CheckCircle className="w-4 h-4 text-green-400 shrink-0 mt-0.5" />
+                          <p className="text-[10px] text-green-300 leading-relaxed font-orbitron">
+                            Adamas University Perk: Registration is completely FREE for all Adamas teams. No payment required!
                           </p>
                         </div>
                       )}
 
-                      {/* Payment Button */}
-                      {(() => {
-                        const basePrice = userProfile?.isAdamas ? 150 : 250;
-                        const totalPrice = Math.ceil(basePrice / 0.9764);
-                        return (
-                          <button
-                            onClick={handlePayment}
-                            disabled={loading}
-                            className="w-full bg-yellow-300 hover:bg-gradient-to-r hover:from-yellow-300 hover:to-red-400 text-black py-4 rounded-xl font-bold tracking-widest transition-all hover:scale-[1.02] active:scale-[0.98] shadow-[0_0_20px_rgba(253,224,71,0.4)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-lg"
-                          >
-                            {loading ? (
-                              <>
-                                <Loader2 className="w-5 h-5 animate-spin" />
-                                PROCESSING...
-                              </>
-                            ) : (
-                              <>
-                                <CreditCard className="w-5 h-5" />
-                                PAY ₹{totalPrice} & REGISTER
-                              </>
-                            )}
-                          </button>
-                        );
-                      })()}
+                      {/* Register / Payment Button */}
+                      <button
+                        onClick={handleRegister}
+                        disabled={loading}
+                        className="w-full bg-yellow-300 hover:bg-gradient-to-r hover:from-yellow-300 hover:to-red-400 text-black py-4 rounded-xl font-bold tracking-widest transition-all hover:scale-[1.02] active:scale-[0.98] shadow-[0_0_20px_rgba(253,224,71,0.4)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-lg"
+                      >
+                        {loading ? (
+                          <>
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                            PROCESSING...
+                          </>
+                        ) : userProfile?.isAdamas ? (
+                          <>
+                            <CheckCircle className="w-5 h-5" />
+                            REGISTER FOR FREE
+                          </>
+                        ) : (
+                          <>
+                            <CreditCard className="w-5 h-5" />
+                            PAY ₹{Math.ceil(250 / 0.9764)} & REGISTER
+                          </>
+                        )}
+                      </button>
                     </motion.div>
                   )}
                 </AnimatePresence>

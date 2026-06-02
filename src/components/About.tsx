@@ -5,9 +5,9 @@ import { Info, Users, Zap, Shield, Radio, MapPin } from 'lucide-react';
 
 export default function About() {
   return (
-    <section id="about" className="relative py-32 bg-transparent overflow-hidden">
-      <div className="max-w-7xl mx-auto px-6 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+    <section id="about" className="relative py-16 sm:py-24 md:py-32 bg-transparent overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-20 items-center">
           {/* Left Side: Club Info */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
@@ -19,22 +19,22 @@ export default function About() {
               <div className="p-3 bg-cyan-500/10 rounded-xl border border-cyan-500/20 flex-shrink-0">
                 <Users className="w-6 h-6 text-cyan-400" />
               </div>
-              <h2 className="text-4xl md:text-5xl font-black italic text-yellow-300 uppercase tracking-wider">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-black italic text-yellow-300 uppercase tracking-wider">
                 THE <span className="text-white">GUILD</span>
               </h2>
             </div>
 
-            <p className="text-xl text-neutral-300 leading-relaxed font-medium font-sans">
+            <p className="text-base sm:text-xl text-neutral-300 leading-relaxed font-medium font-sans">
               <span className="text-cyan-400 font-black">GAMELIMINALS</span> is not just a club; it's a brotherhood of digital architects. Based at Adamas University, we are a collective of developers, artists, and storytellers dedicated to the art of game creation.
             </p>
 
-            <div className="grid grid-cols-2 gap-6 pt-4">
-              <div className="p-6 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 group hover:border-cyan-400/50 transition-all">
+            <div className="grid grid-cols-2 gap-3 sm:gap-6 pt-4">
+              <div className="p-4 sm:p-6 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 group hover:border-cyan-400/50 transition-all">
                 <Shield className="w-8 h-8 text-cyan-400 mb-3" />
                 <h3 className="font-bold text-white uppercase mb-2">OUR MISSION</h3>
                 <p className="text-sm text-neutral-400 font-sans">To push the limits of interactive storytelling and technical innovation.</p>
               </div>
-              <div className="p-6 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 group hover:border-yellow-300/50 transition-all">
+              <div className="p-4 sm:p-6 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 group hover:border-yellow-300/50 transition-all">
                 <Zap className="w-8 h-8 text-yellow-300 mb-3" />
                 <h3 className="font-bold text-white uppercase mb-2">OUR LEGACY</h3>
                 <p className="text-sm text-neutral-400 font-sans">Hosting the most intense development challenges in the region.</p>
@@ -49,7 +49,7 @@ export default function About() {
               <div className="text-center border-x border-white/10 px-2">
                 <p className="text-[10px] text-neutral-500 uppercase tracking-widest mb-1">REG FEE</p>
                 <div className="flex flex-col gap-1">
-                  <p className="text-[10px] font-black text-yellow-300 italic uppercase">₹150 <span className="text-[8px] text-neutral-500 font-sans not-italic">ADAMAS</span></p>
+                  <p className="text-[10px] font-black text-green-400 italic uppercase">FREE <span className="text-[8px] text-neutral-500 font-sans not-italic">ADAMAS</span></p>
                   <p className="text-[10px] font-black text-yellow-300 italic uppercase">₹250 <span className="text-[8px] text-neutral-500 font-sans not-italic">OTHERS</span></p>
                 </div>
               </div>

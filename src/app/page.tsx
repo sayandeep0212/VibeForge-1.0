@@ -27,7 +27,7 @@ export default function Home() {
       <ThreeOverlay />
 
       {/* Hero Section */}
-      <section id="home" className="relative h-screen flex flex-col items-start justify-center text-left px-6 md:px-24 overflow-hidden z-20 bg-transparent">
+      <section id="home" className="relative h-screen flex flex-col items-start justify-center text-left px-4 sm:px-6 md:px-24 overflow-hidden z-20 bg-transparent">
         <motion.div
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
@@ -51,7 +51,7 @@ export default function Home() {
 
           {/* Event Date */}
           <div className="mb-6">
-            <span className="text-xl md:text-3xl font-orbitron font-black italic text-red-500 tracking-widest uppercase">
+            <span className="text-lg sm:text-xl md:text-3xl font-orbitron font-black italic text-red-500 tracking-widest uppercase">
               22nd AUGUST
             </span>
           </div>
@@ -59,8 +59,8 @@ export default function Home() {
           {/* Countdown Timer */}
           <CountdownTimer targetDate="2026-08-22T09:00:00" />
 
-          <div className="flex flex-wrap gap-6 justify-start mt-4">
-            <Link href="/arena" className="group relative px-10 py-5 rounded-2xl font-black tracking-[0.2em] text-yellow-300 transition-all duration-500 hover:scale-105 active:scale-95">
+          <div className="flex flex-wrap gap-3 sm:gap-6 justify-start mt-4">
+            <Link href="/arena" className="group relative px-6 py-3 sm:px-10 sm:py-5 rounded-2xl font-black tracking-[0.2em] text-yellow-300 transition-all duration-500 hover:scale-105 active:scale-95 text-sm sm:text-base">
               {/* Glassy Background */}
               <div className="absolute inset-0 bg-yellow-400/5 backdrop-blur-xl rounded-2xl border border-yellow-400/20 group-hover:border-yellow-400/50 transition-colors" />
               {/* Neon Spread */}
@@ -68,7 +68,7 @@ export default function Home() {
               <span className="relative z-10">ENTER ARENA</span>
             </Link>
 
-            <Link href="/register" className="group relative px-10 py-5 rounded-2xl font-black tracking-[0.2em] text-red-500 transition-all duration-500 hover:scale-105 active:scale-95">
+            <Link href="/register" className="group relative px-6 py-3 sm:px-10 sm:py-5 rounded-2xl font-black tracking-[0.2em] text-red-500 transition-all duration-500 hover:scale-105 active:scale-95 text-sm sm:text-base">
               {/* Glassy Background */}
               <div className="absolute inset-0 bg-red-600/5 backdrop-blur-xl rounded-2xl border border-red-600/20 group-hover:border-red-600/50 transition-colors" />
               {/* Neon Spread */}

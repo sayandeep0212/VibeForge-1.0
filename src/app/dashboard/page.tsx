@@ -51,6 +51,7 @@ interface Registration {
     amount: number;
     status: string;
     receipt: string;
+    method?: string;
     paidAt: number;
   };
   status: 'pending_approval' | 'approved' | 'rejected';
@@ -358,7 +359,7 @@ function DashboardContent() {
                       <div className="p-4 bg-yellow-300/5 border border-yellow-300/20 rounded-xl">
                         <p className="text-yellow-300 text-sm font-bold mb-1">⏳ Under Evaluation</p>
                         <p className="text-neutral-400 text-xs leading-relaxed">
-                          Your registration is complete and payment is verified. Your team is currently being evaluated in the Online Selection Round. If selected, you will receive your Event Pass and approval notification via email.
+                          Your registration is complete{currentRegistration!.payment?.method !== 'free' ? ' and payment is verified' : ''}. Your team is currently being evaluated in the Online Selection Round. If selected, you will receive your Event Pass and approval notification via email.
                         </p>
                       </div>
                     )}
@@ -388,7 +389,11 @@ function DashboardContent() {
                       {currentRegistration!.payment && (
                         <div className="bg-white/5 rounded-xl p-4">
                           <p className="text-neutral-500 text-xs uppercase tracking-wider mb-1">Payment</p>
-                          <p className="text-green-400 font-bold">₹{currentRegistration!.payment.amount} — Paid</p>
+                          {currentRegistration!.payment.method === 'free' || currentRegistration!.payment.amount === 0 ? (
+                            <p className="text-green-400 font-bold">FREE — Adamas University</p>
+                          ) : (
+                            <p className="text-green-400 font-bold">₹{currentRegistration!.payment.amount} — Paid</p>
+                          )}
                         </div>
                       )}
                     </div>
@@ -422,7 +427,7 @@ function DashboardContent() {
                     )}
 
                     {/* Payment Receipt */}
-                    {currentRegistration!.payment?.receipt && (
+                    {currentRegistration!.payment?.receipt && currentRegistration!.payment.receipt !== 'N/A' && currentRegistration!.payment.method !== 'free' && (
                       <div className="bg-white/5 rounded-xl p-4">
                         <p className="text-neutral-500 text-xs uppercase tracking-wider mb-1">Payment Receipt</p>
                         <p className="text-white font-mono text-sm">{currentRegistration!.payment.receipt}</p>

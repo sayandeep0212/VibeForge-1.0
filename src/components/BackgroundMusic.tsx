@@ -92,7 +92,7 @@ const BackgroundMusic: React.FC<BackgroundMusicProps> = ({ audioUrl }) => {
 
   return (
     <div 
-      className="fixed bottom-10 left-10 z-[100]"
+      className="fixed bottom-6 left-4 sm:bottom-10 sm:left-10 z-[100]"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -100,13 +100,13 @@ const BackgroundMusic: React.FC<BackgroundMusicProps> = ({ audioUrl }) => {
         initial={{ opacity: 0, scale: 0.5 }}
         animate={{ opacity: 1, scale: 1 }}
         onClick={toggleMute}
-        className={`relative p-4 rounded-full shadow-[0_0_20px_rgba(0,0,0,0.5)] border border-white/10 transition-all hover:scale-110 active:scale-95 flex items-center justify-center ${isPlaying ? 'bg-neutral-900/80 backdrop-blur-md' : 'bg-red-900/80 backdrop-blur-md'}`}
+        className={`relative p-2.5 sm:p-4 rounded-full shadow-[0_0_20px_rgba(0,0,0,0.5)] border border-white/10 transition-all hover:scale-110 active:scale-95 flex items-center justify-center ${isPlaying ? 'bg-neutral-900/80 backdrop-blur-md' : 'bg-red-900/80 backdrop-blur-md'}`}
         title={isPlaying ? "Mute Music" : "Play Music"}
       >
         {isPlaying ? (
-          <Volume2 className="w-6 h-6 text-red-500" />
+          <Volume2 className="w-5 h-5 sm:w-6 sm:h-6 text-red-500" />
         ) : (
-          <VolumeX className="w-6 h-6 text-white" />
+          <VolumeX className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
         )}
         
         {/* Pulsing ring when playing */}

@@ -121,12 +121,12 @@ const PrizesAndMerch = () => {
       {/* Background Decor */}
       <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_0%,rgba(220,38,38,0.05),transparent_50%)]" />
       
-      <div className="max-w-7xl mx-auto px-6 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
         <div className="text-center mb-20">
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            className="text-5xl md:text-7xl font-heading italic tracking-wider text-yellow-300 mb-4"
+            className="text-4xl sm:text-5xl md:text-7xl font-heading italic tracking-wider text-yellow-300 mb-4"
           >
             THE <span className="text-white">PRIZES</span>
           </motion.h2>
@@ -134,22 +134,22 @@ const PrizesAndMerch = () => {
         </div>
 
         {/* Prizes Grid */}
-        <div className="flex flex-wrap justify-center gap-8 mb-40 items-end">
+        <div className="flex flex-wrap justify-center gap-4 sm:gap-8 mb-24 sm:mb-40 items-end">
           {prizes.map((prize, idx) => (
             <motion.div
               key={prize.rank}
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.2 }}
-              className={`relative group w-full md:w-[calc(33.33%-2rem)] min-w-[300px] ${prize.featured ? 'md:scale-110 z-20' : ''} ${prize.fullWidth ? 'md:w-full max-w-2xl' : ''}`}
+              className={`relative group w-full md:w-[calc(33.33%-2rem)] ${prize.featured ? 'md:scale-110 z-20' : ''} ${prize.fullWidth ? 'md:w-full max-w-2xl' : ''}`}
             >
               <div className={`absolute -inset-1 bg-gradient-to-b ${prize.color} rounded-3xl blur opacity-25 group-hover:opacity-50 transition duration-1000`} />
-              <div className="relative bg-neutral-900/40 backdrop-blur-lg rounded-3xl border border-white/10 p-8 h-full">
+              <div className="relative bg-neutral-900/40 backdrop-blur-lg rounded-3xl border border-white/10 p-6 sm:p-8 h-full">
                 <div className="flex justify-center mb-8">
                   {prize.icon}
                 </div>
                 <h3 className="text-center text-neutral-400 font-black font-sans text-sm tracking-[0.3em] mb-2">{prize.rank}</h3>
-                <p className={`text-center text-4xl md:text-5xl font-black font-sans bg-gradient-to-r ${prize.color} bg-clip-text text-transparent mb-8`}>
+                <p className={`text-center text-3xl sm:text-4xl md:text-5xl font-black font-sans bg-gradient-to-r ${prize.color} bg-clip-text text-transparent mb-6 sm:mb-8`}>
                   {prize.amount}
                 </p>
                 <ul className="space-y-4 mb-8">
@@ -170,7 +170,7 @@ const PrizesAndMerch = () => {
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            className="text-4xl md:text-6xl font-heading italic tracking-wider text-yellow-300 mb-4"
+            className="text-3xl sm:text-4xl md:text-6xl font-heading italic tracking-wider text-yellow-300 mb-4"
           >
             LIMITED <span className="text-white">EDITION</span> SWAGS
           </motion.h2>
