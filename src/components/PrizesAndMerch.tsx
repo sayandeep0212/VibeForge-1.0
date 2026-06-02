@@ -57,45 +57,48 @@ const PrizesAndMerch = () => {
   const prizes = [
     {
       rank: "2ND RUNNER UP",
-      amount: "TROPHY",
+      amount: "₹1K",
       color: "from-orange-400 to-red-600",
       icon: <Star className="w-12 h-12 text-orange-500" />,
       benefits: [
-        "Official 3rd Place Trophy",
-        "Certificate of Achievement",
-        "Website Feature (Team Name, Picture & College)"
+        "Prize Money & Goodies upto ₹1K",
+        "Official VibeForge 1.0 Trophy",
+        "Formal Certificate of Merit"
       ]
     },
     {
       rank: "WINNER",
-      amount: "TROPHY",
+      amount: "₹2.5K",
       color: "from-cyan-400 to-blue-600",
       icon: <Trophy className="w-16 h-16 text-cyan-400" />,
       featured: true,
       benefits: [
-        "Official 1st Place Trophy",
-        "Certificate of Excellence",
-        "Website Feature (Team Name, Picture & College)"
+        "Prize Money & Goodies upto ₹2.5K",
+        "Official VibeForge 1.0 Trophy",
+        "Formal Certificate of Merit"
       ]
     },
     {
       rank: "1ST RUNNER UP",
-      amount: "TROPHY",
+      amount: "₹2K",
       color: "from-yellow-400 to-amber-600",
       icon: <Crown className="w-12 h-12 text-yellow-500" />,
       benefits: [
-        "Official 2nd Place Trophy",
-        "Certificate of Merit",
-        "Website Feature (Team Name, Picture & College)"
+        "Prize Money & Goodies upto ₹2K",
+        "Official VibeForge 1.0 Trophy",
+        "Formal Certificate of Merit"
       ]
     },
     {
-      rank: "UI/UX EXCELLENCE",
+      rank: "ALL PARTICIPANTS",
       amount: "CERTIFICATE",
       color: "from-purple-400 to-magenta-600",
       icon: <Zap className="w-12 h-12 text-purple-400" />,
       fullWidth: true,
-      benefits: ["Special Excellence Certificate"]
+      benefits: [
+        "Formal Certificate of Participation",
+        "Recognizing technical execution in agentic development"
+      ]
     }
   ];
 

@@ -31,7 +31,7 @@ const Schedule = () => {
         {
           time: "10:00 AM - 11:00 AM",
           title: "OPENING CEREMONY & TOPIC REVELATION",
-          desc: "Official welcoming ceremony, key notes by dignitaries, guidelines briefing, and official revelation of the unannounced hackathon development theme.",
+          desc: "Official welcoming ceremony, key notes by dignitaries, guidelines briefing, and official revelation of the unannounced hackathon development theme. Breakfast will be provided for all participants.",
           icon: <Rocket className="w-5 h-5" />,
           color: "purple"
         },
