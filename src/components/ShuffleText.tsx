@@ -14,12 +14,11 @@ interface ShuffleTextProps {
 
 export default function ShuffleText({ text, className, duration = 0.35, delay = 0 }: ShuffleTextProps) {
   const [displayText, setDisplayText] = useState(text);
-  const [isHovered, setIsHovered] = useState(false);
 
   const shuffle = useCallback(() => {
     let iteration = 0;
     const interval = setInterval(() => {
-      setDisplayText(prev => 
+      setDisplayText(
         text.split('')
           .map((char, index) => {
             if (index < iteration) {
@@ -40,21 +39,24 @@ export default function ShuffleText({ text, className, duration = 0.35, delay = 
     return () => clearInterval(interval);
   }, [text]);
 
+  // Shuffle on mount (page load / refresh)
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      shuffle();
+    }, delay * 1000);
+    return () => clearTimeout(timeout);
+  }, [shuffle, delay]);
+
+  // Auto shuffle every 10 seconds
   useEffect(() => {
     const interval = setInterval(() => {
       shuffle();
-    }, 10000); // 10 seconds house
+    }, 10000);
     return () => clearInterval(interval);
   }, [shuffle]);
 
   return (
-    <motion.span 
-      onMouseEnter={() => {
-        setIsHovered(true);
-        shuffle();
-      }}
-      className={className}
-    >
+    <motion.span className={className}>
       {displayText.split('').map((char, i) => (
         <span 
           key={i} 

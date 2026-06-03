@@ -126,7 +126,7 @@ const Schedule = () => {
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            className="text-3xl sm:text-4xl md:text-5xl font-black italic text-white uppercase tracking-tighter mb-6"
+            className="text-3xl sm:text-4xl md:text-5xl font-black italic text-white uppercase tracking-tight mb-6 pr-1"
           >
             Timeline <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500">Chronicles</span>
           </motion.h2>
