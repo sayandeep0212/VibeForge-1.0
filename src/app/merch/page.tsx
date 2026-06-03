@@ -326,7 +326,7 @@ function MerchContent() {
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '40px' }}>
                   <div>
-                    <h1 style={{ fontSize: '30px', fontWeight: '900', fontStyle: 'italic', margin: 0, color: '#fde047' }}>VIBEFORGE 1.0</h1>
+                    <h1 style={{ fontSize: '30px', fontWeight: '900', fontStyle: 'italic', margin: 0, color: '#fde047' }}>VIBEFORGE <span style={{ fontFamily: 'sans-serif' }}>1.0</span></h1>
                     <p style={{ fontSize: '12px', color: '#737373', textTransform: 'uppercase', letterSpacing: '2px', margin: '5px 0' }}>Merchandise Receipt</p>
                   </div>
                   <div style={{ textAlign: 'right' }}>

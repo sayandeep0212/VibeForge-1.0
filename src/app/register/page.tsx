@@ -177,7 +177,19 @@ function RegisterContent() {
         newInfos[index] = {
           firebaseId, uid: uid.trim(), name: userInfo.name, email: userInfo.email,
           college: userInfo.college, isAdamas: userInfo.isAdamas || false, photoURL: userInfo.photoURL,
-          valid: false, error: 'Adamas Leaders can only add fellow Adamas students'
+          valid: false, error: 'Adamas teams can only include fellow Adamas students'
+        };
+        setMemberInfos(newInfos);
+        return;
+      }
+
+      // UNIVERSITY RULE: Non-Adamas leaders cannot add Adamas students
+      if (!userProfile?.isAdamas && userInfo.isAdamas) {
+        const newInfos = [...memberInfos];
+        newInfos[index] = {
+          firebaseId, uid: uid.trim(), name: userInfo.name, email: userInfo.email,
+          college: userInfo.college, isAdamas: userInfo.isAdamas || false, photoURL: userInfo.photoURL,
+          valid: false, error: 'You cannot add Adamas University students to a non-Adamas team'
         };
         setMemberInfos(newInfos);
         return;
@@ -368,6 +380,13 @@ function RegisterContent() {
 
       if (participationType === 'team') {
         const validMembers = memberInfos.filter((m) => m !== null && m.valid) as MemberInfo[];
+        // Safety check: all members in an Adamas team must be Adamas students
+        const nonAdamasMember = validMembers.find((m) => !m.isAdamas);
+        if (nonAdamasMember) {
+          setError(`${nonAdamasMember.name} is not an Adamas student. Adamas teams can only include Adamas students.`);
+          setLoading(false);
+          return;
+        }
         for (const member of validMembers) {
           members.push({
             firebaseId: member.firebaseId,
@@ -426,6 +445,13 @@ function RegisterContent() {
 
       if (participationType === 'team') {
         const validMembers = memberInfos.filter((m) => m !== null && m.valid) as MemberInfo[];
+        // Safety check: non-Adamas teams must NOT include Adamas students
+        const adamasMember = validMembers.find((m) => m.isAdamas);
+        if (adamasMember) {
+          setError(`${adamasMember.name} is an Adamas student and cannot be added to a non-Adamas team.`);
+          setLoading(false);
+          return;
+        }
         for (const member of validMembers) {
           members.push({
             firebaseId: member.firebaseId,

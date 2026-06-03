@@ -53,6 +53,22 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Invalid payment signature' }, { status: 400 });
     }
 
+    // Server-side university rule enforcement:
+    // This verify route only handles PAID (non-Adamas) registrations.
+    // Ensure no Adamas student is being added to a non-Adamas team.
+    for (const member of registrationData.members) {
+      const memberSnap = await adminDb.ref(`users/${member.firebaseId}`).get();
+      if (memberSnap.exists()) {
+        const memberData = memberSnap.val();
+        if (memberData.isAdamas) {
+          return NextResponse.json(
+            { error: 'Cannot add Adamas University students to a non-Adamas team. Adamas students register separately for free.' },
+            { status: 400 }
+          );
+        }
+      }
+    }
+
     // Save to Firebase Admin
     const finalData = {
       ...registrationData,
