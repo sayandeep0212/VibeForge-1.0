@@ -27,7 +27,7 @@ export default function Home() {
       <ThreeOverlay />
 
       {/* Hero Section */}
-      <section id="home" className="relative h-screen flex flex-col items-start justify-center text-left px-4 sm:px-6 md:px-24 overflow-hidden z-20 bg-transparent">
+      <section id="home" className="relative h-screen flex flex-col items-start justify-center text-left px-4 sm:px-6 md:px-12 lg:px-24 overflow-hidden z-20 bg-transparent">
         <motion.div
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
@@ -39,11 +39,11 @@ export default function Home() {
           </p>
           <ShuffleText
             text="VIBEFORGE"
-            className="text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-heading tracking-tighter mb-4 bg-gradient-to-b from-white to-neutral-500 bg-clip-text text-transparent leading-none pr-8 block"
+            className="text-5xl sm:text-6xl md:text-7xl lg:text-9xl font-heading tracking-tighter mb-4 bg-gradient-to-b from-white to-neutral-500 bg-clip-text text-transparent leading-none pr-4 block"
             delay={10}
           />
           <p
-            className="text-sm sm:text-lg md:text-2xl font-light tracking-[0.2em] md:tracking-[0.3em] text-yellow-300 uppercase mb-2 md:mb-10"
+            className="text-sm sm:text-lg md:text-xl lg:text-2xl font-light tracking-[0.2em] md:tracking-[0.25em] lg:tracking-[0.3em] text-yellow-300 uppercase mb-2 md:mb-10"
             style={{ fontFamily: "var(--font-orbitron), sans-serif" }}
           >
             12-Hrs Vibe Coding Inter College Hackathon

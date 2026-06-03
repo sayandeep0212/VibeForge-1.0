@@ -84,7 +84,7 @@ const Navbar = () => {
             </div>
 
             {/* Right: Desktop Links */}
-            <div className="hidden md:flex items-center gap-8">
+            <div className="hidden lg:flex items-center gap-8">
               {navLinks.map((link) => (
                 <Link
                   key={link.name}
@@ -123,7 +123,7 @@ const Navbar = () => {
             </div>
 
             {/* Mobile: Hamburger Button */}
-            <div className="md:hidden">
+            <div className="lg:hidden">
               <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="p-2 text-white hover:bg-white/10 rounded-lg transition-colors"
@@ -142,7 +142,7 @@ const Navbar = () => {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="absolute top-full left-6 right-6 mt-4 p-6 rounded-2xl border border-white/10 bg-black/90 backdrop-blur-2xl md:hidden z-50 shadow-2xl"
+            className="absolute top-full left-6 right-6 mt-4 p-6 rounded-2xl border border-white/10 bg-black/90 backdrop-blur-2xl lg:hidden z-50 shadow-2xl"
           >
             <div className="flex flex-col gap-6">
               {navLinks.map((link) => (
