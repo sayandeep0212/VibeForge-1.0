@@ -30,8 +30,8 @@ export default function TeamPage() {
             transition={{ duration: 0.8 }}
             className="text-center mb-20"
           >
-            <h1 className="text-5xl sm:text-6xl md:text-8xl font-black italic tracking-tighter text-yellow-300 mb-4 drop-shadow-[0_0_20px_rgba(253,224,71,0.3)]">
-              THE <span className="text-red-500 drop-shadow-[0_0_20px_rgba(239,68,68,0.3)]">TEAM</span>
+            <h1 className="text-5xl sm:text-6xl md:text-8xl font-black italic tracking-tighter text-yellow-300 mb-4">
+              THE <span className="text-red-400">TEAM</span>
             </h1>
             <div className="h-1 w-24 bg-gradient-to-r from-yellow-300 to-red-500 mx-auto rounded-full shadow-[0_0_15px_rgba(239,68,68,0.5)]" />
             <p className="mt-6 text-neutral-300 max-w-2xl mx-auto text-lg font-medium tracking-wide">
