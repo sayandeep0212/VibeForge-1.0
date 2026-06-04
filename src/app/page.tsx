@@ -39,11 +39,11 @@ export default function Home() {
           </p>
           <ShuffleText
             text="VIBEFORGE"
-            className="text-5xl sm:text-6xl md:text-7xl lg:text-9xl font-heading tracking-tighter mb-4 bg-gradient-to-b from-white to-neutral-500 bg-clip-text text-transparent leading-none pr-4 block"
+            className="text-4xl sm:text-6xl md:text-6xl lg:text-7xl xl:text-9xl font-heading tracking-tighter mb-4 bg-gradient-to-b from-white to-neutral-500 bg-clip-text text-transparent leading-none pr-4 block"
             delay={10}
           />
           <p
-            className="text-sm sm:text-lg md:text-xl lg:text-2xl font-light tracking-[0.2em] md:tracking-[0.25em] lg:tracking-[0.3em] text-yellow-300 uppercase mb-2 md:mb-10"
+            className="text-xs sm:text-lg md:text-xl lg:text-xl xl:text-2xl font-light tracking-[0.15em] sm:tracking-[0.2em] md:tracking-[0.15em] lg:tracking-[0.25em] xl:tracking-[0.3em] text-yellow-300 uppercase mb-2 md:mb-10"
             style={{ fontFamily: "var(--font-orbitron), sans-serif" }}
           >
             12-Hrs Vibe Coding Inter College Hackathon

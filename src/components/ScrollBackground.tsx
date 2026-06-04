@@ -86,7 +86,7 @@ const ScrollBackground = () => {
         // Mobile/Tablet optimization: shift to the right so the subject remains visible
         const screenWidth = window.innerWidth;
         const isMobile = screenWidth < 768;
-        const isTablet = screenWidth >= 768 && screenWidth < 1024;
+        const isTablet = screenWidth >= 768 && screenWidth < 1280;
         const x = isMobile
           ? (canvasWidth - newWidth) * 0.85
           : isTablet

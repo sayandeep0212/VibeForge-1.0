@@ -59,7 +59,7 @@ export default function CountdownTimer({ targetDate }: { targetDate: string }) {
           </span>
         </div>
       </div>
-      <span className="text-[10px] md:text-xs font-bold text-neutral-500 uppercase tracking-widest mt-2">{label}</span>
+      <span className="text-[10px] md:text-xs font-bold text-white uppercase tracking-widest mt-2">{label}</span>
     </div>
   );
 

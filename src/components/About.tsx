@@ -43,23 +43,23 @@ export default function About() {
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-6 border-t border-white/10">
               <div className="text-center">
-                <p className="text-[10px] text-neutral-500 uppercase tracking-widest mb-1">TEAM SIZE</p>
-                <p className="text-lg font-black text-white italic">UP TO 3</p>
+                <p className="text-xs sm:text-sm md:text-base text-white uppercase tracking-widest mb-1">TEAM SIZE</p>
+                <p className="text-xl sm:text-2xl md:text-3xl font-black text-white italic">UP TO 3</p>
               </div>
               <div className="text-center border-x border-white/10 px-2">
-                <p className="text-[10px] text-neutral-500 uppercase tracking-widest mb-1">REG FEE</p>
+                <p className="text-xs sm:text-sm md:text-base text-white uppercase tracking-widest mb-1">REG FEE</p>
                 <div className="flex flex-col gap-1">
-                  <p className="text-[10px] font-black text-green-400 italic uppercase">FREE <span className="text-[8px] text-neutral-500 font-sans not-italic">ADAMAS</span></p>
-                  <p className="text-[10px] font-black text-yellow-300 italic uppercase">₹250 <span className="text-[8px] text-neutral-500 font-sans not-italic">OTHERS</span></p>
+                  <p className="text-sm sm:text-base md:text-lg font-black text-green-400 italic uppercase">FREE <span className="text-xs sm:text-sm text-white font-sans not-italic">ADAMAS</span></p>
+                  <p className="text-sm sm:text-base md:text-lg font-black text-yellow-300 italic uppercase">₹250 <span className="text-xs sm:text-sm text-white font-sans not-italic">OTHERS</span></p>
                 </div>
               </div>
               <div className="text-center border-r border-white/10">
-                <p className="text-[10px] text-neutral-500 uppercase tracking-widest mb-1">DURATION</p>
-                <p className="text-lg font-black text-white italic">12 HRS</p>
+                <p className="text-xs sm:text-sm md:text-base text-white uppercase tracking-widest mb-1">DURATION</p>
+                <p className="text-xl sm:text-2xl md:text-3xl font-black text-white italic">12 HRS</p>
               </div>
               <div className="text-center">
-                <p className="text-[10px] text-neutral-500 uppercase tracking-widest mb-1">THEME</p>
-                <p className="text-[10px] font-black text-red-500 italic uppercase leading-tight">ON SPOT<br />DECLARATION</p>
+                <p className="text-xs sm:text-sm md:text-base text-white uppercase tracking-widest mb-1">THEME</p>
+                <p className="text-sm sm:text-base md:text-lg font-black text-red-500 italic uppercase leading-tight">ON SPOT<br />DECLARATION</p>
               </div>
             </div>
           </motion.div>
