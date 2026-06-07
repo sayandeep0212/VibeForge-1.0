@@ -6,9 +6,9 @@ import { Trophy, Gift, ShoppingBag, Star, Crown, Zap } from 'lucide-react';
 import Link from 'next/link';
 
 const PrizesAndMerch = () => {
-  const [prices, setPrices] = useState<any>({ 
-    tshirtPrice: 699, 
-    capPrice: 499, 
+  const [prices, setPrices] = useState<any>({
+    tshirtPrice: 699,
+    capPrice: 499,
     merchEnabled: true,
     stock: {
       tshirt: { black: true, white: true, lavender: true },
@@ -57,34 +57,34 @@ const PrizesAndMerch = () => {
   const prizes = [
     {
       rank: "2ND RUNNER UP",
-      amount: "₹1K",
+      amount: "₹1.5K",
       color: "from-orange-400 to-red-600",
       icon: <Star className="w-12 h-12 text-orange-500" />,
       benefits: [
-        "Prize Money & Goodies upto ₹1K",
+        "Prize Money & Goodies",
         "Official VibeForge 1.0 Trophy",
         "Formal Certificate of Merit"
       ]
     },
     {
       rank: "WINNER",
-      amount: "₹2.5K",
+      amount: "₹3K",
       color: "from-cyan-400 to-blue-600",
       icon: <Trophy className="w-16 h-16 text-cyan-400" />,
       featured: true,
       benefits: [
-        "Prize Money & Goodies upto ₹2.5K",
+        "Prize Money & Goodies",
         "Official VibeForge 1.0 Trophy",
         "Formal Certificate of Merit"
       ]
     },
     {
       rank: "1ST RUNNER UP",
-      amount: "₹2K",
+      amount: "₹2.5K",
       color: "from-yellow-400 to-amber-600",
       icon: <Crown className="w-12 h-12 text-yellow-500" />,
       benefits: [
-        "Prize Money & Goodies upto ₹2K",
+        "Prize Money & Goodies",
         "Official VibeForge 1.0 Trophy",
         "Formal Certificate of Merit"
       ]
@@ -103,16 +103,16 @@ const PrizesAndMerch = () => {
   ];
 
   const merch = [
-    { 
-      name: "Vibeforge polo T shirt", 
-      price: `₹${prices.tshirtPrice}`, 
+    {
+      name: "Vibeforge polo T shirt",
+      price: `₹${prices.tshirtPrice}`,
       image: tshirtImages[tshirtIndex],
       type: "t-shirt",
       id: "tshirt"
     },
-    { 
-      name: "Cyber Cap", 
-      price: `₹${prices.capPrice}`, 
+    {
+      name: "Cyber Cap",
+      price: `₹${prices.capPrice}`,
       image: capImages[capIndex],
       type: "cap",
       id: "cap"
@@ -123,10 +123,10 @@ const PrizesAndMerch = () => {
     <section id="prizes" className="py-32 relative overflow-hidden bg-transparent">
       {/* Background Decor */}
       <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_0%,rgba(220,38,38,0.05),transparent_50%)]" />
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
         <div className="text-center mb-20">
-          <motion.h2 
+          <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             className="text-4xl sm:text-5xl md:text-7xl font-heading italic tracking-wider text-yellow-300 mb-4"
@@ -170,7 +170,7 @@ const PrizesAndMerch = () => {
 
         {/* Merch Section */}
         <div className="text-center mb-20">
-          <motion.h2 
+          <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             className="text-3xl sm:text-4xl md:text-6xl font-heading italic tracking-wider text-yellow-300 mb-4"
@@ -191,9 +191,9 @@ const PrizesAndMerch = () => {
             >
               <div className="aspect-[4/5] rounded-3xl overflow-hidden relative border border-white/10 bg-neutral-900">
                 <AnimatePresence mode="wait">
-                  <motion.img 
+                  <motion.img
                     key={item.image}
-                    src={item.image} 
+                    src={item.image}
                     alt={item.name}
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -203,7 +203,7 @@ const PrizesAndMerch = () => {
                   />
                 </AnimatePresence>
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent pointer-events-none" />
-                
+
                 <div className="absolute bottom-0 left-0 w-full p-8 pt-0 space-y-4">
                   <div className="flex justify-between items-end">
                     <div>
@@ -221,13 +221,12 @@ const PrizesAndMerch = () => {
                       <p className="text-xl font-black italic text-yellow-300 mt-1 mb-4">{item.price}</p>
                     </div>
                   </div>
-                  <Link 
+                  <Link
                     href={prices.merchEnabled ? `/merch?type=${item.type}` : '#'}
-                    className={`w-full py-3 font-black uppercase text-xs tracking-widest rounded-xl transition-all flex items-center justify-center gap-2 ${
-                      prices.merchEnabled 
-                      ? 'bg-white text-black hover:bg-gradient-to-r hover:from-yellow-300 hover:to-red-400 hover:text-black' 
+                    className={`w-full py-3 font-black uppercase text-xs tracking-widest rounded-xl transition-all flex items-center justify-center gap-2 ${prices.merchEnabled
+                      ? 'bg-white text-black hover:bg-gradient-to-r hover:from-yellow-300 hover:to-red-400 hover:text-black'
                       : 'bg-neutral-800 text-neutral-500 cursor-not-allowed'
-                    }`}
+                      }`}
                   >
                     <ShoppingBag className="w-4 h-4" />
                     {prices.merchEnabled ? 'BUY MERCH' : 'STORE CLOSED'}
