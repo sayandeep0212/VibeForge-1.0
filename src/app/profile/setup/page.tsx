@@ -89,8 +89,8 @@ export default function ProfileSetupPage() {
       return;
     }
 
-    if (college === 'Adamas University' && !registrationNumber.trim()) {
-      setError('Please enter your Adamas University registration number.');
+    if (college === 'Adamas University' && (registrationNumber.trim() === '' || registrationNumber.trim() === 'AU/')) {
+      setError('Please enter your complete Adamas University registration number.');
       return;
     }
 
