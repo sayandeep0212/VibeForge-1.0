@@ -3,7 +3,9 @@
   "framework": "nextjs",
   "buildCommand": "next build",
   "installCommand": "npm install",
-  "regions": ["sfo1"],
+  "regions": [
+    "sfo1"
+  ],
   "headers": [
     {
       "source": "/(.*)",
@@ -40,6 +42,24 @@
         {
           "key": "Content-Security-Policy",
           "value": "frame-ancestors 'self' https://vibeforge-1-0.tech"
+        }
+      ]
+    },
+    {
+      "source": "/api/:path*",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        }
+      ]
+    },
+    {
+      "source": "/((?!_next/static|_next/image|api/).*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, must-revalidate"
         }
       ]
     },
