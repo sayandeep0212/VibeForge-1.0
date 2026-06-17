@@ -73,7 +73,8 @@ export default function RegistrationsPage() {
     type: 'individual' as 'individual' | 'team',
     leaderUid: '',
     memberUids: [''] as string[],
-    amount: 0
+    amount: 0,
+    initialStatus: 'pending_approval' as 'pending_approval' | 'approved' | 'rejected',
   });
   const [manualError, setManualError] = useState('');
   const [isSubmittingManual, setIsSubmittingManual] = useState(false);
@@ -189,7 +190,7 @@ export default function RegistrationsPage() {
           receipt: `RCPT-${nanoid(8).toUpperCase()}`,
           paidAt: Date.now(),
         },
-        status: 'pending_approval',
+        status: manualForm.initialStatus,
         passId: '',
         bookingId: '',
         createdAt: Date.now(),
@@ -198,20 +199,22 @@ export default function RegistrationsPage() {
       const newRegRef = push(ref(getDb(), 'registrations'));
       await set(newRegRef, newRegData);
 
-      // Now approve it to generate passes and send emails
-      const res = await fetch('/api/admin/registrations/approve', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ registrationId: newRegRef.key }),
-      });
+      // Only call the approve API (which generates passes + sends emails) if admin chose "Selected"
+      if (manualForm.initialStatus === 'approved') {
+        const res = await fetch('/api/admin/registrations/approve', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ registrationId: newRegRef.key }),
+        });
 
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || 'Failed to approve manual registration');
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.error || 'Failed to approve manual registration');
+        }
       }
 
       setShowManualModal(false);
-      setManualForm({ teamName: '', type: 'individual', leaderUid: '', memberUids: [''], amount: 0 });
+      setManualForm({ teamName: '', type: 'individual', leaderUid: '', memberUids: [''], amount: 0, initialStatus: 'pending_approval' });
       fetchData(); // refresh data
     } catch (err: any) {
       console.error(err);
@@ -656,6 +659,22 @@ export default function RegistrationsPage() {
                   <label className="text-neutral-500 text-xs uppercase tracking-wider block mb-1">Amount Paid</label>
                   <input type="number" value={manualForm.amount} onChange={e => setManualForm(p => ({ ...p, amount: Number(e.target.value) }))}
                     className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-300/50" />
+                </div>
+
+                <div>
+                  <label className="text-neutral-500 text-xs uppercase tracking-wider block mb-1">Initial Status</label>
+                  <select
+                    value={manualForm.initialStatus}
+                    onChange={e => setManualForm(p => ({ ...p, initialStatus: e.target.value as 'pending_approval' | 'approved' | 'rejected' }))}
+                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-300/50"
+                  >
+                    <option value="pending_approval" className="bg-black">⏳ Pending Selection</option>
+                    <option value="approved" className="bg-black">✅ Selected (generates pass + sends email)</option>
+                    <option value="rejected" className="bg-black">❌ Eliminated</option>
+                  </select>
+                  {manualForm.initialStatus === 'approved' && (
+                    <p className="text-xs text-yellow-400/70 mt-1 pl-1">⚠️ This will immediately generate a pass and send a confirmation email.</p>
+                  )}
                 </div>
 
                 <button onClick={handleManualSubmit} disabled={isSubmittingManual}
