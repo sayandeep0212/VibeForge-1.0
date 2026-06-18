@@ -1,13 +1,14 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
   LayoutDashboard, Users, ClipboardList, Settings, LogOut, Shield, MessageSquare, Image as ImageIcon, Scan, Menu, X, ShoppingBag
 } from 'lucide-react';
-import { getFirebaseAuth } from '@/lib/firebase';
-import { signOut } from 'firebase/auth';
+import { getFirebaseAuth, getDb } from '@/lib/firebase';
+import { signOut, onAuthStateChanged } from 'firebase/auth';
+import { ref, onValue, set, onDisconnect, serverTimestamp } from 'firebase/database';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -19,6 +20,88 @@ interface AdminLayoutProps {
 export default function AdminLayout({ children, onLogout, adminName, photoURL }: AdminLayoutProps) {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [activeAdmins, setActiveAdmins] = useState<any[]>([]);
+
+  useEffect(() => {
+    const auth = getFirebaseAuth();
+    const db = getDb();
+    
+    let isConnected = false;
+    let currentUserUid: string | null = null;
+    let presenceRefInstance: any = null;
+
+    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        currentUserUid = user.uid;
+        updatePresence();
+      } else {
+        currentUserUid = null;
+      }
+    });
+
+    const connectedRef = ref(db, '.info/connected');
+    const unsubscribeConnected = onValue(connectedRef, (snap) => {
+      isConnected = snap.val() === true;
+      if (isConnected && currentUserUid) {
+        updatePresence();
+      }
+    });
+
+    function updatePresence() {
+      if (!currentUserUid || !isConnected) return;
+      
+      const myPresenceRef = ref(db, `admin_presence/${currentUserUid}`);
+      presenceRefInstance = onDisconnect(myPresenceRef);
+      
+      presenceRefInstance.set({
+        status: 'offline',
+        lastActive: serverTimestamp(),
+        name: adminName,
+      }).catch((err: any) => console.error("onDisconnect error:", err));
+
+      set(myPresenceRef, {
+        status: 'online',
+        lastActive: serverTimestamp(),
+        name: adminName,
+        path: pathname
+      }).catch((err: any) => console.error("Presence set error:", err));
+    }
+
+    const presenceRef = ref(db, 'admin_presence');
+    const unsubscribePresence = onValue(presenceRef, (snap) => {
+      if (snap.exists()) {
+        const data = snap.val();
+        const admins = Object.keys(data).map(key => ({
+          uid: key,
+          ...data[key]
+        }));
+        setActiveAdmins(admins);
+      } else {
+        setActiveAdmins([]);
+      }
+    }, (error: any) => {
+      console.error("Presence read error:", error);
+    });
+
+    return () => {
+      unsubscribeAuth();
+      unsubscribeConnected();
+      unsubscribePresence();
+    };
+  }, [adminName, pathname]);
+
+  const getReadablePath = (path: string) => {
+    if (path === '/admin/dashboard') return 'Dashboard';
+    if (path === '/admin/scanner') return 'Scanner';
+    if (path === '/admin/entries') return 'Entries';
+    if (path === '/admin/participants') return 'Participants';
+    if (path === '/admin/registrations') return 'Registrations';
+    if (path === '/admin/inquiries') return 'Inquiries';
+    if (path === '/admin/merch') return 'Merch';
+    if (path === '/admin/content') return 'Content';
+    if (path === '/admin/settings') return 'Settings';
+    return 'Admin Panel';
+  };
 
   const navItems = [
     { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
@@ -36,6 +119,17 @@ export default function AdminLayout({ children, onLogout, adminName, photoURL }:
     try {
       // Sign out from Firebase Auth on the client side
       const auth = getFirebaseAuth();
+      const user = auth.currentUser;
+      
+      if (user) {
+        const db = getDb();
+        await set(ref(db, `admin_presence/${user.uid}`), {
+          status: 'offline',
+          lastActive: serverTimestamp(),
+          name: adminName
+        });
+      }
+      
       await signOut(auth);
       
       // Clear the admin session cookie
@@ -98,6 +192,37 @@ export default function AdminLayout({ children, onLogout, adminName, photoURL }:
             );
           })}
         </nav>
+
+        {/* Active Admins */}
+        <div className="flex-1 overflow-y-auto px-4 py-2 mt-4 custom-scrollbar min-h-[150px]">
+          <h3 className="text-[10px] text-neutral-500 uppercase tracking-widest font-black mb-3 px-2">Online Admins</h3>
+          
+          {activeAdmins.filter(a => a.status === 'online').length > 0 ? (
+            <div className="space-y-3">
+              {activeAdmins
+                .filter(a => a.status === 'online')
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .map(admin => (
+                <div key={admin.uid} className="flex items-center gap-3 px-2">
+                  <div className="relative shrink-0">
+                    <div className="w-8 h-8 rounded-full bg-neutral-800 border border-white/5 flex items-center justify-center text-xs font-bold text-neutral-400">
+                      {admin.name.charAt(0)}
+                    </div>
+                    <div className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-green-500 border-2 border-black"></div>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-medium text-white truncate">{admin.name}</p>
+                    <p className="text-[10px] text-neutral-500 truncate">
+                      {admin.path === pathname ? 'Here with you' : getReadablePath(admin.path)}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="px-2 text-xs text-neutral-600 italic">No one else is online</div>
+          )}
+        </div>
 
         {/* Footer */}
         <div className="p-4 border-t border-white/5">
