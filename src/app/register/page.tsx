@@ -65,7 +65,7 @@ function RegisterContent() {
   useEffect(() => {
     checkRegistrationStatus();
     checkAdminSettings();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const checkAdminSettings = async () => {
@@ -630,7 +630,7 @@ function RegisterContent() {
                   <div>
                     <p className="text-yellow-300 text-sm font-bold">Important Notice</p>
                     <p className="text-neutral-400 text-xs mt-1">
-                      If you are in anyone&apos;s team as a member, <strong className="text-white">do NOT fill this registration form</strong>. 
+                      If you are in anyone&apos;s team as a member, <strong className="text-white">do NOT fill this registration form</strong>.
                       Your team leader will add you using your UID. If you are already registered (individually or as a team member), registration will be blocked.
                     </p>
                   </div>
@@ -654,11 +654,10 @@ function RegisterContent() {
                   <div className="grid grid-cols-2 gap-4">
                     <button
                       onClick={() => { setParticipationType('individual'); setMemberUIDs([]); setMemberInfos([]); }}
-                      className={`p-4 rounded-xl border transition-all text-center ${
-                        participationType === 'individual'
+                      className={`p-4 rounded-xl border transition-all text-center ${participationType === 'individual'
                           ? 'bg-yellow-300/10 border-yellow-300/30 text-yellow-300'
                           : 'bg-white/5 border-white/10 text-neutral-400 hover:border-white/20'
-                      }`}
+                        }`}
                     >
                       <UserIcon className="w-8 h-8 mx-auto mb-2" />
                       <p className="font-bold text-sm">Individual</p>
@@ -666,11 +665,10 @@ function RegisterContent() {
                     </button>
                     <button
                       onClick={() => { setParticipationType('team'); setMemberUIDs(['']); setMemberInfos([null]); }}
-                      className={`p-4 rounded-xl border transition-all text-center ${
-                        participationType === 'team'
+                      className={`p-4 rounded-xl border transition-all text-center ${participationType === 'team'
                           ? 'bg-yellow-300/10 border-yellow-300/30 text-yellow-300'
                           : 'bg-white/5 border-white/10 text-neutral-400 hover:border-white/20'
-                      }`}
+                        }`}
                     >
                       <Users className="w-8 h-8 mx-auto mb-2" />
                       <p className="font-bold text-sm">Team</p>
@@ -779,11 +777,10 @@ function RegisterContent() {
                                   <motion.div
                                     initial={{ opacity: 0, y: -5 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    className={`p-3 rounded-xl border ${
-                                      memberInfos[index]!.valid
+                                    className={`p-3 rounded-xl border ${memberInfos[index]!.valid
                                         ? 'bg-green-500/5 border-green-500/20'
                                         : 'bg-red-500/5 border-red-500/20'
-                                    }`}
+                                      }`}
                                   >
                                     {memberInfos[index]!.valid ? (
                                       <div className="flex items-center gap-3">
