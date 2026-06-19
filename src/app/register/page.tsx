@@ -397,24 +397,23 @@ function RegisterContent() {
         }
       }
 
-      const registrationRef = push(ref(db!, 'registrations'));
-      await set(registrationRef, {
-        teamName: teamName.trim(),
-        type: participationType,
-        leaderId: user.uid,
-        leaderUid: userProfile.uid,
-        members,
-        payment: {
-          method: 'free',
-          amount: 0,
-          status: 'free_adamas',
-          razorpayId: 'FREE-ADAMAS',
-          receipt: 'N/A',
-          paidAt: Date.now(),
-        },
-        status: 'pending_approval',
-        createdAt: Date.now(),
+      // Use server-side API route so emails can be sent (Resend API key is server-only)
+      const res = await fetch('/api/register/free', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          teamName: teamName.trim(),
+          type: participationType,
+          leaderId: user.uid,
+          leaderUid: userProfile.uid,
+          members,
+        }),
       });
+
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.error || 'Registration failed');
+      }
 
       setPaymentSuccess(true);
       setLoading(false);
