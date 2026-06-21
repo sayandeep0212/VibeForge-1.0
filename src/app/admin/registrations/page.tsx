@@ -383,7 +383,13 @@ export default function RegistrationsPage() {
     setEditForm({
       teamName: reg.teamName,
       status: reg.status,
-      members: reg.members ? reg.members.map(m => ({ ...m })) : [],
+      members: reg.members ? reg.members.map(m => {
+        const profile = findUserByUid(m.uid);
+        return {
+          ...m,
+          college: m.college || (profile ? (profile.college || (profile.isAdamas ? 'Adamas University' : '')) : '')
+        };
+      }) : [],
       payment: {
         razorpayId: reg.payment?.razorpayId || '',
         orderId: reg.payment?.orderId || '',
@@ -408,6 +414,35 @@ export default function RegistrationsPage() {
         return;
       }
 
+      // Auto-resolve firebaseId for members that don't have one (newly added)
+      const resolvedMembers = validMembers.map(m => {
+        if (!m.firebaseId) {
+          const foundUser = findUserByUid(m.uid);
+          if (foundUser) {
+            const collegeName = foundUser.college || (foundUser.isAdamas ? 'Adamas University' : '');
+            return { ...m, firebaseId: foundUser.firebaseId, college: m.college || collegeName };
+          }
+        }
+        return m;
+      });
+
+      // Validate Adamas/External team composition rule
+      if (resolvedMembers.length > 1) {
+        const memberStatuses = resolvedMembers.map(m => {
+          const profile = findUserByUid(m.uid);
+          return { name: m.name, isAdamas: profile?.isAdamas || false };
+        });
+        const hasAdamas = memberStatuses.some(s => s.isAdamas);
+        const hasExternal = memberStatuses.some(s => !s.isAdamas);
+        if (hasAdamas && hasExternal) {
+          const adamasNames = memberStatuses.filter(s => s.isAdamas).map(s => s.name).join(', ');
+          const externalNames = memberStatuses.filter(s => !s.isAdamas).map(s => s.name).join(', ');
+          setEditError(`Adamas students (${adamasNames}) and external college students (${externalNames}) cannot be in the same team.`);
+          setEditSaving(false);
+          return;
+        }
+      }
+
       // If status changed to approved, use the approval API first
       if (editForm.status === 'approved' && registrations[editingId].status !== 'approved') {
         // Save other changes first
@@ -418,7 +453,7 @@ export default function RegistrationsPage() {
             registrationId: editingId,
             updates: {
               teamName: editForm.teamName,
-              members: validMembers,
+              members: resolvedMembers,
               payment: editForm.payment,
             },
           }),
@@ -438,7 +473,7 @@ export default function RegistrationsPage() {
             updates: {
               teamName: editForm.teamName,
               status: editForm.status,
-              members: validMembers,
+              members: resolvedMembers,
               payment: editForm.payment,
             },
           }),
@@ -479,6 +514,24 @@ export default function RegistrationsPage() {
     setEditForm(prev => {
       const newMembers = [...prev.members];
       newMembers[idx] = { ...newMembers[idx], [field]: value };
+
+      // Auto-fill all fields when UID is changed and user is found
+      if (field === 'uid') {
+        const foundUser = findUserByUid(value);
+        if (foundUser) {
+          // Read college — profile stores it as 'college' string field
+          const collegeName = foundUser.college || (foundUser.isAdamas ? 'Adamas University' : '');
+          newMembers[idx] = {
+            ...newMembers[idx],
+            uid: value,
+            name: foundUser.name || '',
+            email: foundUser.email || '',
+            college: collegeName,
+            firebaseId: foundUser.firebaseId || '',
+          };
+        }
+      }
+
       return { ...prev, members: newMembers };
     });
   };
@@ -874,22 +927,27 @@ export default function RegistrationsPage() {
                             <input type="email" value={member.email} onChange={e => updateEditMember(idx, 'email', e.target.value)}
                               className="w-full bg-black/50 border border-white/10 rounded-lg px-3 py-2 text-white text-xs focus:outline-none focus:border-yellow-300/50" />
                           </div>
-                          <div>
-                            <label className="text-neutral-600 text-[10px] uppercase tracking-wider block mb-0.5">UID</label>
+                          <div className="col-span-1 sm:col-span-2">
+                            <label className="text-neutral-600 text-[10px] uppercase tracking-wider block mb-0.5">UID <span className="text-neutral-700">(type to auto-fill)</span></label>
                             <input type="text" value={member.uid} onChange={e => updateEditMember(idx, 'uid', e.target.value.toUpperCase())}
                               placeholder="GL-XXXXXX"
-                              className="w-full bg-black/50 border border-white/10 rounded-lg px-3 py-2 text-white text-xs focus:outline-none focus:border-yellow-300/50 font-mono" />
+                              className={`w-full bg-black/50 border rounded-lg px-3 py-2 text-white text-xs focus:outline-none font-mono ${
+                                member.uid && findUserByUid(member.uid) ? 'border-green-500/30 focus:border-green-500/50' :
+                                member.uid && member.uid.length > 3 && !findUserByUid(member.uid) ? 'border-red-500/30 focus:border-red-500/50' :
+                                'border-white/10 focus:border-yellow-300/50'
+                              }`} />
+                            {member.uid && findUserByUid(member.uid) && (
+                              <p className="text-[10px] text-green-400 mt-0.5 pl-1">✓ Found: {findUserByUid(member.uid)!.name} • {findUserByUid(member.uid)!.college || 'No college'}</p>
+                            )}
+                            {member.uid && member.uid.length > 3 && !findUserByUid(member.uid) && (
+                              <p className="text-[10px] text-red-400 mt-0.5 pl-1">✗ User not found — fill details manually</p>
+                            )}
                           </div>
                           <div>
                             <label className="text-neutral-600 text-[10px] uppercase tracking-wider block mb-0.5">College</label>
                             <input type="text" value={member.college || ''} onChange={e => updateEditMember(idx, 'college', e.target.value)}
                               className="w-full bg-black/50 border border-white/10 rounded-lg px-3 py-2 text-white text-xs focus:outline-none focus:border-yellow-300/50" />
                           </div>
-                        </div>
-                        <div className="mt-2">
-                          <label className="text-neutral-600 text-[10px] uppercase tracking-wider block mb-0.5">Firebase ID</label>
-                          <input type="text" value={member.firebaseId} onChange={e => updateEditMember(idx, 'firebaseId', e.target.value)}
-                            className="w-full bg-black/50 border border-white/10 rounded-lg px-3 py-2 text-neutral-400 text-xs focus:outline-none focus:border-yellow-300/50 font-mono" />
                         </div>
                       </div>
                     ))}
