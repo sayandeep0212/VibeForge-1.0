@@ -4,7 +4,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import {
   Search, Download, CheckCircle, XCircle, Clock, Users,
-  User as UserIcon, CreditCard, Shield, Star, Trash2, Edit3, X, Save, Building2, RefreshCw, Plus
+  User as UserIcon, CreditCard, Shield, Star, Trash2, Edit3, X, Save, Building2, RefreshCw, Plus,
+  UserPlus, UserMinus, Calendar
 } from 'lucide-react';
 import { ref, get, update, remove, push, set } from 'firebase/database';
 import { getDb, getFirebaseAuth } from '@/lib/firebase';
@@ -64,7 +65,26 @@ export default function RegistrationsPage() {
 
   // Edit modal state
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [editForm, setEditForm] = useState({ teamName: '', status: '' as string });
+  const [editForm, setEditForm] = useState<{
+    teamName: string;
+    status: string;
+    members: Member[];
+    payment: {
+      razorpayId: string;
+      orderId?: string;
+      amount: number;
+      status: string;
+      receipt: string;
+      paidAt: number;
+    };
+  }>({
+    teamName: '',
+    status: '',
+    members: [],
+    payment: { razorpayId: '', amount: 0, status: '', receipt: '', paidAt: Date.now() },
+  });
+  const [editSaving, setEditSaving] = useState(false);
+  const [editError, setEditError] = useState('');
 
   // Manual Registration Modal State
   const [showManualModal, setShowManualModal] = useState(false);
@@ -359,33 +379,118 @@ export default function RegistrationsPage() {
   const startEdit = (regId: string) => {
     const reg = registrations[regId];
     setEditingId(regId);
-    setEditForm({ teamName: reg.teamName, status: reg.status });
+    setEditError('');
+    setEditForm({
+      teamName: reg.teamName,
+      status: reg.status,
+      members: reg.members ? reg.members.map(m => ({ ...m })) : [],
+      payment: {
+        razorpayId: reg.payment?.razorpayId || '',
+        orderId: reg.payment?.orderId || '',
+        amount: reg.payment?.amount || 0,
+        status: reg.payment?.status || '',
+        receipt: reg.payment?.receipt || '',
+        paidAt: reg.payment?.paidAt || Date.now(),
+      },
+    });
   };
 
   const saveEdit = async () => {
     if (!editingId) return;
+    setEditError('');
+    setEditSaving(true);
     try {
-      // If status is changed to approved, use the approval API
-      if (editForm.status === 'approved' && registrations[editingId].status !== 'approved') {
-        await handleApprove(editingId);
-        // Also update team name if it was changed
-        if (editForm.teamName !== registrations[editingId].teamName) {
-          await update(ref(getDb(), `registrations/${editingId}`), { teamName: editForm.teamName });
-          setRegistrations(prev => ({ ...prev, [editingId!]: { ...prev[editingId!], teamName: editForm.teamName } }));
-        }
-      } else {
-        const updates: any = { teamName: editForm.teamName, status: editForm.status };
-        if (editForm.status === 'approved' && !registrations[editingId].passId) {
-          updates.passId = `PASS-${nanoid(6).toUpperCase()}`;
-          updates.bookingId = `BOOK-${nanoid(8).toUpperCase()}`;
-        }
-        if (editForm.status === 'rejected') { updates.passId = ''; }
-        await update(ref(getDb(), `registrations/${editingId}`), updates);
-        setRegistrations(prev => ({ ...prev, [editingId!]: { ...prev[editingId!], ...updates } }));
+      // Validate at least one member
+      const validMembers = editForm.members.filter(m => m.name.trim() && m.email.trim() && m.uid.trim());
+      if (validMembers.length === 0) {
+        setEditError('At least one member with name, email, and UID is required.');
+        setEditSaving(false);
+        return;
       }
+
+      // If status changed to approved, use the approval API first
+      if (editForm.status === 'approved' && registrations[editingId].status !== 'approved') {
+        // Save other changes first
+        const res = await fetch('/api/admin/registrations/update', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            registrationId: editingId,
+            updates: {
+              teamName: editForm.teamName,
+              members: validMembers,
+              payment: editForm.payment,
+            },
+          }),
+        });
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.error || 'Failed to save changes');
+        }
+        // Then trigger approval (generates pass + sends email)
+        await handleApprove(editingId);
+      } else {
+        const res = await fetch('/api/admin/registrations/update', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            registrationId: editingId,
+            updates: {
+              teamName: editForm.teamName,
+              status: editForm.status,
+              members: validMembers,
+              payment: editForm.payment,
+            },
+          }),
+        });
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.error || 'Failed to save changes');
+        }
+      }
+
+      // Refresh data to get the updated state
+      await fetchData();
       setEditingId(null);
-    } catch (err) { console.error('Error saving edit:', err); }
+    } catch (err: any) {
+      console.error('Error saving edit:', err);
+      setEditError(err.message || 'Failed to save changes');
+    } finally {
+      setEditSaving(false);
+    }
   };
+
+  const addEditMember = () => {
+    if (editForm.members.length >= 3) return; // Max 3 members (1 leader + 2 members)
+    setEditForm(prev => ({
+      ...prev,
+      members: [...prev.members, { firebaseId: '', uid: '', name: '', email: '', college: '' }],
+    }));
+  };
+
+  const removeEditMember = (idx: number) => {
+    setEditForm(prev => ({
+      ...prev,
+      members: prev.members.filter((_, i) => i !== idx),
+    }));
+  };
+
+  const updateEditMember = (idx: number, field: keyof Member, value: string) => {
+    setEditForm(prev => {
+      const newMembers = [...prev.members];
+      newMembers[idx] = { ...newMembers[idx], [field]: value };
+      return { ...prev, members: newMembers };
+    });
+  };
+
+  // Helper: convert timestamp to datetime-local input value
+  const timestampToLocal = (ts: number) => {
+    const d = new Date(ts);
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  };
+
+  const localToTimestamp = (val: string) => new Date(val).getTime();
 
   const exportData = (format: 'csv' | 'excel' | 'json') => {
     const rows = filteredRegistrations.map(([regId, reg]) => ({
@@ -686,31 +791,169 @@ export default function RegistrationsPage() {
           </div>
         )}
 
-        {/* Edit Modal */}
+        {/* Edit Modal — Full Details */}
         {editingId && (
-          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setEditingId(null)}>
-            <div className="bg-neutral-900 border border-white/10 rounded-2xl p-6 w-full max-w-md" onClick={e => e.stopPropagation()}>
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => !editSaving && setEditingId(null)}>
+            <div className="bg-neutral-900 border border-white/10 rounded-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-white font-bold">Edit Registration</h3>
-                <button onClick={() => setEditingId(null)} className="text-neutral-500 hover:text-white"><X className="w-5 h-5" /></button>
+                <div>
+                  <h3 className="text-white font-bold text-lg">Edit Registration</h3>
+                  <p className="text-neutral-500 text-xs mt-0.5">ID: <span className="font-mono text-neutral-400">{editingId}</span></p>
+                </div>
+                <button onClick={() => setEditingId(null)} disabled={editSaving} className="text-neutral-500 hover:text-white disabled:opacity-50"><X className="w-5 h-5" /></button>
               </div>
-              <div className="space-y-4">
-                <div>
-                  <label className="text-neutral-500 text-xs uppercase tracking-wider block mb-1">Team Name</label>
-                  <input type="text" value={editForm.teamName} onChange={e => setEditForm(p => ({ ...p, teamName: e.target.value }))}
-                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-300/50" />
+
+              {editError && (
+                <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-xs">
+                  {editError}
                 </div>
-                <div>
-                  <label className="text-neutral-500 text-xs uppercase tracking-wider block mb-1">Status</label>
-                  <select value={editForm.status} onChange={e => setEditForm(p => ({ ...p, status: e.target.value }))}
-                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-300/50">
-                    <option value="pending_approval" className="bg-black">Pending Selection</option>
-                    <option value="approved" className="bg-black">Selected</option>
-                    <option value="rejected" className="bg-black">Eliminated</option>
-                  </select>
+              )}
+
+              <div className="space-y-6">
+                {/* Section: Team Info */}
+                <div className="space-y-3">
+                  <h4 className="text-neutral-400 text-xs uppercase tracking-widest font-bold border-b border-white/5 pb-2">Team Info</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-neutral-500 text-xs uppercase tracking-wider block mb-1">Team Name</label>
+                      <input type="text" value={editForm.teamName} onChange={e => setEditForm(p => ({ ...p, teamName: e.target.value }))}
+                        className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-300/50" />
+                    </div>
+                    <div>
+                      <label className="text-neutral-500 text-xs uppercase tracking-wider block mb-1">Status</label>
+                      <select value={editForm.status} onChange={e => setEditForm(p => ({ ...p, status: e.target.value }))}
+                        className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-300/50">
+                        <option value="pending_approval" className="bg-black">⏳ Pending Selection</option>
+                        <option value="approved" className="bg-black">✅ Selected</option>
+                        <option value="rejected" className="bg-black">❌ Eliminated</option>
+                      </select>
+                      {editForm.status === 'approved' && registrations[editingId]?.status !== 'approved' && (
+                        <p className="text-xs text-yellow-400/70 mt-1 pl-1">⚠️ Changing to Selected will generate a pass and send a confirmation email.</p>
+                      )}
+                    </div>
+                  </div>
                 </div>
-                <button onClick={saveEdit} className="w-full bg-yellow-300 hover:bg-yellow-400 text-black py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2">
-                  <Save className="w-4 h-4" /> Save Changes
+
+                {/* Section: Members */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between border-b border-white/5 pb-2">
+                    <h4 className="text-neutral-400 text-xs uppercase tracking-widest font-bold">Members ({editForm.members.length}/3)</h4>
+                    {editForm.members.length < 3 && (
+                      <button onClick={addEditMember} className="flex items-center gap-1 text-xs text-yellow-300 hover:text-yellow-400 transition-colors">
+                        <UserPlus className="w-3.5 h-3.5" /> Add Member
+                      </button>
+                    )}
+                  </div>
+                  <div className="space-y-3">
+                    {editForm.members.map((member, idx) => (
+                      <div key={idx} className="bg-white/[0.02] border border-white/5 rounded-xl p-4 relative group">
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-2">
+                            <div className="w-6 h-6 rounded-full bg-yellow-300/10 flex items-center justify-center text-yellow-300 text-[10px] font-bold">
+                              {idx + 1}
+                            </div>
+                            <span className="text-neutral-500 text-[10px] uppercase tracking-wider font-bold">
+                              {idx === 0 ? '⭐ Leader' : `Member ${idx}`}
+                            </span>
+                          </div>
+                          {editForm.members.length > 1 && (
+                            <button onClick={() => removeEditMember(idx)}
+                              className="p-1.5 text-red-400/60 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all" title="Remove member">
+                              <UserMinus className="w-3.5 h-3.5" />
+                            </button>
+                          )}
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          <div>
+                            <label className="text-neutral-600 text-[10px] uppercase tracking-wider block mb-0.5">Name</label>
+                            <input type="text" value={member.name} onChange={e => updateEditMember(idx, 'name', e.target.value)}
+                              className="w-full bg-black/50 border border-white/10 rounded-lg px-3 py-2 text-white text-xs focus:outline-none focus:border-yellow-300/50" />
+                          </div>
+                          <div>
+                            <label className="text-neutral-600 text-[10px] uppercase tracking-wider block mb-0.5">Email</label>
+                            <input type="email" value={member.email} onChange={e => updateEditMember(idx, 'email', e.target.value)}
+                              className="w-full bg-black/50 border border-white/10 rounded-lg px-3 py-2 text-white text-xs focus:outline-none focus:border-yellow-300/50" />
+                          </div>
+                          <div>
+                            <label className="text-neutral-600 text-[10px] uppercase tracking-wider block mb-0.5">UID</label>
+                            <input type="text" value={member.uid} onChange={e => updateEditMember(idx, 'uid', e.target.value.toUpperCase())}
+                              placeholder="GL-XXXXXX"
+                              className="w-full bg-black/50 border border-white/10 rounded-lg px-3 py-2 text-white text-xs focus:outline-none focus:border-yellow-300/50 font-mono" />
+                          </div>
+                          <div>
+                            <label className="text-neutral-600 text-[10px] uppercase tracking-wider block mb-0.5">College</label>
+                            <input type="text" value={member.college || ''} onChange={e => updateEditMember(idx, 'college', e.target.value)}
+                              className="w-full bg-black/50 border border-white/10 rounded-lg px-3 py-2 text-white text-xs focus:outline-none focus:border-yellow-300/50" />
+                          </div>
+                        </div>
+                        <div className="mt-2">
+                          <label className="text-neutral-600 text-[10px] uppercase tracking-wider block mb-0.5">Firebase ID</label>
+                          <input type="text" value={member.firebaseId} onChange={e => updateEditMember(idx, 'firebaseId', e.target.value)}
+                            className="w-full bg-black/50 border border-white/10 rounded-lg px-3 py-2 text-neutral-400 text-xs focus:outline-none focus:border-yellow-300/50 font-mono" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Section: Payment */}
+                <div className="space-y-3">
+                  <h4 className="text-neutral-400 text-xs uppercase tracking-widest font-bold border-b border-white/5 pb-2">Payment Details</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-neutral-500 text-xs uppercase tracking-wider block mb-1">Razorpay ID</label>
+                      <input type="text" value={editForm.payment.razorpayId}
+                        onChange={e => setEditForm(p => ({ ...p, payment: { ...p.payment, razorpayId: e.target.value } }))}
+                        className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-300/50 font-mono" />
+                    </div>
+                    <div>
+                      <label className="text-neutral-500 text-xs uppercase tracking-wider block mb-1">Amount (₹)</label>
+                      <input type="number" value={editForm.payment.amount}
+                        onChange={e => setEditForm(p => ({ ...p, payment: { ...p.payment, amount: Number(e.target.value) } }))}
+                        className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-300/50" />
+                    </div>
+                    <div>
+                      <label className="text-neutral-500 text-xs uppercase tracking-wider block mb-1">Payment Status</label>
+                      <select value={editForm.payment.status}
+                        onChange={e => setEditForm(p => ({ ...p, payment: { ...p.payment, status: e.target.value } }))}
+                        className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-300/50">
+                        <option value="paid" className="bg-black">Paid</option>
+                        <option value="pending" className="bg-black">Pending</option>
+                        <option value="failed" className="bg-black">Failed</option>
+                        <option value="refunded" className="bg-black">Refunded</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="text-neutral-500 text-xs uppercase tracking-wider block mb-1 flex items-center gap-1"><Calendar className="w-3 h-3" /> Paid At</label>
+                      <input type="datetime-local" value={timestampToLocal(editForm.payment.paidAt)}
+                        onChange={e => setEditForm(p => ({ ...p, payment: { ...p.payment, paidAt: localToTimestamp(e.target.value) } }))}
+                        className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-300/50 [color-scheme:dark]" />
+                    </div>
+                    <div>
+                      <label className="text-neutral-500 text-xs uppercase tracking-wider block mb-1">Receipt</label>
+                      <input type="text" value={editForm.payment.receipt}
+                        onChange={e => setEditForm(p => ({ ...p, payment: { ...p.payment, receipt: e.target.value } }))}
+                        className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-300/50 font-mono" />
+                    </div>
+                    {editForm.payment.orderId !== undefined && (
+                      <div>
+                        <label className="text-neutral-500 text-xs uppercase tracking-wider block mb-1">Order ID</label>
+                        <input type="text" value={editForm.payment.orderId || ''}
+                          onChange={e => setEditForm(p => ({ ...p, payment: { ...p.payment, orderId: e.target.value } }))}
+                          className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-300/50 font-mono" />
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Save Button */}
+                <button onClick={saveEdit} disabled={editSaving}
+                  className="w-full bg-yellow-300 hover:bg-yellow-400 text-black py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+                  {editSaving ? (
+                    <><div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" /> Saving...</>
+                  ) : (
+                    <><Save className="w-4 h-4" /> Save All Changes</>
+                  )}
                 </button>
               </div>
             </div>
