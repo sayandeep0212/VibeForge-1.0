@@ -77,16 +77,18 @@ export default function AdminLayout({ children, onLogout, adminName, photoURL }:
       const myPresenceRef = ref(db, `admin_presence/${currentUserUid}`);
       presenceRefInstance = onDisconnect(myPresenceRef);
       
+      const displayName = adminName || 'Admin';
+
       presenceRefInstance.set({
         status: 'offline',
         lastActive: serverTimestamp(),
-        name: adminName,
+        name: displayName,
       }).catch((err: any) => console.error("onDisconnect error:", err));
 
       set(myPresenceRef, {
         status: 'online',
         lastActive: serverTimestamp(),
-        name: adminName,
+        name: displayName,
         path: pathname
       }).catch((err: any) => console.error("Presence set error:", err));
     }
@@ -134,7 +136,7 @@ export default function AdminLayout({ children, onLogout, adminName, photoURL }:
         await set(ref(db, `admin_presence/${user.uid}`), {
           status: 'offline',
           lastActive: serverTimestamp(),
-          name: adminName
+          name: adminName || 'Admin'
         });
       }
       
