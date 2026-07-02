@@ -12,26 +12,45 @@ interface Sponsor {
   brandingType: string;
   image: string;
   displayOrder?: number;
+  websiteUrl?: string;
 }
 
-const SponsorCard = ({ image, name, brandingType }: Sponsor) => (
-  <motion.div
-    whileHover={{ y: -10, scale: 1.02 }}
-    className="relative group p-8 rounded-3xl border border-white/5 bg-neutral-900 hover:bg-neutral-800 transition-all duration-500 overflow-hidden"
-  >
-    <div className="absolute inset-0 bg-gradient-to-br from-red-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+const SponsorCard = ({ image, name, brandingType, websiteUrl }: Sponsor) => {
+  const content = (
+    <>
+      <div className="absolute inset-0 bg-gradient-to-br from-red-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
 
-    <div className="relative z-10 flex flex-col items-center gap-6">
-      <div className="p-4 rounded-2xl bg-black/40 border border-white/10 group-hover:border-red-400/50 transition-colors">
-        <img src={image} alt={name} className="w-16 h-16 object-contain" />
+      <div className="relative z-10 flex flex-col items-center gap-6">
+        <div className="p-4 rounded-2xl bg-black/40 border border-white/10 group-hover:border-red-400/50 transition-colors cursor-pointer">
+          <img src={image} alt={name} className="w-16 h-16 object-contain" />
+        </div>
+        <div className="text-center">
+          <h3 className="text-xl font-bold text-white group-hover:text-yellow-400 transition-colors tracking-wider uppercase">{name}</h3>
+          {brandingType && <p className="text-xs font-medium text-yellow-300 tracking-[0.3em] uppercase mt-2">{brandingType}</p>}
+        </div>
       </div>
-      <div className="text-center">
-        <h3 className="text-xl font-bold text-white group-hover:text-yellow-400 transition-colors tracking-wider uppercase">{name}</h3>
-        <p className="text-xs font-medium text-yellow-300 tracking-[0.3em] uppercase mt-2">{brandingType}</p>
-      </div>
-    </div>
-  </motion.div>
-);
+    </>
+  );
+
+  return websiteUrl ? (
+    <motion.a
+      href={websiteUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      whileHover={{ y: -10, scale: 1.02 }}
+      className="relative block group p-8 rounded-3xl border border-white/5 bg-neutral-900 hover:bg-neutral-800 transition-all duration-500 overflow-hidden cursor-pointer"
+    >
+      {content}
+    </motion.a>
+  ) : (
+    <motion.div
+      whileHover={{ y: -10, scale: 1.02 }}
+      className="relative group p-8 rounded-3xl border border-white/5 bg-neutral-900 hover:bg-neutral-800 transition-all duration-500 overflow-hidden"
+    >
+      {content}
+    </motion.div>
+  );
+};
 
 const Sponsors = () => {
   const [sponsors, setSponsors] = useState<Sponsor[]>([]);

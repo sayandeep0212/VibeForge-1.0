@@ -29,13 +29,37 @@ export default function AdminLayout({ children, onLogout, adminName, photoURL }:
     let isConnected = false;
     let currentUserUid: string | null = null;
     let presenceRefInstance: any = null;
+    let unsubscribePresence: any = null;
 
     const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
       if (user) {
         currentUserUid = user.uid;
         updatePresence();
+
+        if (!unsubscribePresence) {
+          const presenceRef = ref(db, 'admin_presence');
+          unsubscribePresence = onValue(presenceRef, (snap) => {
+            if (snap.exists()) {
+              const data = snap.val();
+              const admins = Object.keys(data).map(key => ({
+                uid: key,
+                ...data[key]
+              }));
+              setActiveAdmins(admins);
+            } else {
+              setActiveAdmins([]);
+            }
+          }, (error: any) => {
+            console.error("Presence read error:", error);
+          });
+        }
       } else {
         currentUserUid = null;
+        if (unsubscribePresence) {
+          unsubscribePresence();
+          unsubscribePresence = null;
+        }
+        setActiveAdmins([]);
       }
     });
 
@@ -67,26 +91,10 @@ export default function AdminLayout({ children, onLogout, adminName, photoURL }:
       }).catch((err: any) => console.error("Presence set error:", err));
     }
 
-    const presenceRef = ref(db, 'admin_presence');
-    const unsubscribePresence = onValue(presenceRef, (snap) => {
-      if (snap.exists()) {
-        const data = snap.val();
-        const admins = Object.keys(data).map(key => ({
-          uid: key,
-          ...data[key]
-        }));
-        setActiveAdmins(admins);
-      } else {
-        setActiveAdmins([]);
-      }
-    }, (error: any) => {
-      console.error("Presence read error:", error);
-    });
-
     return () => {
       unsubscribeAuth();
       unsubscribeConnected();
-      unsubscribePresence();
+      if (unsubscribePresence) unsubscribePresence();
     };
   }, [adminName, pathname]);
 

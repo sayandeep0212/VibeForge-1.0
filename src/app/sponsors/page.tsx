@@ -3,6 +3,7 @@
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import Sponsors from '@/components/Sponsors';
+import Partners from '@/components/Partners';
 import Footer from '@/components/Footer';
 import { motion } from 'framer-motion';
 
@@ -39,6 +40,7 @@ export default function SponsorsPage() {
 
 
           <Sponsors />
+          <Partners />
         </div>
       </div>
 

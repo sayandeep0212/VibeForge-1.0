@@ -10,7 +10,7 @@ import { uploadToImgBB } from '@/lib/imgbb';
 import { useRouter } from 'next/navigation';
 import AdminLayout from '@/components/AdminLayout';
 
-type Tab = 'judges' | 'faculty' | 'coreTeam' | 'sponsors' | 'winners';
+type Tab = 'judges' | 'faculty' | 'coreTeam' | 'sponsors' | 'partners' | 'winners';
 
 export default function AdminContentPage() {
   const router = useRouter();
@@ -108,7 +108,8 @@ export default function AdminContentPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !role || (!photoFile && !imageURL.trim())) {
+    const isRoleRequired = activeTab !== 'sponsors' && activeTab !== 'partners';
+    if (!name || (isRoleRequired && !role) || (!photoFile && !imageURL.trim())) {
       alert('Please fill out all required fields and provide an image.');
       return;
     }
@@ -121,6 +122,11 @@ export default function AdminContentPage() {
       const payload: any = { name: name.trim(), image: finalImageUrl, displayOrder };
       if (activeTab === 'sponsors') {
         payload.brandingType = role.trim();
+        payload.websiteUrl = linkedin.trim();
+      } else if (activeTab === 'partners') {
+        payload.brandingType = role.trim();
+        payload.communityType = facebook.trim();
+        payload.websiteUrl = linkedin.trim();
       } else if (activeTab === 'winners') {
         payload.title = role.trim(); // Using role input for award title
         payload.rank = linkedin.trim(); // Using linkedin input for rank string
@@ -166,8 +172,8 @@ export default function AdminContentPage() {
       role: item.role || item.brandingType || item.title || '',
       displayOrder: item.displayOrder || 0,
       imageURL: item.image || item.imageUrl || '',
-      linkedin: item.socials?.linkedin || item.rank || '',
-      facebook: item.socials?.facebook || item.college || '',
+      linkedin: item.socials?.linkedin || item.rank || item.websiteUrl || '',
+      facebook: item.socials?.facebook || item.college || item.communityType || '',
       instagram: item.socials?.instagram || (item.members ? item.members.join(', ') : '') || '',
       college: '', 
       members: ''
@@ -201,6 +207,11 @@ export default function AdminContentPage() {
       };
       if (activeTab === 'sponsors') {
         updates.brandingType = editForm.role.trim();
+        updates.websiteUrl = editForm.linkedin.trim();
+      } else if (activeTab === 'partners') {
+        updates.brandingType = editForm.role.trim();
+        updates.communityType = editForm.facebook.trim();
+        updates.websiteUrl = editForm.linkedin.trim();
       } else if (activeTab === 'winners') {
         updates.title = editForm.role.trim();
         updates.rank = editForm.linkedin.trim();
@@ -242,7 +253,7 @@ export default function AdminContentPage() {
   };
 
   const getTabLabel = (tab: Tab) => {
-    const map: Record<Tab, string> = { judges: 'Judge', faculty: 'Spectator', coreTeam: 'Team Member', sponsors: 'Sponsor', winners: 'Winner' };
+    const map: Record<Tab, string> = { judges: 'Judge', faculty: 'Spectator', coreTeam: 'Team Member', sponsors: 'Sponsor', partners: 'Partner', winners: 'Winner' };
     return map[tab];
   };
 
@@ -263,6 +274,7 @@ export default function AdminContentPage() {
             { key: 'faculty' as Tab, label: 'The Spectator', icon: Users },
             { key: 'coreTeam' as Tab, label: 'Core Team', icon: Users },
             { key: 'sponsors' as Tab, label: 'Sponsors', icon: Box },
+            { key: 'partners' as Tab, label: 'Partners', icon: Users },
             { key: 'winners' as Tab, label: 'Winners', icon: Trophy },
           ]).map(tab => (
             <button key={tab.key} onClick={() => setActiveTab(tab.key)}
@@ -294,10 +306,10 @@ export default function AdminContentPage() {
 
               <input type="text" placeholder="Or Paste Image URL" value={imageURL} onChange={(e) => setImageURL(e.target.value)}
                 className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-yellow-300 transition-all text-xs" />
-              <input type="text" placeholder={activeTab === 'sponsors' ? "Brand Name" : activeTab === 'winners' ? "Team Name" : "Full Name"} value={name} onChange={(e) => setName(e.target.value)} required
+              <input type="text" placeholder={activeTab === 'sponsors' || activeTab === 'partners' ? "Brand Name / Company Name" : activeTab === 'winners' ? "Team Name" : "Full Name"} value={name} onChange={(e) => setName(e.target.value)} required
                 className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-yellow-300 transition-all text-sm" />
-              <input type="text" placeholder={activeTab === 'judges' || activeTab === 'faculty' ? "Designation" : activeTab === 'coreTeam' ? "Role" : activeTab === 'winners' ? "Award Title (e.g. Champions)" : "Branding Type (e.g. Platinum, Gold)"}
-                value={role} onChange={(e) => setRole(e.target.value)} required
+              <input type="text" placeholder={activeTab === 'judges' || activeTab === 'faculty' ? "Designation" : activeTab === 'coreTeam' ? "Role" : activeTab === 'winners' ? "Award Title (e.g. Champions)" : "Branding Type (Optional)"}
+                value={role} onChange={(e) => setRole(e.target.value)} required={activeTab !== 'sponsors' && activeTab !== 'partners'}
                 className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-yellow-300 transition-all text-sm" />
 
               <div>
@@ -306,16 +318,18 @@ export default function AdminContentPage() {
                   className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-yellow-300 transition-all text-sm" />
               </div>
 
-              {activeTab !== 'sponsors' && (
-                <>
-                  <input type="text" placeholder={activeTab === 'winners' ? "Rank (e.g. 1st Place)" : "LinkedIn URL (optional)"} value={linkedin} onChange={(e) => setLinkedin(e.target.value)} required={activeTab === 'winners'}
-                    className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-yellow-300 transition-all text-sm" />
-                  <input type="text" placeholder={activeTab === 'winners' ? "College/University Name" : "Facebook URL (optional)"} value={facebook} onChange={(e) => setFacebook(e.target.value)} required={activeTab === 'winners'}
-                    className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-yellow-300 transition-all text-sm" />
-                  <input type="text" placeholder={activeTab === 'winners' ? "Team Members (comma separated)" : "Instagram URL (optional)"} value={instagram} onChange={(e) => setInstagram(e.target.value)} required={activeTab === 'winners'}
-                    className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-yellow-300 transition-all text-sm" />
-                </>
-              )}
+              <>
+                <input type="text" placeholder={activeTab === 'winners' ? "Rank (e.g. 1st Place)" : (activeTab === 'sponsors' || activeTab === 'partners') ? "Website Link URL" : "LinkedIn URL (optional)"} value={linkedin} onChange={(e) => setLinkedin(e.target.value)} required={activeTab === 'winners'}
+                  className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-yellow-300 transition-all text-sm" />
+                {activeTab !== 'sponsors' && (
+                <input type="text" placeholder={activeTab === 'winners' ? "College/University Name" : activeTab === 'partners' ? "Community Type" : "Facebook URL (optional)"} value={facebook} onChange={(e) => setFacebook(e.target.value)} required={activeTab === 'winners'}
+                  className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-yellow-300 transition-all text-sm" />
+                )}
+                {activeTab !== 'sponsors' && activeTab !== 'partners' && (
+                <input type="text" placeholder={activeTab === 'winners' ? "Team Members (comma separated)" : "Instagram URL (optional)"} value={instagram} onChange={(e) => setInstagram(e.target.value)} required={activeTab === 'winners'}
+                  className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-yellow-300 transition-all text-sm" />
+                )}
+              </>
 
               <button type="submit" disabled={saving}
                 className="w-full bg-yellow-300 hover:bg-yellow-400 text-black py-3 rounded-xl font-bold uppercase tracking-widest text-sm transition-all disabled:opacity-50 flex items-center justify-center gap-2">
@@ -359,8 +373,13 @@ export default function AdminContentPage() {
                           <span className="text-[10px] text-cyan-400">{item.college}</span>
                           <span className="text-[10px] text-neutral-400 truncate">{item.members?.join(', ')}</span>
                         </div>
+                      ) : activeTab === 'sponsors' || activeTab === 'partners' ? (
+                        <div className="flex flex-col gap-1 mt-1">
+                          {item.websiteUrl && <a href={item.websiteUrl} target="_blank" rel="noreferrer" className="text-[10px] text-blue-400 hover:underline">Website</a>}
+                          {item.communityType && <span className="text-[10px] text-green-400">{item.communityType}</span>}
+                        </div>
                       ) : (
-                        item.socials && (item.socials.linkedin || item.socials.instagram) && (
+                        item.socials && (item.socials.linkedin || item.socials.instagram || item.socials.facebook) && (
                           <div className="flex gap-2 mt-1">
                             {item.socials.linkedin && <span className="text-[10px] text-blue-400">LinkedIn</span>}
                             {item.socials.instagram && <span className="text-[10px] text-pink-400">Instagram</span>}
@@ -420,14 +439,14 @@ export default function AdminContentPage() {
 
                 {/* Name */}
                 <div>
-                  <label className="text-neutral-500 text-xs uppercase tracking-wider block mb-1">{activeTab === 'sponsors' ? 'Brand Name' : activeTab === 'winners' ? 'Team Name' : 'Full Name'}</label>
+                  <label className="text-neutral-500 text-xs uppercase tracking-wider block mb-1">{activeTab === 'sponsors' || activeTab === 'partners' ? 'Brand Name / Company Name' : activeTab === 'winners' ? 'Team Name' : 'Full Name'}</label>
                   <input type="text" value={editForm.name} onChange={e => setEditForm(p => ({ ...p, name: e.target.value }))}
                     className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-300/50" />
                 </div>
 
                 {/* Role / Branding Type */}
                 <div>
-                  <label className="text-neutral-500 text-xs uppercase tracking-wider block mb-1">{activeTab === 'sponsors' ? 'Branding Type' : activeTab === 'winners' ? 'Award Title' : 'Designation / Role'}</label>
+                  <label className="text-neutral-500 text-xs uppercase tracking-wider block mb-1">{activeTab === 'sponsors' || activeTab === 'partners' ? 'Branding Type' : activeTab === 'winners' ? 'Award Title' : 'Designation / Role'}</label>
                   <input type="text" value={editForm.role} onChange={e => setEditForm(p => ({ ...p, role: e.target.value }))}
                     className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-300/50" />
                 </div>
@@ -440,24 +459,26 @@ export default function AdminContentPage() {
                 </div>
 
                 {/* Social URLs or Winner Details */}
-                {activeTab !== 'sponsors' && (
-                  <>
-                    <div className="border-t border-white/5 pt-4">
-                      <label className="text-neutral-500 text-xs uppercase tracking-wider block mb-3">{activeTab === 'winners' ? 'Team Details' : 'Social Links'}</label>
-                      <div className="space-y-3">
-                        <input type="text" placeholder={activeTab === 'winners' ? "Rank (e.g. 1st Place)" : "LinkedIn URL"} value={editForm.linkedin}
-                          onChange={e => setEditForm(p => ({ ...p, linkedin: e.target.value }))}
-                          className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-300/50" />
-                        <input type="text" placeholder={activeTab === 'winners' ? "College/University" : "Facebook URL"} value={editForm.facebook}
-                          onChange={e => setEditForm(p => ({ ...p, facebook: e.target.value }))}
-                          className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-300/50" />
-                        <input type="text" placeholder={activeTab === 'winners' ? "Members (comma separated)" : "Instagram URL"} value={editForm.instagram}
-                          onChange={e => setEditForm(p => ({ ...p, instagram: e.target.value }))}
-                          className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-300/50" />
-                      </div>
+                <>
+                  <div className="border-t border-white/5 pt-4">
+                    <label className="text-neutral-500 text-xs uppercase tracking-wider block mb-3">{activeTab === 'winners' ? 'Team Details' : activeTab === 'sponsors' || activeTab === 'partners' ? 'External Links' : 'Social Links'}</label>
+                    <div className="space-y-3">
+                      <input type="text" placeholder={activeTab === 'winners' ? "Rank (e.g. 1st Place)" : activeTab === 'sponsors' || activeTab === 'partners' ? "Website Link URL" : "LinkedIn URL"} value={editForm.linkedin}
+                        onChange={e => setEditForm(p => ({ ...p, linkedin: e.target.value }))}
+                        className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-300/50" />
+                      {activeTab !== 'sponsors' && (
+                      <input type="text" placeholder={activeTab === 'winners' ? "College/University" : activeTab === 'partners' ? "Community Type" : "Facebook URL"} value={editForm.facebook}
+                        onChange={e => setEditForm(p => ({ ...p, facebook: e.target.value }))}
+                        className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-300/50" />
+                      )}
+                      {activeTab !== 'sponsors' && activeTab !== 'partners' && (
+                      <input type="text" placeholder={activeTab === 'winners' ? "Members (comma separated)" : "Instagram URL"} value={editForm.instagram}
+                        onChange={e => setEditForm(p => ({ ...p, instagram: e.target.value }))}
+                        className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-300/50" />
+                      )}
                     </div>
-                  </>
-                )}
+                  </div>
+                </>
 
                 <button onClick={saveEdit} disabled={editSaving}
                   className="w-full bg-yellow-300 hover:bg-yellow-400 text-black py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 disabled:opacity-50">
