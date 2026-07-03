@@ -42,15 +42,14 @@ const PrizesAndMerch = () => {
   useEffect(() => {
     fetch('/api/merch/settings')
       .then(res => {
-        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        if (!res.ok) return null;
         return res.json();
       })
       .then(data => {
         if (data && !data.error) setPrices(data);
       })
-      .catch(err => {
-        console.error('Error fetching prices:', err);
-        // Silently fail or use defaults already in state
+      .catch(() => {
+        // Silently fail — defaults already in state
       });
   }, []);
 
