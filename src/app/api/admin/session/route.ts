@@ -12,8 +12,15 @@ export async function GET() {
       return NextResponse.json({ isLoggedIn: false });
     }
 
-    // Generate a fresh custom token for client-side Firebase Auth sync
-    const token = await adminAuth.createCustomToken(session.user.id);
+    // Reuse cached token if it's less than 30 minutes old
+    const now = Date.now();
+    let token = session.cachedToken;
+    if (!token || !session.tokenGeneratedAt || now - session.tokenGeneratedAt > 30 * 60 * 1000) {
+      token = await adminAuth.createCustomToken(session.user.id);
+      session.cachedToken = token;
+      session.tokenGeneratedAt = now;
+      await session.save();
+    }
 
     return NextResponse.json({ 
       isLoggedIn: true, 

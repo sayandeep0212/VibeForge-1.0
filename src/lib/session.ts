@@ -15,6 +15,8 @@ import { cookies } from "next/headers";
 declare module "iron-session" {
   interface IronSessionData {
     user?: AdminSession;
+    cachedToken?: string;
+    tokenGeneratedAt?: number;
   }
 }
 

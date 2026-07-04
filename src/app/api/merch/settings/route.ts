@@ -28,7 +28,11 @@ export async function GET() {
       }
     };
     
-    return NextResponse.json(finalSettings);
+    return NextResponse.json(finalSettings, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=60',
+      },
+    });
   } catch (error) {
     console.error('Error fetching merch settings:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

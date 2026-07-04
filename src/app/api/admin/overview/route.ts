@@ -65,6 +65,10 @@ export async function GET() {
       shortlistedTeams,
       checkedInTeams,
       newInquiries,
+    }, {
+      headers: {
+        'Cache-Control': 'private, max-age=60, stale-while-revalidate=120',
+      },
     });
   } catch (error) {
     console.error('Stats fetch error:', error);

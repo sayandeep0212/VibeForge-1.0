@@ -26,38 +26,43 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { phone, registrationNumber, currentUserId } = requestSchema.parse(body);
 
-    const usersSnap = await adminDb.ref('users').get();
+    // 1. Check phone duplicate with indexed query
+    const phoneSnap = await adminDb.ref('users')
+      .orderByChild('phone')
+      .equalTo(phone.trim())
+      .limitToFirst(2) // Need at most 2 to check if someone ELSE has it
+      .once('value');
 
-    if (!usersSnap.exists()) {
-      // No users at all, nothing is duplicated
-      return NextResponse.json({ duplicate: false });
-    }
-
-    const allUsers = usersSnap.val();
-
-    for (const uid in allUsers) {
-      if (uid === currentUserId) continue; // skip the submitting user
-      const u = allUsers[uid];
-
-      if (u.phone && u.phone === phone.trim()) {
+    if (phoneSnap.exists()) {
+      const matches = phoneSnap.val();
+      const otherUser = Object.keys(matches).find(uid => uid !== currentUserId);
+      if (otherUser) {
         return NextResponse.json({
           duplicate: true,
           field: 'phone',
           message: 'This phone number is already registered by another student.',
         });
       }
+    }
 
-      if (
-        registrationNumber &&
-        registrationNumber.trim() &&
-        u.registrationNumber &&
-        u.registrationNumber === registrationNumber.trim()
-      ) {
-        return NextResponse.json({
-          duplicate: true,
-          field: 'registrationNumber',
-          message: 'This Adamas registration number is already registered by another student.',
-        });
+    // 2. Check registrationNumber duplicate with indexed query
+    if (registrationNumber && registrationNumber.trim()) {
+      const regSnap = await adminDb.ref('users')
+        .orderByChild('registrationNumber')
+        .equalTo(registrationNumber.trim())
+        .limitToFirst(2)
+        .once('value');
+
+      if (regSnap.exists()) {
+        const matches = regSnap.val();
+        const otherUser = Object.keys(matches).find(uid => uid !== currentUserId);
+        if (otherUser) {
+          return NextResponse.json({
+            duplicate: true,
+            field: 'registrationNumber',
+            message: 'This Adamas registration number is already registered by another student.',
+          });
+        }
       }
     }
 
