@@ -116,11 +116,21 @@ export default function AdminMerchPage() {
         fetch('/api/admin/merch/orders'),
         fetch('/api/merch/settings')
       ]);
-      const ordersData = await ordersRes.json();
-      const settingsData = await settingsRes.json();
-      
-      if (!ordersData.error) setOrders(ordersData);
-      if (!settingsData.error) setPrices(settingsData);
+
+      // Only parse JSON if response is OK and content-type is JSON
+      if (ordersRes.ok && ordersRes.headers.get('content-type')?.includes('application/json')) {
+        const ordersData = await ordersRes.json();
+        if (!ordersData.error) setOrders(ordersData);
+      } else {
+        console.error('Orders API error:', ordersRes.status, ordersRes.statusText);
+      }
+
+      if (settingsRes.ok && settingsRes.headers.get('content-type')?.includes('application/json')) {
+        const settingsData = await settingsRes.json();
+        if (!settingsData.error) setPrices(settingsData);
+      } else {
+        console.error('Settings API error:', settingsRes.status, settingsRes.statusText);
+      }
     } catch (err) {
       console.error('Error fetching data:', err);
     } finally {
