@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
 import { adminDb } from '@/lib/firebase-admin';
 
-
+// Cache this route for 60s on the CDN, serve stale for up to 5 min while revalidating.
+// This is a public read route hit on every homepage visit — no need to run edge on every request.
+export const revalidate = 60;
 
 const DEFAULT_SETTINGS = {
   tshirtPrice: 499,
@@ -30,7 +32,9 @@ export async function GET() {
     
     return NextResponse.json(finalSettings, {
       headers: {
-        'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=60',
+        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+        'CDN-Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+        'Vercel-CDN-Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
       },
     });
   } catch (error) {

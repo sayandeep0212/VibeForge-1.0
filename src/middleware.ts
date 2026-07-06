@@ -20,5 +20,17 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: '/((?!api|_next/static|_next/image|favicon.ico).*)',
+  // Only run middleware on actual page routes (not static files, images, API, etc.)
+  // This drastically reduces edge invocations.
+  matcher: [
+    /*
+     * Match all paths except:
+     * - api/ (API routes — handled by serverless functions)
+     * - _next/static/ (static files)
+     * - _next/image/ (image optimization)
+     * - favicon.ico, sitemap.xml, robots.txt
+     * - Public asset directories (images, fonts, media, backgrounds, Logos, Merch, etc.)
+     */
+    '/((?!api|_next/static|_next/image|favicon\\.ico|sitemap\\.xml|robots\\.txt|home-frames|backgrounds|fonts|media|Logos|Merch|images|.*\\.(?:png|jpg|jpeg|gif|webp|svg|ico|mp3|mp4|woff|woff2|ttf|eot)).*)',
+  ],
 };

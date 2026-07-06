@@ -12,7 +12,11 @@ export async function GET() {
       ...orders[key]
     })).sort((a, b) => b.createdAt - a.createdAt);
 
-    return NextResponse.json(ordersArray);
+    return NextResponse.json(ordersArray, {
+      headers: {
+        'Cache-Control': 'private, max-age=30, stale-while-revalidate=60',
+      },
+    });
   } catch (error) {
     console.error('Error fetching merch orders:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

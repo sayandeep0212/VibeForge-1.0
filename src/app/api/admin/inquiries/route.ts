@@ -12,7 +12,11 @@ export async function GET() {
 
   try {
     const snap = await adminDb.ref('inquiries').get();
-    return NextResponse.json(snap.val() || {});
+    return NextResponse.json(snap.val() || {}, {
+      headers: {
+        'Cache-Control': 'private, max-age=30, stale-while-revalidate=60',
+      },
+    });
   } catch (error) {
     console.error('Fetch inquiries error:', error);
     return NextResponse.json({ error: 'Failed to fetch inquiries' }, { status: 500 });

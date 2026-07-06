@@ -27,7 +27,11 @@ export async function GET() {
     // Sort by name
     adminsList.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
 
-    return NextResponse.json({ admins: adminsList });
+    return NextResponse.json({ admins: adminsList }, {
+      headers: {
+        'Cache-Control': 'private, max-age=60, stale-while-revalidate=120',
+      },
+    });
   } catch (error) {
     console.error('List admins error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

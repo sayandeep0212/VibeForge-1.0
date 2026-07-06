@@ -55,20 +55,74 @@
       ]
     },
     {
-      "source": "/((?!_next/static|_next/image|api/).*)",
+      "source": "/home-frames/:path*",
       "headers": [
         {
           "key": "Cache-Control",
-          "value": "no-cache, must-revalidate"
+          "value": "public, max-age=2592000, s-maxage=2592000, immutable"
         }
       ]
     },
     {
-      "source": "/Logos/logo.ico",
+      "source": "/backgrounds/:path*",
       "headers": [
         {
           "key": "Cache-Control",
-          "value": "public, max-age=86400"
+          "value": "public, max-age=2592000, s-maxage=2592000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/fonts/:path*",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, s-maxage=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/media/:path*",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=2592000, s-maxage=2592000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/Logos/:path*",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=2592000, s-maxage=2592000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/Merch/:path*",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=2592000, s-maxage=2592000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/images/:path*",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=2592000, s-maxage=2592000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/((?!_next/static|_next/image|api/|home-frames|backgrounds|fonts|media|Logos|Merch|images).*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, s-maxage=120, stale-while-revalidate=300"
         }
       ]
     }

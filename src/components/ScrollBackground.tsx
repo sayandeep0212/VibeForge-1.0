@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useScroll, useTransform, useSpring } from 'framer-motion';
 
 const TOTAL_FRAMES = 193;
@@ -11,6 +11,8 @@ const ScrollBackground = () => {
     // Use a ref for images instead of state to avoid re-renders and batching issues
     const imagesRef = useRef<HTMLImageElement[]>(new Array(TOTAL_FRAMES));
     const [isFirstFrameLoaded, setIsFirstFrameLoaded] = useState(false);
+    const lastRenderedFrameRef = useRef<number>(-1);
+    const rafRef = useRef<number>(0);
     const { scrollYProgress } = useScroll();
     
     const smoothProgress = useSpring(scrollYProgress, {
@@ -21,44 +23,18 @@ const ScrollBackground = () => {
 
     const frameIndex = useTransform(smoothProgress, [0, 1], [1, TOTAL_FRAMES]);
 
-    // Preload strategy: Load first frame immediately, then others
-    useEffect(() => {
-        // Load first frame immediately
-        const firstImg = new Image();
-        firstImg.src = `${FRAME_FOLDER}/ezgif-frame-001.jpg`;
-        firstImg.onload = () => {
-            imagesRef.current[0] = firstImg;
-            setIsFirstFrameLoaded(true);
-            renderFrame(1);
-        };
-
-        // Load remaining frames in the background
-        const loadRemaining = async () => {
-            for (let i = 2; i <= TOTAL_FRAMES; i++) {
-                // Small delay to avoid blocking the main thread
-                if (i % 20 === 0) await new Promise(r => setTimeout(r, 10));
-                
-                const img = new Image();
-                const frameNum = i.toString().padStart(3, '0');
-                img.src = `${FRAME_FOLDER}/ezgif-frame-${frameNum}.jpg`;
-                img.onload = () => {
-                    imagesRef.current[i - 1] = img;
-                    // Force a render if we are currently at this frame or if it's the currently closest available
-                    renderFrame(frameIndex.get());
-                };
-            }
-        };
-
-        loadRemaining();
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-    const renderFrame = (index: number) => {
+    const renderFrame = useCallback((index: number) => {
         const canvas = canvasRef.current;
         if (!canvas) return;
+
+        const imgIndex = Math.floor(index) - 1;
+
+        // Skip re-render if same frame
+        if (imgIndex === lastRenderedFrameRef.current) return;
+
         const ctx = canvas.getContext('2d', { alpha: false }); // Optimization: no alpha
         if (!ctx) return;
 
-        const imgIndex = Math.floor(index) - 1;
         const currentImages = imagesRef.current;
         
         // Fallback logic: if requested image isn't loaded, find the closest available one
@@ -74,6 +50,8 @@ const ScrollBackground = () => {
         }
         
         if (!img) return;
+
+        lastRenderedFrameRef.current = imgIndex;
 
         const canvasWidth = canvas.width;
         const canvasHeight = canvas.height;
@@ -95,15 +73,77 @@ const ScrollBackground = () => {
         const y = (canvasHeight - newHeight) / 2;
 
         ctx.drawImage(img, x, y, newWidth, newHeight);
-    };
+    }, []);
 
-    // Update frame on scroll
+    // Preload strategy: Load first frame immediately, then batch-load others
+    useEffect(() => {
+        // Load first frame immediately
+        const firstImg = new Image();
+        firstImg.src = `${FRAME_FOLDER}/ezgif-frame-001.jpg`;
+        firstImg.onload = () => {
+            imagesRef.current[0] = firstImg;
+            setIsFirstFrameLoaded(true);
+            renderFrame(1);
+        };
+
+        // Load remaining frames in the background using requestIdleCallback
+        // to avoid blocking main thread and causing jank
+        let cancelled = false;
+
+        const loadRemaining = async () => {
+            // Load frames in priority batches:
+            // 1. Every 10th frame first (scrubbing skeleton)
+            // 2. Then fill in the gaps
+            const priorityFrames: number[] = [];
+            for (let i = 10; i <= TOTAL_FRAMES; i += 10) priorityFrames.push(i);
+            
+            const remainingFrames: number[] = [];
+            for (let i = 2; i <= TOTAL_FRAMES; i++) {
+                if (!priorityFrames.includes(i)) remainingFrames.push(i);
+            }
+
+            const loadBatch = async (frames: number[]) => {
+                for (const i of frames) {
+                    if (cancelled) return;
+                    
+                    // Yield to main thread every 5 frames
+                    if (frames.indexOf(i) % 5 === 0) {
+                        await new Promise(r => setTimeout(r, 0));
+                    }
+
+                    const img = new Image();
+                    const frameNum = i.toString().padStart(3, '0');
+                    img.src = `${FRAME_FOLDER}/ezgif-frame-${frameNum}.jpg`;
+                    img.onload = () => {
+                        imagesRef.current[i - 1] = img;
+                    };
+                }
+            };
+
+            // Load priority frames first
+            await loadBatch(priorityFrames);
+            // Then load remaining
+            await loadBatch(remainingFrames);
+        };
+
+        loadRemaining();
+
+        return () => { cancelled = true; };
+    }, [renderFrame]);
+
+    // Update frame on scroll using requestAnimationFrame for debouncing
     useEffect(() => {
         const unsubscribe = frameIndex.on('change', (latest) => {
-            renderFrame(latest);
+            if (rafRef.current) cancelAnimationFrame(rafRef.current);
+            rafRef.current = requestAnimationFrame(() => {
+                renderFrame(latest);
+            });
         });
-        return () => unsubscribe();
-    }, [frameIndex]);
+        return () => {
+            unsubscribe();
+            if (rafRef.current) cancelAnimationFrame(rafRef.current);
+        };
+    }, [frameIndex, renderFrame]);
 
     // Handle Resize
     useEffect(() => {
@@ -112,6 +152,7 @@ const ScrollBackground = () => {
             if (canvas) {
                 canvas.width = window.innerWidth;
                 canvas.height = window.innerHeight;
+                lastRenderedFrameRef.current = -1; // Force re-render
                 renderFrame(frameIndex.get());
             }
         };
@@ -120,7 +161,7 @@ const ScrollBackground = () => {
         handleResize();
 
         return () => window.removeEventListener('resize', handleResize);
-    }, [frameIndex]);
+    }, [frameIndex, renderFrame]);
 
     return (
         <div className="fixed inset-0 z-0 bg-black">

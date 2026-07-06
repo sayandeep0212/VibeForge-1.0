@@ -68,6 +68,7 @@ export async function GET() {
     }, {
       headers: {
         'Cache-Control': 'private, max-age=60, stale-while-revalidate=120',
+        'CDN-Cache-Control': 'private, max-age=60, stale-while-revalidate=120',
       },
     });
   } catch (error) {

@@ -17,6 +17,19 @@ const nextConfig: NextConfig = {
 
   async headers() {
     return [
+      // ── Static assets (fonts, images, media, backgrounds, merch, logos) ──
+      // These files almost never change — cache them aggressively.
+      // 30 days browser cache + 30 days on CDN + stale-while-revalidate.
+      {
+        source: "/(fonts|media|backgrounds|Logos|Merch|images|home-frames)/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=2592000, s-maxage=2592000, stale-while-revalidate=86400",
+          },
+        ],
+      },
+
       // ── API routes ──────────────────────────────────────────────────────
       // Never cache. Responses contain live data and must always be fresh.
       // Does NOT affect cookies or session tokens.
@@ -28,15 +41,18 @@ const nextConfig: NextConfig = {
       },
 
       // ── HTML pages (all App Router routes) ──────────────────────────────
-      // Browser must revalidate on every visit. If the server says "not
-      // modified" (ETag match) the browser uses its copy — so it's still
-      // fast. But it will always pick up a new deploy immediately.
+      // Allow Vercel's edge CDN to cache pages for 60s, browser revalidates.
+      // This massively reduces edge function invocations for repeat visitors.
+      // If the server says "not modified" (ETag match) the browser uses its copy.
       // NOTE: /_next/static/* is intentionally excluded — Next.js already
       // gives those files immutable hashed names (max-age=31536000).
       {
-        source: "/((?!_next/static|_next/image|api/).*)",
+        source: "/((?!_next/static|_next/image|api/|fonts|media|backgrounds|Logos|Merch|images|home-frames).*)",
         headers: [
-          { key: "Cache-Control", value: "no-cache, must-revalidate" },
+          {
+            key: "Cache-Control",
+            value: "public, s-maxage=120, stale-while-revalidate=300",
+          },
         ],
       },
     ];
@@ -44,4 +60,3 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
-
