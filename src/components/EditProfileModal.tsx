@@ -82,6 +82,23 @@ export default function EditProfileModal({
         finalPhotoURL = await uploadToImgBB(photoFile);
       }
 
+      if (phone.trim() !== profile.phone) {
+        const duplicateRes = await fetch('/api/profile/check-duplicate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            phone: phone.trim(),
+            currentUserId: firebaseUid,
+          }),
+        });
+        const duplicateData = await duplicateRes.json();
+        if (duplicateData.duplicate) {
+          setError(duplicateData.message);
+          setLoading(false);
+          return;
+        }
+      }
+
       const updates: any = {
         name: name.trim(),
         phone: phone.trim(),
