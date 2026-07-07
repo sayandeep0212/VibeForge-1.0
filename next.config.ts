@@ -15,6 +15,16 @@ function getBuildId(): string {
 const nextConfig: NextConfig = {
   generateBuildId: async () => getBuildId(),
 
+  async rewrites() {
+    return [
+      {
+        // Forward Firebase Auth requests to the actual Firebase project domain
+        source: '/__/auth/:path*',
+        destination: 'https://vibeforge-d35bc.firebaseapp.com/__/auth/:path*',
+      },
+    ];
+  },
+
   async headers() {
     return [
       // ── Static assets (fonts, images, media, backgrounds, merch, logos) ──
