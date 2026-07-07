@@ -60,9 +60,11 @@ const PrizesAndMerch = () => {
       color: "from-orange-400 to-red-600",
       icon: <Star className="w-12 h-12 text-orange-500" />,
       benefits: [
-        "Prize Money & Goodies",
-        "Official VibeForge 1.0 Trophy",
-        "Formal Certificate of Merit"
+        "Trophy & Certificate",
+        "6-Month VIP Membership – Codecrafters",
+        "Free Domain – .xyz",
+        "Swag Boxes from n8n",
+        "Certification Course – Internshala"
       ]
     },
     {
@@ -72,9 +74,12 @@ const PrizesAndMerch = () => {
       icon: <Trophy className="w-16 h-16 text-cyan-400" />,
       featured: true,
       benefits: [
-        "Prize Money & Goodies",
-        "Official VibeForge 1.0 Trophy",
-        "Formal Certificate of Merit"
+        "Winning Trophy & Certificate",
+        "n8n Cloud Pro License (all members)",
+        "Swag Boxes from n8n",
+        "2-Year VIP Membership – Codecrafters",
+        "Free Domain – .xyz",
+        "Free Certification Course – Internshala"
       ]
     },
     {
@@ -83,9 +88,11 @@ const PrizesAndMerch = () => {
       color: "from-yellow-400 to-amber-600",
       icon: <Crown className="w-12 h-12 text-yellow-500" />,
       benefits: [
-        "Prize Money & Goodies",
-        "Official VibeForge 1.0 Trophy",
-        "Formal Certificate of Merit"
+        "Runner-Up Trophy & Certificate",
+        "Swag Boxes from n8n",
+        "1-Year VIP Membership – Codecrafters",
+        "Free Domain – .xyz",
+        "Paid Certification Course – Internshala"
       ]
     },
     {
