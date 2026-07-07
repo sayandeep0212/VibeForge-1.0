@@ -103,6 +103,7 @@ const PrizesAndMerch = () => {
       fullWidth: true,
       benefits: [
         "Formal Certificate of Participation",
+        "Free Domain – .xyz (for all teams)",
         "Recognizing technical execution in agentic development"
       ]
     }
