@@ -199,15 +199,25 @@ function DashboardContent() {
       <div className="relative min-h-screen">
         {/* Background */}
         <div className="fixed top-24 sm:top-0 left-0 w-full h-[55vh] sm:h-full z-0 pointer-events-none">
-          <Image 
-            src="/backgrounds/dashboardbg.jpg" 
-            alt="Dashboard Background" 
-            fill
-            className="object-cover object-center opacity-70 brightness-[0.8]"
-            priority
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black" />
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-yellow-300/10 blur-[120px] rounded-full" />
+          <div className="block sm:hidden absolute inset-0">
+            <Image 
+              src="/backgrounds/dashboardbgphone.jpeg" 
+              alt="Dashboard Background Phone" 
+              fill
+              className="object-cover object-center opacity-90"
+              priority
+            />
+          </div>
+          <div className="hidden sm:block absolute inset-0">
+            <Image 
+              src="/backgrounds/dashboardbgpc.png" 
+              alt="Dashboard Background PC" 
+              fill
+              className="object-cover object-center opacity-90"
+              priority
+            />
+          </div>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/20 to-black/80" />
           <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-red-500/10 blur-[120px] rounded-full" />
         </div>
 

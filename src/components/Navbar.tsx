@@ -12,16 +12,9 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
 
-  // Safely try to access auth context (may not be available on admin pages)
-  let authData: { user: { photoURL: string | null; displayName: string | null } | null; userProfile: { photoURL: string; name: string } | null } | null = null;
-  try {
-    authData = useAuth();
-  } catch {
-    // Auth context not available (e.g., on admin pages without provider)
-  }
-
-  const user = authData?.user || null;
-  const userProfile = authData?.userProfile || null;
+  const authData = useAuth();
+  const user = authData.user;
+  const userProfile = authData.userProfile;
 
   // Handle scroll for navbar background effect
   useEffect(() => {
