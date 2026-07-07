@@ -25,7 +25,7 @@ const PartnerCard = ({ image, name, brandingType, websiteUrl, communityType }: P
           <img src={image} alt={name} className="w-16 h-16 object-contain" />
         </div>
         <div className="text-center">
-          <h3 className="text-xl font-bold text-white group-hover:text-cyan-400 transition-colors tracking-wider uppercase">{name}</h3>
+          <h3 className="text-xl font-bold font-sans text-white group-hover:text-cyan-400 transition-colors tracking-wider uppercase">{name}</h3>
           {brandingType && <p className="text-xs font-medium text-blue-300 tracking-[0.2em] uppercase mt-2">{brandingType}</p>}
           {communityType && (
             <p className="text-[10px] font-bold text-neutral-400 tracking-wider uppercase mt-1">{communityType}</p>

@@ -25,7 +25,7 @@ const SponsorCard = ({ image, name, brandingType, websiteUrl }: Sponsor) => {
           <img src={image} alt={name} className="w-16 h-16 object-contain" />
         </div>
         <div className="text-center">
-          <h3 className="text-xl font-bold text-white group-hover:text-yellow-400 transition-colors tracking-wider uppercase">{name}</h3>
+          <h3 className="text-xl font-bold font-sans text-white group-hover:text-yellow-400 transition-colors tracking-wider uppercase">{name}</h3>
           {brandingType && <p className="text-xs font-medium text-yellow-300 tracking-[0.3em] uppercase mt-2">{brandingType}</p>}
         </div>
       </div>
