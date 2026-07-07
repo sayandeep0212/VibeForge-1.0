@@ -34,7 +34,7 @@ const MemberCard = ({ member }: { member: TeamMember }) => {
       <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 to-magenta-500 rounded-xl blur opacity-0 group-hover:opacity-40 transition duration-500" />
 
       {/* Main Card Container with Clip Path */}
-      <div 
+      <div
         className="relative h-full w-full bg-neutral-900 overflow-hidden transition-all duration-500 shadow-2xl"
         style={{ clipPath: 'polygon(15% 0, 100% 0, 100% 85%, 85% 100%, 0 100%, 0 15%)' }}
       >
@@ -52,11 +52,11 @@ const MemberCard = ({ member }: { member: TeamMember }) => {
 
         {/* Inner Border SVG (Matches Clip Path) */}
         <svg className="absolute inset-0 w-full h-full pointer-events-none z-10" preserveAspectRatio="none" viewBox="0 0 320 426">
-          <polygon 
-            points="48,2 318,2 318,364 272,424 2,424 2,62" 
-            fill="none" 
-            stroke="url(#neon-grad)" 
-            strokeWidth="3" 
+          <polygon
+            points="48,2 318,2 318,364 272,424 2,424 2,62"
+            fill="none"
+            stroke="url(#neon-grad)"
+            strokeWidth="3"
             className="opacity-40 group-hover:opacity-100 transition-opacity duration-500"
           />
           <defs>
@@ -89,23 +89,23 @@ const MemberCard = ({ member }: { member: TeamMember }) => {
             </div>
 
             {/* Social Icons Container */}
-            <div 
+            <div
               className={`flex gap-2 sm:gap-3 mt-2 sm:mt-4 md:mt-6 transition-all duration-500 opacity-100 translate-y-0 sm:opacity-0 sm:translate-y-2 sm:group-hover:opacity-100 sm:group-hover:translate-y-0 ${active ? 'sm:opacity-100 sm:translate-y-0' : ''}`}
               onClick={(e) => e.stopPropagation()}
             >
               {member.socials?.linkedin && (
                 <a href={member.socials.linkedin} target="_blank" rel="noopener noreferrer" className="p-1 sm:p-2 bg-black/60 backdrop-blur-md rounded border border-white/10 hover:border-cyan-400 hover:text-cyan-400 transition-all hover:-translate-y-1">
-                  <svg className="w-2.5 h-2.5 sm:w-4 sm:h-4 fill-current" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                  <svg className="w-2.5 h-2.5 sm:w-4 sm:h-4 fill-current" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" /></svg>
                 </a>
               )}
               {member.socials?.facebook && (
                 <a href={member.socials.facebook} target="_blank" rel="noopener noreferrer" className="p-1 sm:p-2 bg-black/60 backdrop-blur-md rounded border border-white/10 hover:border-magenta-500 hover:text-magenta-500 transition-all hover:-translate-y-1">
-                  <svg className="w-2.5 h-2.5 sm:w-4 sm:h-4 fill-current" viewBox="0 0 24 24"><path d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.312h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.325-1.325z"/></svg>
+                  <svg className="w-2.5 h-2.5 sm:w-4 sm:h-4 fill-current" viewBox="0 0 24 24"><path d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.312h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.325-1.325z" /></svg>
                 </a>
               )}
               {member.socials?.instagram && (
                 <a href={member.socials.instagram} target="_blank" rel="noopener noreferrer" className="p-1 sm:p-2 bg-black/60 backdrop-blur-md rounded border border-white/10 hover:border-yellow-400 hover:text-yellow-400 transition-all hover:-translate-y-1">
-                  <svg className="w-2.5 h-2.5 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+                  <svg className="w-2.5 h-2.5 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5" /><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" /><line x1="17.5" x2="17.51" y1="6.5" y2="6.5" /></svg>
                 </a>
               )}
             </div>
@@ -134,7 +134,7 @@ export default function Team() {
           list.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
           setFaculty(list);
         }
-        
+
         if (teamSnap.exists()) {
           const list = Object.values(teamSnap.val()) as TeamMember[];
           list.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
@@ -160,23 +160,16 @@ export default function Team() {
 
   return (
     <section id="team" className="relative py-24 bg-transparent overflow-hidden">
-      {/* Background Decorative Elements */}
-      <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
-
-        <div className="absolute top-1/4 left-0 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[120px] mix-blend-screen" />
-        <div className="absolute bottom-1/4 right-0 w-[500px] h-[500px] bg-cyan-600/10 rounded-full blur-[120px] mix-blend-screen" />
-      </div>
-
       <div className="container mx-auto px-4 relative z-10">
         {/* Faculty Section */}
         <div className="mb-24">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
-            className="flex items-center gap-4 mb-12"
+            className="flex items-center gap-3 sm:gap-4 mb-12"
           >
-            <div className="h-10 w-2 bg-gradient-to-b from-purple-600 to-cyan-400 rounded-full" />
-            <h2 className="text-3xl md:text-5xl font-heading italic text-yellow-300 uppercase tracking-wider">
+            <div className="h-8 sm:h-10 w-2 bg-gradient-to-b from-purple-600 to-cyan-400 rounded-full" />
+            <h2 className="text-[22px] xs:text-2xl sm:text-3xl md:text-5xl font-heading italic text-yellow-300 uppercase tracking-wider">
               The <span className="text-white">Spectator</span>
             </h2>
           </motion.div>
@@ -202,10 +195,10 @@ export default function Team() {
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
-            className="flex items-center gap-4 mb-12"
+            className="flex items-center gap-3 sm:gap-4 mb-12"
           >
-            <div className="h-10 w-2 bg-gradient-to-b from-red-600 to-orange-500 rounded-full" />
-            <h2 className="text-3xl md:text-5xl font-heading italic text-yellow-300 uppercase tracking-wider">
+            <div className="h-8 sm:h-10 w-2 bg-gradient-to-b from-red-600 to-orange-500 rounded-full" />
+            <h2 className="text-[22px] xs:text-2xl sm:text-3xl md:text-5xl font-heading italic text-yellow-300 uppercase tracking-wider">
               Core <span className="text-white">Management</span>
             </h2>
           </motion.div>

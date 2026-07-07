@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 import { adminDb } from '@/lib/firebase-admin';
+import { cacheGet, cacheSet } from '@/lib/redis';
 
-// Cache this route for 60s on the CDN, serve stale for up to 5 min while revalidating.
-// This is a public read route hit on every homepage visit — no need to run edge on every request.
-export const revalidate = 60;
+const CACHE_KEY = 'merch:settings';
+const CACHE_TTL = 120; // 2 minutes
 
 const DEFAULT_SETTINGS = {
   tshirtPrice: 499,
@@ -17,6 +17,20 @@ const DEFAULT_SETTINGS = {
 
 export async function GET() {
   try {
+    // Try Redis cache first
+    const cached = await cacheGet(CACHE_KEY);
+    if (cached) {
+      return NextResponse.json(cached, {
+        headers: {
+          'Cache-Control': 'public, max-age=60, s-maxage=60, stale-while-revalidate=300',
+          'CDN-Cache-Control': 'public, max-age=60, s-maxage=60, stale-while-revalidate=300',
+          'Vercel-CDN-Cache-Control': 'public, max-age=60, s-maxage=60, stale-while-revalidate=300',
+          'X-Cache': 'HIT',
+        },
+      });
+    }
+
+    // Cache miss — fetch from Firebase
     const snap = await adminDb.ref('settings/merch').once('value');
     const settings = snap.val() || DEFAULT_SETTINGS;
     
@@ -29,12 +43,16 @@ export async function GET() {
         cap: { ...DEFAULT_SETTINGS.stock.cap, ...settings?.stock?.cap }
       }
     };
+
+    // Store in Redis
+    await cacheSet(CACHE_KEY, finalSettings, CACHE_TTL);
     
     return NextResponse.json(finalSettings, {
       headers: {
-        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
-        'CDN-Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
-        'Vercel-CDN-Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+        'Cache-Control': 'public, max-age=60, s-maxage=60, stale-while-revalidate=300',
+        'CDN-Cache-Control': 'public, max-age=60, s-maxage=60, stale-while-revalidate=300',
+        'Vercel-CDN-Cache-Control': 'public, max-age=60, s-maxage=60, stale-while-revalidate=300',
+        'X-Cache': 'MISS',
       },
     });
   } catch (error) {
@@ -51,6 +69,10 @@ export async function POST(req: Request) {
       ...data,
       updatedAt: Date.now()
     });
+
+    // Invalidate cache after mutation
+    const { cacheDel } = await import('@/lib/redis');
+    await cacheDel(CACHE_KEY);
 
     return NextResponse.json({ success: true });
   } catch (error) {

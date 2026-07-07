@@ -16,47 +16,13 @@ export default function Preloader() {
     const timer = setTimeout(() => {
       setLoading(false);
       document.body.style.overflow = 'unset';
-    }, 2500);
+    }, 2500); // slightly longer to appreciate the loading sequence
 
     return () => {
       clearTimeout(timer);
       document.body.style.overflow = 'unset';
     };
   }, [loading]);
-
-  const text = "VIBEFORGE 1.0";
-  const letters = Array.from(text);
-
-  const container = {
-    hidden: { opacity: 0 },
-    visible: (i = 1) => ({
-      opacity: 1,
-      transition: { staggerChildren: 0.1, delayChildren: 0.4 * i },
-    }),
-  };
-
-  const child = {
-    visible: {
-      opacity: 1,
-      y: 0,
-      filter: "blur(0px)",
-      transition: {
-        type: "spring" as const,
-        damping: 12,
-        stiffness: 100,
-      },
-    },
-    hidden: {
-      opacity: 0,
-      y: 20,
-      filter: "blur(10px)",
-      transition: {
-        type: "spring" as const,
-        damping: 12,
-        stiffness: 100,
-      },
-    },
-  };
 
   return (
     <AnimatePresence>
@@ -69,7 +35,7 @@ export default function Preloader() {
             filter: "blur(20px)",
             transition: { duration: 1, ease: [0.76, 0, 0.24, 1] }
           }}
-          className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-black overflow-hidden"
+          className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-black overflow-y-auto px-4 py-8"
         >
           {/* Subtle Ambient Glow */}
           <motion.div
@@ -80,85 +46,90 @@ export default function Preloader() {
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-red-400/5 rounded-full blur-[150px] pointer-events-none"
           />
 
-          <div className="relative z-10 flex flex-col items-center">
+          <div className="relative z-10 flex flex-col items-center max-w-4xl w-full my-auto">
             {/* Logos */}
-            <div className="flex items-center gap-6 mb-8">
-              <motion.div
-                whileHover={{ scale: 1.1 }}
-                className="w-10 h-10 sm:w-12 sm:h-12 relative flex items-center justify-center overflow-hidden rounded-lg bg-white/5 border border-white/10"
-              >
-                <img src="/Logos/logo.png" alt="Logo 1" className="w-full h-full object-contain" />
-              </motion.div>
-              <motion.div
-                whileHover={{ scale: 1.1 }}
-                className="w-10 h-10 sm:w-12 sm:h-12 relative flex items-center justify-center overflow-hidden rounded-lg bg-white/5 border border-white/10"
-              >
-                <img src="/Logos/au_logo.jpg" alt="Logo 2" className="w-full h-full object-cover" />
-              </motion.div>
-              <motion.div
-                whileHover={{ scale: 1.1 }}
-                className="w-10 h-10 sm:w-12 sm:h-12 relative flex items-center justify-center overflow-hidden rounded-lg bg-white/5 border border-white/10"
-              >
-                <img src="/Logos/cycoders.png" alt="Logo 3" className="w-full h-full object-cover" />
-              </motion.div>
-            </div>
+            <motion.div 
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="flex items-center justify-center gap-4 sm:gap-6 mb-8 select-none"
+            >
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-white rounded-xl flex items-center justify-center p-1.5 shadow-[0_0_15px_rgba(255,255,255,0.1)] border border-white/20">
+                <img src="/Logos/logo.png" alt="GameLiminals" className="w-full h-full object-contain" />
+              </div>
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-white rounded-xl flex items-center justify-center p-1.5 shadow-[0_0_15px_rgba(255,255,255,0.1)] border border-white/20">
+                <img src="/Logos/au_logo.jpg" alt="Adamas University" className="w-full h-full object-contain" />
+              </div>
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-white rounded-xl flex items-center justify-center p-1.5 shadow-[0_0_15px_rgba(255,255,255,0.1)] border border-white/20">
+                <img src="/Logos/cycoders.png" alt="Cycoders" className="w-full h-full object-contain" />
+              </div>
+            </motion.div>
 
             {/* Presenter Text */}
             <motion.div
-              initial={{ opacity: 0, letterSpacing: "0.2em" }}
-              animate={{ opacity: 1, letterSpacing: "0.6em" }}
-              transition={{ duration: 2, ease: "easeOut" }}
-              className="text-neutral-500 uppercase text-[10px] md:text-xs mb-6 font-medium tracking-[0.6em]"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="font-heading text-neutral-400 text-[10px] sm:text-sm tracking-[0.25em] uppercase text-center mb-6 px-2 select-none leading-[2] sm:leading-normal"
             >
-              GameLiminals Presents
+              Adamas University Presents
             </motion.div>
 
-            <p
-              className="text-sm sm:text-xl md:text-2xl font-light tracking-[0.2em] sm:tracking-[0.3em] text-yellow-300 uppercase mb-8 text-center px-4"
-              style={{ fontFamily: "var(--font-orbitron), sans-serif" }}
-            >
-              12-Hrs Vibe Coding Hackathon
-            </p>
-
+            {/* Title block: GameLiminals X VibeForge 1.0 */}
             <motion.div
-              variants={container}
-              initial="hidden"
-              animate="visible"
-              className="text-[2rem] sm:text-5xl md:text-8xl font-heading italic tracking-tighter flex px-4 justify-center"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.6 }}
+              className="flex flex-col items-center justify-center w-full px-4"
             >
-              {letters.map((letter, index) => (
-                <motion.span
-                  variants={child}
-                  key={index}
-                  className={`${letter === " " ? "mr-4" : "inline-block"} ${/[\d.]/.test(letter) ? 'font-sans font-black' : ''}`}
-                  style={{
-                    color: index >= 8 ? "#dc2626" : "#fde047", // Yellow for GAMEJAM, Deep Red for 2K26 house
-                    textShadow: index >= 8 ? "0 0 25px rgba(220,38,38,0.6)" : "0 0 25px rgba(253,224,71,0.3)"
-                  }}
-                >
-                  {letter}
-                </motion.span>
-              ))}
+              <h1 className="font-heading text-[22px] xs:text-3xl sm:text-5xl md:text-7xl text-white tracking-wide text-center uppercase select-none">
+                GameLiminals
+              </h1>
+              
+              <div className="font-heading text-lg sm:text-2xl md:text-3xl text-red-500 my-4 sm:my-6 select-none">
+                X
+              </div>
+              
+              <div className="flex items-baseline justify-center gap-1 sm:gap-2 select-none">
+                <span className="font-heading text-[22px] xs:text-3xl sm:text-5xl md:text-7xl text-yellow-300 tracking-wide uppercase">
+                  VibeForge
+                </span>
+                <span className="font-sans font-black text-[22px] xs:text-3xl sm:text-5xl md:text-7xl text-red-600 ml-1 tracking-tight">
+                  1.0
+                </span>
+              </div>
             </motion.div>
 
-
+            {/* 12 Hrs Inter College Vibe Coding Hackathon */}
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.8 }}
+              className="mt-8 sm:mt-12 px-4 text-center select-none leading-[2] sm:leading-normal"
+            >
+              <span className="font-sans font-black text-xs sm:text-lg md:text-xl text-white mr-1.5 sm:mr-2">
+                12
+              </span>
+              <span className="font-heading text-white text-[9px] xs:text-[10px] sm:text-lg md:text-xl tracking-wider sm:tracking-widest uppercase align-middle">
+                Hrs Inter College Vibe Coding Hackathon
+              </span>
+            </motion.div>
 
             {/* Progress/Loading Bar */}
-            <div className="absolute -bottom-24 w-48 h-[2px] bg-neutral-900 overflow-hidden">
+            <div className="w-48 h-[2px] bg-neutral-900 overflow-hidden mt-16 relative">
               <motion.div
                 initial={{ x: "-100%" }}
                 animate={{ x: "100%" }}
                 transition={{
-                  duration: 2.5,
+                  duration: 2.2,
                   repeat: Infinity,
                   ease: "easeInOut",
-                  repeatDelay: 0.5
+                  repeatDelay: 0.3
                 }}
-                className="w-1/2 h-full bg-red-600 shadow-[0_0_15px_#dc2626]"
+                className="w-1/2 h-full bg-red-600 shadow-[0_0_15px_#dc2626] absolute left-0"
               />
             </div>
           </div>
-
         </motion.div>
       )}
     </AnimatePresence>

@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/session';
 import { adminDb } from '@/lib/firebase-admin';
+import { cacheGet, cacheSet } from '@/lib/redis';
 
 export const dynamic = 'force-dynamic';
+
+const CACHE_KEY = 'admin:overview';
+const CACHE_TTL = 60; // 1 minute
 
 export async function GET() {
   const session = await getSession();
@@ -11,7 +15,18 @@ export async function GET() {
   }
 
   try {
-    // Fetch all required nodes in parallel
+    // Try Redis cache first
+    const cached = await cacheGet(CACHE_KEY);
+    if (cached) {
+      return NextResponse.json(cached, {
+        headers: {
+          'Cache-Control': 'private, max-age=60, stale-while-revalidate=120',
+          'X-Cache': 'HIT',
+        },
+      });
+    }
+
+    // Cache miss — fetch all required nodes in parallel from Firebase
     const [usersSnap, regsSnap, inqsSnap] = await Promise.all([
       adminDb.ref('users').get(),
       adminDb.ref('registrations').get(),
@@ -54,7 +69,7 @@ export async function GET() {
       if (i.status === 'new') newInquiries++;
     });
 
-    return NextResponse.json({
+    const result = {
       totalUsers,
       totalRegistrations,
       pendingApprovals,
@@ -65,10 +80,16 @@ export async function GET() {
       shortlistedTeams,
       checkedInTeams,
       newInquiries,
-    }, {
+    };
+
+    // Store in Redis
+    await cacheSet(CACHE_KEY, result, CACHE_TTL);
+
+    return NextResponse.json(result, {
       headers: {
         'Cache-Control': 'private, max-age=60, stale-while-revalidate=120',
         'CDN-Cache-Control': 'private, max-age=60, stale-while-revalidate=120',
+        'X-Cache': 'MISS',
       },
     });
   } catch (error) {

@@ -30,6 +30,7 @@ export const config = {
      * - _next/image/ (image optimization)
      * - favicon.ico, sitemap.xml, robots.txt
      * - Public asset directories (images, fonts, media, backgrounds, Logos, Merch, etc.)
+     * - Any file with a common static extension
      */
     '/((?!api|_next/static|_next/image|favicon\\.ico|sitemap\\.xml|robots\\.txt|home-frames|backgrounds|fonts|media|Logos|Merch|images|.*\\.(?:png|jpg|jpeg|gif|webp|svg|ico|mp3|mp4|woff|woff2|ttf|eot)).*)',
   ],

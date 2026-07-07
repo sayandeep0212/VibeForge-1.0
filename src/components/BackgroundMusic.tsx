@@ -16,12 +16,13 @@ const BackgroundMusic: React.FC<BackgroundMusicProps> = ({ audioUrl }) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const pathname = usePathname();
 
-  // Remove music player from admin panel
-  if (pathname.startsWith('/admin')) {
-    return null;
-  }
+  // Check if we're on admin pages — used in the render, not before hooks
+  const isAdminPage = pathname.startsWith('/admin');
 
   useEffect(() => {
+    // Don't initialize audio on admin pages
+    if (isAdminPage) return;
+
     // 1. Initial Load: Check localStorage
     const savedMuteStatus = localStorage.getItem('bg-music-muted');
     const isMuted = savedMuteStatus === 'true';
@@ -69,7 +70,7 @@ const BackgroundMusic: React.FC<BackgroundMusicProps> = ({ audioUrl }) => {
       document.removeEventListener('touchstart', startAudio);
       document.removeEventListener('scroll', startAudio);
     };
-  }, [audioUrl]);
+  }, [audioUrl, isAdminPage]);
 
   const toggleMute = () => {
     if (audioRef.current) {
@@ -90,9 +91,14 @@ const BackgroundMusic: React.FC<BackgroundMusicProps> = ({ audioUrl }) => {
     }
   };
 
+  // Remove music player from admin panel — AFTER all hooks
+  if (isAdminPage) {
+    return null;
+  }
+
   return (
     <div 
-      className="fixed bottom-6 left-4 sm:bottom-10 sm:left-10 z-[100]"
+      className="fixed bottom-6 left-4 sm:bottom-10 sm:left-10 z-[100] hidden md:block"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >

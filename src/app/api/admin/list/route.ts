@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/session';
 import { adminDb } from '@/lib/firebase-admin';
+import { cacheGet, cacheSet } from '@/lib/redis';
 
 export const dynamic = 'force-dynamic';
+
+const CACHE_KEY = 'admin:list';
+const CACHE_TTL = 120; // 2 minutes
 
 export async function GET() {
   const session = await getSession();
@@ -11,6 +15,17 @@ export async function GET() {
   }
 
   try {
+    // Try Redis cache first
+    const cached = await cacheGet(CACHE_KEY);
+    if (cached) {
+      return NextResponse.json(cached, {
+        headers: {
+          'Cache-Control': 'private, max-age=60, stale-while-revalidate=120',
+          'X-Cache': 'HIT',
+        },
+      });
+    }
+
     const snapshot = await adminDb.ref('admins').once('value');
     const adminsData = snapshot.val() || {};
     
@@ -27,9 +42,15 @@ export async function GET() {
     // Sort by name
     adminsList.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
 
-    return NextResponse.json({ admins: adminsList }, {
+    const result = { admins: adminsList };
+
+    // Store in Redis
+    await cacheSet(CACHE_KEY, result, CACHE_TTL);
+
+    return NextResponse.json(result, {
       headers: {
         'Cache-Control': 'private, max-age=60, stale-while-revalidate=120',
+        'X-Cache': 'MISS',
       },
     });
   } catch (error) {

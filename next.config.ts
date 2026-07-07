@@ -19,20 +19,19 @@ const nextConfig: NextConfig = {
     return [
       // ── Static assets (fonts, images, media, backgrounds, merch, logos) ──
       // These files almost never change — cache them aggressively.
-      // 30 days browser cache + 30 days on CDN + stale-while-revalidate.
+      // 30 days browser cache + 30 days on CDN + immutable.
       {
         source: "/(fonts|media|backgrounds|Logos|Merch|images|home-frames)/:path*",
         headers: [
           {
             key: "Cache-Control",
-            value: "public, max-age=2592000, s-maxage=2592000, stale-while-revalidate=86400",
+            value: "public, max-age=2592000, s-maxage=2592000, immutable",
           },
         ],
       },
 
       // ── API routes ──────────────────────────────────────────────────────
-      // Never cache. Responses contain live data and must always be fresh.
-      // Does NOT affect cookies or session tokens.
+      // Never cache globally. Individual routes set their own Cache-Control.
       {
         source: "/api/:path*",
         headers: [
@@ -41,9 +40,8 @@ const nextConfig: NextConfig = {
       },
 
       // ── HTML pages (all App Router routes) ──────────────────────────────
-      // Allow Vercel's edge CDN to cache pages for 60s, browser revalidates.
+      // Allow Vercel's edge CDN to cache pages for 120s, serve stale for 5 min.
       // This massively reduces edge function invocations for repeat visitors.
-      // If the server says "not modified" (ETag match) the browser uses its copy.
       // NOTE: /_next/static/* is intentionally excluded — Next.js already
       // gives those files immutable hashed names (max-age=31536000).
       {

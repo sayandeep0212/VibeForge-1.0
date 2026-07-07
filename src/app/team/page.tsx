@@ -10,13 +10,20 @@ export default function TeamPage() {
   return (
     <main className="min-h-screen bg-black overflow-hidden relative">
       <div className="absolute inset-0 z-0 pointer-events-none">
-        <div className="fixed top-24 sm:top-0 left-0 w-full h-[55vh] sm:h-full">
+        <div className="fixed inset-0 w-full h-full">
+          {/* Desktop Background */}
           <img 
-            src="/backgrounds/teambg.png" 
-            alt="Team Background" 
-            className="w-full h-full object-cover object-center opacity-60"
+            src="/backgrounds/teambgpc.png" 
+            alt="Team Background PC" 
+            className="hidden md:block w-full h-full object-cover object-[50%_25%] opacity-90"
           />
-          <div className="absolute inset-0 bg-black/40" />
+          {/* Mobile Background */}
+          <img 
+            src="/backgrounds/teambgphone.png" 
+            alt="Team Background Phone" 
+            className="block md:hidden w-full h-full object-cover object-top opacity-90"
+          />
+          <div className="absolute inset-0 bg-black/10" />
         </div>
       </div>
 

@@ -97,7 +97,7 @@ const Partners = () => {
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            className="text-4xl sm:text-5xl md:text-7xl font-black italic tracking-wider mb-4 text-cyan-400"
+            className="text-3xl xs:text-4xl sm:text-5xl md:text-7xl font-black italic tracking-wider mb-4 text-cyan-400"
           >
             OUR <span className="text-white">PARTNERS</span>
           </motion.h2>

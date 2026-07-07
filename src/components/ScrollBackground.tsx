@@ -86,7 +86,7 @@ const ScrollBackground = () => {
             renderFrame(1);
         };
 
-        // Load remaining frames in the background using requestIdleCallback
+        // Load remaining frames in the background using priority batches
         // to avoid blocking main thread and causing jank
         let cancelled = false;
 
@@ -106,7 +106,7 @@ const ScrollBackground = () => {
                 for (const i of frames) {
                     if (cancelled) return;
                     
-                    // Yield to main thread every 5 frames
+                    // Yield to main thread every 5 frames to prevent jank
                     if (frames.indexOf(i) % 5 === 0) {
                         await new Promise(r => setTimeout(r, 0));
                     }
@@ -120,9 +120,9 @@ const ScrollBackground = () => {
                 }
             };
 
-            // Load priority frames first
+            // Load priority frames first (every 10th)
             await loadBatch(priorityFrames);
-            // Then load remaining
+            // Then load remaining frames to fill gaps
             await loadBatch(remainingFrames);
         };
 

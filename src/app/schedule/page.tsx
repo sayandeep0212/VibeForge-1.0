@@ -11,20 +11,19 @@ export default function SchedulePage() {
     <main className="min-h-screen bg-black overflow-hidden relative">
       <Navbar />
       
-      {/* Background Image with Focused Panning */}
+      {/* Static Background Images */}
       <div className="fixed inset-0 z-0 overflow-hidden">
-        <motion.img 
-          src="/backgrounds/schedulebg.png" 
-          alt="Schedule Background" 
-          initial={{ x: "0%" }}
-          animate={{ x: ["0%", "-5%"] }}
-          transition={{ 
-            duration: 20, 
-            repeat: Infinity, 
-            repeatType: "reverse", 
-            ease: "easeInOut" 
-          }}
-          className="w-[110%] h-full object-cover object-left opacity-90 max-w-none"
+        {/* Desktop Background */}
+        <img 
+          src="/backgrounds/schedulepc.png" 
+          alt="Schedule Background PC" 
+          className="hidden md:block w-full h-full object-cover object-center opacity-90"
+        />
+        {/* Mobile Background */}
+        <img 
+          src="/backgrounds/schedulephone.png" 
+          alt="Schedule Background Phone" 
+          className="block md:hidden w-full h-full object-cover object-center opacity-90"
         />
         {/* Subtle Overlays */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-black/60" />

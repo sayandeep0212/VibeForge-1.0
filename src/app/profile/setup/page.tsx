@@ -219,13 +219,20 @@ export default function ProfileSetupPage() {
 
       <div className="relative min-h-screen flex items-center justify-center">
         {/* Background Image */}
-        <div className="absolute inset-0 z-0 pointer-events-none">
-          <img
-            src="/backgrounds/signup.png"
-            alt="Profile Setup Background"
-            className="w-full h-full object-cover opacity-60 brightness-50"
+        <div className="fixed inset-0 w-full h-full z-0 pointer-events-none">
+          {/* Desktop Background */}
+          <img 
+            src="/backgrounds/signinbgpc.png" 
+            alt="Profile Setup Background PC" 
+            className="hidden md:block w-full h-full object-cover object-center opacity-85 brightness-90"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black" />
+          {/* Mobile Background */}
+          <img 
+            src="/backgrounds/signinbgphone.png" 
+            alt="Profile Setup Background Phone" 
+            className="block md:hidden w-full h-full object-cover object-top opacity-85 brightness-90"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black" />
         </div>
 
         <div className="relative z-10 pt-32 pb-20 w-full max-w-lg px-6">

@@ -53,13 +53,20 @@ const ContactPage = () => {
       <Navbar />
 
       {/* Background Image */}
-      <div className="fixed top-24 sm:top-0 left-0 w-full h-[55vh] sm:h-full z-0 pointer-events-none">
+      <div className="fixed inset-0 w-full h-full z-0 pointer-events-none">
+        {/* Desktop Background */}
         <img
-          src="/backgrounds/contactbg.png"
-          alt="Contact Background"
-          className="w-full h-full object-cover object-center opacity-80 brightness-75"
+          src="/backgrounds/contactbgpc.png"
+          alt="Contact Background PC"
+          className="hidden md:block w-full h-full object-cover object-center opacity-90 brightness-90"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black" />
+        {/* Mobile Background */}
+        <img
+          src="/backgrounds/contactbgphone.png"
+          alt="Contact Background Phone"
+          className="block md:hidden w-full h-full object-cover object-top opacity-90 brightness-90"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black" />
       </div>
       <div className="relative z-20 pt-32 pb-20 px-6 md:px-24">
         <div className="max-w-7xl mx-auto">
@@ -69,7 +76,7 @@ const ContactPage = () => {
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-20"
           >
-            <h1 className="text-5xl sm:text-6xl md:text-8xl font-black tracking-tighter mb-4 italic text-yellow-300">
+            <h1 className="text-[40px] xs:text-5xl sm:text-6xl md:text-8xl font-black tracking-tighter mb-4 italic text-yellow-300">
               CONTACT <span className="text-red-400 text-shadow-glow">US</span>
             </h1>
             <p className="text-[10px] sm:text-xl text-neutral-400 tracking-[0.3em] sm:tracking-[0.5em] uppercase">The Ninja Network</p>
@@ -86,8 +93,8 @@ const ContactPage = () => {
               {/* Coordinators Section */}
               <div className="space-y-8">
                 <div>
-                  <h2 className="text-lg sm:text-2xl font-bold uppercase tracking-wider sm:tracking-widest mb-6 flex items-center gap-2 sm:gap-3">
-                    <User className="w-5 h-5 sm:w-6 sm:h-6 text-red-400" /> <span className="text-yellow-300">Student</span> <span className="text-white">Coordinators</span>
+                  <h2 className="text-[16px] xs:text-[18px] sm:text-2xl font-heading italic uppercase tracking-normal sm:tracking-wider mb-6 flex flex-wrap items-center gap-2 sm:gap-3">
+                    <User className="w-5 h-5 sm:w-6 sm:h-6 text-red-400 shrink-0" /> <span className="text-yellow-300">Student</span> <span className="text-white">Coordinators</span>
                   </h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="bg-white/5 backdrop-blur-md p-4 rounded-xl border border-white/10">
@@ -102,8 +109,8 @@ const ContactPage = () => {
                 </div>
 
                 <div>
-                  <h2 className="text-lg sm:text-2xl font-bold uppercase tracking-wider sm:tracking-widest mb-6 flex items-center gap-2 sm:gap-3">
-                    <User className="w-5 h-5 sm:w-6 sm:h-6 text-red-400" /> <span className="text-yellow-300">Event</span> <span className="text-white">Coordinators</span>
+                  <h2 className="text-[16px] xs:text-[18px] sm:text-2xl font-heading italic uppercase tracking-normal sm:tracking-wider mb-6 flex flex-wrap items-center gap-2 sm:gap-3">
+                    <User className="w-5 h-5 sm:w-6 sm:h-6 text-red-400 shrink-0" /> <span className="text-yellow-300">Event</span> <span className="text-white">Coordinators</span>
                   </h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="bg-white/5 backdrop-blur-md p-4 rounded-xl border border-white/10">
@@ -132,7 +139,7 @@ const ContactPage = () => {
                   <div className="p-3 bg-red-400 rounded-lg"><Mail className="w-5 h-5 text-white" /></div>
                   <div>
                     <p className="font-bold uppercase tracking-wider">Official Email</p>
-                    <p className="text-neutral-400">ADAMASGAMINGCLUB@GMAIL.COM</p>
+                    <p className="text-neutral-400 text-sm sm:text-base break-all">ADAMASGAMINGCLUB@GMAIL.COM</p>
                   </div>
                 </div>
 

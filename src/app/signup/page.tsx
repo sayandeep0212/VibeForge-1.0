@@ -97,13 +97,20 @@ export default function SignupPage() {
 
       <div className="relative min-h-screen flex items-center justify-center">
         {/* Background Image */}
-        <div className="fixed top-24 sm:top-0 left-0 w-full h-[55vh] sm:h-full z-0 pointer-events-none">
+        <div className="fixed inset-0 w-full h-full z-0 pointer-events-none">
+          {/* Desktop Background */}
           <img 
-            src="/backgrounds/signup.png" 
-            alt="Auth Background" 
-            className="w-full h-full object-cover object-center opacity-80 brightness-75"
+            src="/backgrounds/signinbgpc.png" 
+            alt="Auth Background PC" 
+            className="hidden md:block w-full h-full object-cover object-center opacity-85 brightness-90"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black" />
+          {/* Mobile Background */}
+          <img 
+            src="/backgrounds/signinbgphone.png" 
+            alt="Auth Background Phone" 
+            className="block md:hidden w-full h-full object-cover object-top opacity-85 brightness-90"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black" />
         </div>
 
         <div className="relative z-10 pt-32 pb-20 w-full max-w-md px-6">

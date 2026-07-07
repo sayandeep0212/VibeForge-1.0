@@ -43,7 +43,7 @@ export default function CountdownTimer({ targetDate }: { targetDate: string }) {
           transition={{ duration: 2, repeat: Infinity }}
           className="text-2xl md:text-4xl font-black italic text-red-500 uppercase tracking-tighter"
         >
-          Hackathon is Live..
+          Hackathon is Live
         </motion.p>
       </div>
     );
