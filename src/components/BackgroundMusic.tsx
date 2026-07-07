@@ -98,7 +98,7 @@ const BackgroundMusic: React.FC<BackgroundMusicProps> = ({ audioUrl }) => {
 
   return (
     <div 
-      className="fixed bottom-6 left-4 sm:bottom-10 sm:left-10 z-[100] hidden md:block"
+      className="fixed bottom-6 left-4 sm:bottom-10 sm:left-10 z-[100]"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >

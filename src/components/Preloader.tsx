@@ -12,7 +12,7 @@ export default function Preloader() {
     const timer = setTimeout(() => {
       setLoading(false);
       document.body.style.overflow = '';
-    }, 2500); // slightly longer to appreciate the loading sequence
+    }, 1500); // reduced time for faster entry
 
     return () => {
       clearTimeout(timer);
