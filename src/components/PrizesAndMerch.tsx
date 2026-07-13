@@ -63,8 +63,7 @@ const PrizesAndMerch = () => {
         "Trophy & Certificate",
         "6-Month VIP Membership – Codecrafters",
         "Free Domain – .xyz",
-        "Swag Boxes from n8n",
-        "Certification Course – Internshala"
+        "Swag Boxes from n8n"
       ]
     },
     {
@@ -78,8 +77,7 @@ const PrizesAndMerch = () => {
         "n8n Cloud Pro License (all members)",
         "Swag Boxes from n8n",
         "2-Year VIP Membership – Codecrafters",
-        "Free Domain – .xyz",
-        "Free Certification Course – Internshala"
+        "Free Domain – .xyz"
       ]
     },
     {
@@ -91,8 +89,7 @@ const PrizesAndMerch = () => {
         "Runner-Up Trophy & Certificate",
         "Swag Boxes from n8n",
         "1-Year VIP Membership – Codecrafters",
-        "Free Domain – .xyz",
-        "Paid Certification Course – Internshala"
+        "Free Domain – .xyz"
       ]
     },
     {
