@@ -112,21 +112,6 @@ const Sponsors = () => {
           </div>
         )}
 
-        <div className="flex flex-col items-center gap-6 sm:gap-8 bg-gradient-to-b from-white/[0.05] to-transparent p-6 sm:p-12 rounded-2xl sm:rounded-[3rem] border border-white/5 backdrop-blur-xl">
-          <div className="text-center max-w-2xl">
-            <h3 className="text-xl sm:text-3xl font-bold mb-4 italic uppercase">WANT TO EMPOWER THE FUTURE<span className="font-sans">?</span></h3>
-            <p className="text-neutral-400">Join the elite rank of organizations shaping the next generation of ninja developers. Partner with VIBEFORGE 1.0.</p>
-          </div>
-          <a href="mailto:adamasgamingclub@gmail.com?subject=Become a Sponsor for VibeForge 1.0">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="bg-yellow-300 hover:bg-gradient-to-r hover:from-yellow-300 hover:to-red-400 text-black px-8 py-4 sm:px-12 sm:py-5 rounded-full font-black text-base sm:text-xl tracking-widest shadow-[0_0_30px_rgba(253,224,71,0.4)] transition-all"
-            >
-              BECOME A SPONSOR
-            </motion.button>
-          </a>
-        </div>
       </div>
     </section>
   );

@@ -50,16 +50,15 @@ export default function Home() {
                 <span className="relative z-10">ENTER ARENA</span>
               </Link>
 
-              <Link
-                href="/register"
-                className="group relative px-5 py-2.5 sm:px-8 sm:py-4 h-12 sm:h-14 flex items-center justify-center rounded-2xl font-black tracking-[0.2em] text-white transition-all duration-500 hover:scale-105 hover:-translate-y-1 active:scale-95 text-xs sm:text-sm font-heading"
+              <div
+                className="relative px-5 py-2.5 sm:px-8 sm:py-4 h-12 sm:h-14 flex items-center justify-center rounded-2xl font-black tracking-[0.2em] text-white text-xs sm:text-sm font-heading cursor-not-allowed select-none"
               >
-                {/* Glassy Background */}
-                <div className="absolute inset-0 bg-white/5 backdrop-blur-xl rounded-2xl border border-white/20 group-hover:border-white/50 transition-colors" />
-                {/* Neon Glow Spread (neutral/dark glow) */}
-                <div className="absolute inset-0 rounded-2xl shadow-[0_0_20px_rgba(255,255,255,0.05)] group-hover:shadow-[0_0_40px_rgba(255,255,255,0.15)] transition-all duration-500" />
-                <span className="relative z-10">REGISTER NOW</span>
-              </Link>
+                {/* Red Background */}
+                <div className="absolute inset-0 bg-red-600/90 backdrop-blur-xl rounded-2xl border border-red-500/50" />
+                {/* Red Glow Spread */}
+                <div className="absolute inset-0 rounded-2xl shadow-[0_0_20px_rgba(220,38,38,0.4)]" />
+                <span className="relative z-10 text-white">REGISTRATION CLOSED</span>
+              </div>
 
               {/* Desktop Discord Button */}
               <Link

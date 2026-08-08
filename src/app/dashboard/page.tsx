@@ -448,12 +448,11 @@ function DashboardContent() {
                   <div className="text-center py-8">
                     <Users className="w-12 h-12 text-neutral-600 mx-auto mb-3" />
                     <p className="text-neutral-400 mb-4">You haven&apos;t registered for the event yet.</p>
-                    <Link
-                      href="/register"
-                      className="inline-flex items-center gap-2 px-6 py-3 bg-yellow-300 hover:bg-gradient-to-r hover:from-yellow-300 hover:to-red-400 text-black rounded-xl font-bold tracking-widest transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(253,224,71,0.3)]"
+                    <div
+                      className="inline-flex items-center gap-2 px-6 py-3 bg-red-600 text-white rounded-xl font-bold tracking-widest cursor-not-allowed select-none shadow-[0_0_15px_rgba(220,38,38,0.4)]"
                     >
-                      REGISTER NOW
-                    </Link>
+                      REGISTRATION CLOSED
+                    </div>
                   </div>
                 )}
               </div>
