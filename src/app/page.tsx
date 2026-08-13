@@ -3,6 +3,9 @@
 import { motion } from 'framer-motion';
 import { ChevronDown, Sword, Ghost, Zap } from 'lucide-react';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { ref, get } from 'firebase/database';
+import { getDb } from '@/lib/firebase';
 
 // Components
 import Navbar from '@/components/Navbar';
@@ -15,6 +18,32 @@ import Judges from '@/components/Judges';
 import Faq from '@/components/Faq';
 
 export default function Home() {
+  const [registrationClosed, setRegistrationClosed] = useState(false);
+  const [checkingRegistration, setCheckingRegistration] = useState(true);
+
+  useEffect(() => {
+    const checkAdminSettings = async () => {
+      try {
+        const snap = await get(ref(getDb(), 'eventSettings/registration'));
+        if (snap.exists()) {
+          const settings = snap.val();
+          if (settings.isOpen === false) {
+            setRegistrationClosed(true);
+          } else if (settings.deadline && Date.now() > settings.deadline) {
+            setRegistrationClosed(true);
+          } else {
+            setRegistrationClosed(false);
+          }
+        }
+      } catch (err) {
+        console.error('Error checking admin settings:', err);
+      } finally {
+        setCheckingRegistration(false);
+      }
+    };
+    checkAdminSettings();
+  }, []);
+
   return (
     <main className="relative min-h-[500vh] bg-black text-white selection:bg-yellow-400 selection:text-black">
       {/* Navigation */}
@@ -50,15 +79,34 @@ export default function Home() {
                 <span className="relative z-10">ENTER ARENA</span>
               </Link>
 
-              <div
-                className="relative px-5 py-2.5 sm:px-8 sm:py-4 h-12 sm:h-14 flex items-center justify-center rounded-2xl font-black tracking-[0.2em] text-white text-xs sm:text-sm font-heading cursor-not-allowed select-none"
-              >
-                {/* Red Background */}
-                <div className="absolute inset-0 bg-red-600/90 backdrop-blur-xl rounded-2xl border border-red-500/50" />
-                {/* Red Glow Spread */}
-                <div className="absolute inset-0 rounded-2xl shadow-[0_0_20px_rgba(220,38,38,0.4)]" />
-                <span className="relative z-10 text-white">REGISTRATION CLOSED</span>
-              </div>
+              {checkingRegistration ? (
+                <div
+                  className="relative px-5 py-2.5 sm:px-8 sm:py-4 h-12 sm:h-14 flex items-center justify-center rounded-2xl font-black tracking-[0.2em] text-white text-xs sm:text-sm font-heading cursor-wait select-none opacity-50"
+                >
+                  <span className="relative z-10 text-white">CHECKING...</span>
+                </div>
+              ) : registrationClosed ? (
+                <div
+                  className="relative px-5 py-2.5 sm:px-8 sm:py-4 h-12 sm:h-14 flex items-center justify-center rounded-2xl font-black tracking-[0.2em] text-white text-xs sm:text-sm font-heading cursor-not-allowed select-none"
+                >
+                  {/* Red Background */}
+                  <div className="absolute inset-0 bg-red-600/90 backdrop-blur-xl rounded-2xl border border-red-500/50" />
+                  {/* Red Glow Spread */}
+                  <div className="absolute inset-0 rounded-2xl shadow-[0_0_20px_rgba(220,38,38,0.4)]" />
+                  <span className="relative z-10 text-white">REGISTRATION CLOSED</span>
+                </div>
+              ) : (
+                <Link
+                  href="/register"
+                  className="group relative px-5 py-2.5 sm:px-8 sm:py-4 h-12 sm:h-14 flex items-center justify-center rounded-2xl font-black tracking-[0.2em] text-white transition-all duration-500 hover:scale-105 hover:-translate-y-1 active:scale-95 text-xs sm:text-sm font-heading"
+                >
+                  {/* Solid Background */}
+                  <div className="absolute inset-0 bg-green-500 group-hover:bg-green-400 rounded-2xl border border-white/10 transition-colors duration-300" />
+                  {/* Neon Glow Spread */}
+                  <div className="absolute inset-0 rounded-2xl shadow-[0_0_20px_rgba(34,197,94,0.3)] group-hover:shadow-[0_0_40px_rgba(34,197,94,0.65)] transition-all duration-500" />
+                  <span className="relative z-10 text-white drop-shadow-md">REGISTER FOR EVENT</span>
+                </Link>
+              )}
 
               {/* Desktop Discord Button */}
               <Link
