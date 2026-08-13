@@ -11,7 +11,7 @@ import {
   ShoppingBag, Download
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-import { ref, get, query, orderByChild, equalTo } from 'firebase/database';
+import { ref, get, query, orderByChild, equalTo, onValue } from 'firebase/database';
 import { db } from '@/lib/firebase';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -93,6 +93,29 @@ function DashboardContent() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [merchOrders, setMerchOrders] = useState<MerchOrder[]>([]);
   const [merchLoading, setMerchLoading] = useState(true);
+  const [registrationClosed, setRegistrationClosed] = useState(false);
+  const [checkingRegistration, setCheckingRegistration] = useState(true);
+
+  useEffect(() => {
+    const dbRef = ref(db!, 'eventSettings/registration');
+    const unsubscribe = onValue(dbRef, (snap) => {
+      if (snap.exists()) {
+        const settings = snap.val();
+        if (settings.isOpen === false) {
+          setRegistrationClosed(true);
+        } else if (settings.deadline && Date.now() > settings.deadline) {
+          setRegistrationClosed(true);
+        } else {
+          setRegistrationClosed(false);
+        }
+      } else {
+        setRegistrationClosed(false);
+      }
+      setCheckingRegistration(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     fetchRegistration();
@@ -448,11 +471,26 @@ function DashboardContent() {
                   <div className="text-center py-8">
                     <Users className="w-12 h-12 text-neutral-600 mx-auto mb-3" />
                     <p className="text-neutral-400 mb-4">You haven&apos;t registered for the event yet.</p>
-                    <div
-                      className="inline-flex items-center gap-2 px-6 py-3 bg-red-600 text-white rounded-xl font-bold tracking-widest cursor-not-allowed select-none shadow-[0_0_15px_rgba(220,38,38,0.4)]"
-                    >
-                      REGISTRATION CLOSED
-                    </div>
+                    {checkingRegistration ? (
+                      <div
+                        className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 text-white rounded-xl font-bold tracking-widest cursor-wait select-none opacity-50"
+                      >
+                        CHECKING...
+                      </div>
+                    ) : registrationClosed ? (
+                      <div
+                        className="inline-flex items-center gap-2 px-6 py-3 bg-red-600 text-white rounded-xl font-bold tracking-widest cursor-not-allowed select-none shadow-[0_0_15px_rgba(220,38,38,0.4)]"
+                      >
+                        REGISTRATION CLOSED
+                      </div>
+                    ) : (
+                      <Link
+                        href="/register"
+                        className="inline-flex items-center gap-2 px-6 py-3 bg-yellow-300 hover:bg-yellow-400 text-black rounded-xl font-bold tracking-widest transition-all shadow-[0_0_15px_rgba(253,224,71,0.4)] hover:scale-105 active:scale-95"
+                      >
+                        REGISTER NOW
+                      </Link>
+                    )}
                   </div>
                 )}
               </div>
