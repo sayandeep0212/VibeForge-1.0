@@ -19,7 +19,7 @@ export default function OnlineRoundResultPage() {
 
   useEffect(() => {
     setIsClient(true);
-    
+
     const calculateTimeLeft = () => {
       const now = new Date().getTime();
       const difference = targetDate - now;
@@ -52,13 +52,13 @@ export default function OnlineRoundResultPage() {
       <div className="absolute inset-0 bg-[url('/images/hexagon-pattern.png')] bg-repeat opacity-10 pointer-events-none" />
 
       <div className="container mx-auto px-4 relative z-10">
-        
+
         {/* Banner Section */}
         <div className="w-full max-w-5xl mx-auto mb-16 relative rounded-2xl overflow-hidden shadow-[0_0_40px_rgba(255,100,0,0.2)] border border-orange-500/20">
           {/* Decorative Corner Borders for Banner */}
           <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-orange-500 rounded-tl-xl z-10" />
           <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-orange-500 rounded-br-xl z-10" />
-          
+
           <Image
             src="/images/online-round.png"
             alt="Online Round Banner"
@@ -71,20 +71,20 @@ export default function OnlineRoundResultPage() {
 
         {/* Content Section */}
         <div className="max-w-6xl mx-auto">
-          
+
           {!showResults ? (
             <div className="flex flex-col items-center justify-center py-20 space-y-8 bg-[#0a0a0a] border border-cyan-500/30 rounded-2xl relative shadow-[0_0_30px_rgba(0,255,255,0.1)]">
               {/* Corner brackets */}
               <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-cyan-400 rounded-tl-lg" />
               <div className="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-cyan-400 rounded-br-lg" />
-              
+
               <h2 className="text-3xl md:text-5xl font-bold uppercase tracking-wider text-center text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-600">
                 Phase One Results
               </h2>
               <p className="text-gray-400 text-lg md:text-xl font-medium tracking-widest uppercase">
                 Revealing in
               </p>
-              
+
               <div className="flex flex-wrap justify-center gap-2 sm:gap-4 md:gap-8 px-2">
                 {[
                   { label: "Days", value: timeLeft?.days },
@@ -120,14 +120,14 @@ export default function OnlineRoundResultPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {teamsData.map((team: any, index: number) => (
-                  <div 
-                    key={index} 
+                  <div
+                    key={index}
                     className="relative bg-[#080808] border border-cyan-900/50 rounded-xl p-6"
                   >
                     {/* Corner decorative borders */}
                     <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-cyan-500 rounded-tl-lg" />
                     <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-cyan-500 rounded-br-lg" />
-                    
+
                     <div className="flex justify-between items-start mb-6">
                       <span className="text-cyan-800 text-sm font-mono font-bold">
                         {(index + 1).toString().padStart(2, "0")}
@@ -144,7 +144,7 @@ export default function OnlineRoundResultPage() {
                       <h4 className="text-xl font-orbitron font-bold text-white uppercase tracking-wide truncate">
                         {team.teamName}
                       </h4>
-                      
+
                       {/* Members List */}
                       {team.members && team.members.length > 0 && (
                         <div className="pt-3 mt-3 border-t border-white/5 flex flex-wrap gap-1">
