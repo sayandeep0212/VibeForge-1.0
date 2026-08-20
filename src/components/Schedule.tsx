@@ -22,58 +22,114 @@ const Schedule = () => {
       date: "THE ARENA - SINGLE DAY SPRINT",
       events: [
         {
-          time: "08:00 AM - 10:00 AM",
-          title: "CHECK-IN, REGISTRATION, KIT",
-          desc: "Gate Verification: Strict entry scanning of team passes at the main Adamas University Gate. Convention Centre Operations: On-site offline registration completion, distribution of participant identification materials/kits.",
+          time: "08:00 AM - 09:30 AM",
+          title: "CHECK-IN AND REGISTRATION",
+          desc: "Gate Verification and On-site registration completion.",
           icon: <Coffee className="w-5 h-5" />,
           color: "blue"
         },
         {
-          time: "10:00 AM - 11:00 AM",
-          title: "OPENING CEREMONY & TOPIC REVELATION",
-          desc: "Official welcoming ceremony, key notes by dignitaries, guidelines briefing, and official revelation of the unannounced hackathon development theme. Breakfast will be provided for all participants.",
-          icon: <Rocket className="w-5 h-5" />,
+          time: "09:30 AM - 09:45 AM",
+          title: "REPORTING AND VENUE ORIENTATION",
+          desc: "Participants report to the venue and receive orientation.",
+          icon: <MapPin className="w-5 h-5" />,
           color: "purple"
         },
         {
-          time: "11:00 AM - 04:00 PM",
-          title: "BUILD & CODE (5 HOURS)",
-          desc: "5 Hours of non-stop development and deployment. Uninterrupted development window utilizing prompt engineering and AI-agentic development platforms.",
-          icon: <Code2 className="w-5 h-5" />,
+          time: "09:45 AM - 10:00 AM",
+          title: "ASSEMBLY FOR OPENING CEREMONY",
+          desc: "Gathering for the official opening ceremony.",
+          icon: <Rocket className="w-5 h-5" />,
           color: "cyan"
         },
         {
-          time: "01:30 PM - 02:00 PM",
-          title: "LUNCH BREAK",
-          desc: "Mid-day energy refill for all participants (integrated directly into the team project workflow).",
+          time: "10:00 AM - 10:30 AM",
+          title: "OPENING CEREMONY AND WELCOME ADDRESS",
+          desc: "Official welcoming ceremony and key notes by dignitaries.",
           icon: <Zap className="w-5 h-5" />,
           color: "orange"
         },
         {
-          time: "04:00 PM - 05:15 PM",
-          title: "JUDGES WATCHING & REVIEWS",
-          desc: "Project review sessions where the live panel jury inspects deployed software architectures, evaluates prompt efficiency, and provides professional reviews.",
+          time: "10:30 AM - 10:50 AM",
+          title: "HACKATHON RULES BRIEFING",
+          desc: "Detailed briefing on the rules and guidelines of the hackathon.",
           icon: <Search className="w-5 h-5" />,
           color: "red"
         },
         {
-          time: "05:15 PM - 05:30 PM",
-          title: "JUDGES' DECISIONS",
-          desc: "Private deliberation, score aggregation, and compilation of final results by the jury panel.",
+          time: "10:50 AM - 11:00 AM",
+          title: "TOPIC REVEAL AND Q&A SESSION",
+          desc: "Official revelation of the development theme and a brief Q&A session.",
           icon: <Terminal className="w-5 h-5" />,
           color: "yellow"
         },
         {
-          time: "05:30 PM - 06:00 PM",
-          title: "PRIZE DISTRIBUTION",
-          desc: "Crowning the champions of VibeForge 1.0, handing out awards, accolades, and closing remarks.",
-          icon: <Trophy className="w-5 h-5" />,
+          time: "11:00 AM - 01:00 PM",
+          title: "ROUND 1 - DEVELOPMENT BEGINS",
+          desc: "The first round of non-stop development begins.",
+          icon: <Code2 className="w-5 h-5" />,
           color: "green"
         },
         {
-          time: "06:30 PM Onwards",
-          title: "HALL VACATING & WRAPPING UP",
-          desc: "System tear-downs, wrapping up club property, technical asset recovery, and clearing out the Convention Centre main workspace.",
+          time: "01:30 PM - 02:00 PM",
+          title: "LUNCH BREAK",
+          desc: "Mid-day energy refill for all participants.",
+          icon: <Coffee className="w-5 h-5" />,
+          color: "slate"
+        },
+        {
+          time: "02:00 PM",
+          title: "ROUND 2 BEGINS",
+          desc: "The second round of development starts.",
+          icon: <Zap className="w-5 h-5" />,
+          color: "blue"
+        },
+        {
+          time: "02:15 PM - 02:30 PM",
+          title: "GENERATIVE AI SESSION",
+          desc: "A brief session on Generative AI.",
+          icon: <Terminal className="w-5 h-5" />,
+          color: "purple"
+        },
+        {
+          time: "02:30 PM - 02:45 PM",
+          title: "CYBERSECURITY AND BLOCKCHAIN SESSION",
+          desc: "Insights into Cybersecurity and Blockchain technologies.",
+          icon: <Search className="w-5 h-5" />,
+          color: "cyan"
+        },
+        {
+          time: "04:15 PM",
+          title: "FINAL SUBMISSION DEADLINE",
+          desc: "All teams must submit their final projects.",
+          icon: <Clock className="w-5 h-5" />,
+          color: "red"
+        },
+        {
+          time: "04:15 PM - 05:15 PM",
+          title: "JUDGES' EVALUATION",
+          desc: "Jury inspects deployed architectures and provides reviews.",
+          icon: <Search className="w-5 h-5" />,
+          color: "orange"
+        },
+        {
+          time: "05:45 PM - 06:00 PM",
+          title: "CERTIFICATES AND RECOGNITION",
+          desc: "Handing out awards, certificates, and accolades.",
+          icon: <Trophy className="w-5 h-5" />,
+          color: "yellow"
+        },
+        {
+          time: "06:00 PM - 06:10 PM",
+          title: "CLOSING REMARKS AND GROUP PHOTOGRAPH",
+          desc: "Final remarks from the organizers and a group photo.",
+          icon: <Rocket className="w-5 h-5" />,
+          color: "green"
+        },
+        {
+          time: "06:15 PM - 06:25 PM",
+          title: "DEPARTURE AND COLLECTION OF BELONGINGS",
+          desc: "Wrapping up and departure of participants.",
           icon: <MapPin className="w-5 h-5" />,
           color: "slate"
         }
@@ -192,7 +248,7 @@ const Schedule = () => {
                         {event.time}
                       </span>
 
-                      <h3 className="text-lg sm:text-xl md:text-3xl font-black italic text-white uppercase tracking-tight mb-3 group-hover:text-red-500 transition-colors">
+                      <h3 className="text-base sm:text-lg md:text-xl font-black italic text-white uppercase tracking-tight mb-3 group-hover:text-red-500 transition-colors">
                         {renderTitle(event.title)}
                       </h3>
 

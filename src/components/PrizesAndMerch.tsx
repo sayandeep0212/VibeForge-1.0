@@ -56,7 +56,7 @@ const PrizesAndMerch = () => {
   const prizes = [
     {
       rank: "2ND RUNNER UP",
-      amount: "₹1.5K",
+      amount: "",
       color: "from-orange-400 to-red-600",
       icon: <Star className="w-12 h-12 text-orange-500" />,
       benefits: [
@@ -68,7 +68,7 @@ const PrizesAndMerch = () => {
     },
     {
       rank: "WINNER",
-      amount: "₹3K",
+      amount: "ELECTRIC CYCLE",
       color: "from-cyan-400 to-blue-600",
       icon: <Trophy className="w-16 h-16 text-cyan-400" />,
       featured: true,
@@ -82,7 +82,7 @@ const PrizesAndMerch = () => {
     },
     {
       rank: "1ST RUNNER UP",
-      amount: "₹2.5K",
+      amount: "",
       color: "from-yellow-400 to-amber-600",
       icon: <Crown className="w-12 h-12 text-yellow-500" />,
       benefits: [
@@ -137,7 +137,7 @@ const PrizesAndMerch = () => {
           >
             THE <span className="text-white">PRIZES</span>
           </motion.h2>
-          <p className="text-neutral-400 text-lg uppercase tracking-widest font-bold">🏆 Trophies & Certificates</p>
+          <p className="text-neutral-400 text-lg uppercase tracking-widest font-bold">🏆 Up to 7K Prize Pool</p>
         </div>
 
         {/* Prizes Grid */}
@@ -156,9 +156,11 @@ const PrizesAndMerch = () => {
                   {prize.icon}
                 </div>
                 <h3 className="text-center text-neutral-400 font-black font-sans text-sm tracking-[0.3em] mb-2">{prize.rank}</h3>
-                <p className={`text-center text-3xl sm:text-4xl md:text-5xl font-black font-sans bg-gradient-to-r ${prize.color} bg-clip-text text-transparent mb-6 sm:mb-8`}>
-                  {prize.amount}
-                </p>
+                {prize.amount && (
+                  <p className={`text-center text-3xl sm:text-4xl md:text-5xl font-black font-sans bg-gradient-to-r ${prize.color} bg-clip-text text-transparent mb-6 sm:mb-8`}>
+                    {prize.amount}
+                  </p>
+                )}
                 <ul className="space-y-4 mb-8">
                   {prize.benefits.map((benefit) => (
                     <li key={benefit} className="flex items-center gap-3 text-neutral-300 text-sm">
