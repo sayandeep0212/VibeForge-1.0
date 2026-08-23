@@ -50,15 +50,16 @@ export default function Home() {
                 <span className="relative z-10">ENTER ARENA</span>
               </Link>
 
-              <div
-                className="relative px-5 py-2.5 sm:px-8 sm:py-4 h-12 sm:h-14 flex items-center justify-center rounded-2xl font-black tracking-[0.2em] text-white text-xs sm:text-sm font-heading cursor-not-allowed select-none"
+              <Link
+                href="/winners"
+                className="group relative px-5 py-2.5 sm:px-8 sm:py-4 h-12 sm:h-14 flex items-center justify-center rounded-2xl font-black tracking-[0.2em] text-white transition-all duration-500 hover:scale-105 hover:-translate-y-1 active:scale-95 text-xs sm:text-sm font-heading"
               >
                 {/* Red Background */}
-                <div className="absolute inset-0 bg-red-600/90 backdrop-blur-xl rounded-2xl border border-red-500/50" />
+                <div className="absolute inset-0 bg-red-600/90 backdrop-blur-xl rounded-2xl border border-red-500/50 group-hover:border-red-400/80 transition-colors" />
                 {/* Red Glow Spread */}
-                <div className="absolute inset-0 rounded-2xl shadow-[0_0_20px_rgba(220,38,38,0.4)]" />
-                <span className="relative z-10 text-white">REGISTRATION CLOSED</span>
-              </div>
+                <div className="absolute inset-0 rounded-2xl shadow-[0_0_20px_rgba(220,38,38,0.4)] group-hover:shadow-[0_0_40px_rgba(220,38,38,0.65)] transition-all duration-500" />
+                <span className="relative z-10 text-white">SHOW WINNERS</span>
+              </Link>
 
               {/* Desktop Discord Button */}
               <Link

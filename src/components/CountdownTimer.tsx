@@ -37,14 +37,26 @@ export default function CountdownTimer({ targetDate }: { targetDate: string }) {
 
   if (timeLeft.days === 0 && timeLeft.hours === 0 && timeLeft.minutes === 0 && timeLeft.seconds === 0) {
     return (
-      <div className="mt-6 py-4 px-8 bg-red-600/10 border border-red-600/50 rounded-2xl backdrop-blur-xl">
-        <motion.p 
-          animate={{ opacity: [0.5, 1, 0.5] }}
-          transition={{ duration: 2, repeat: Infinity }}
-          className="text-2xl md:text-4xl font-black italic text-red-500 uppercase tracking-tighter"
+      <div className="mt-6 py-6 px-4 md:px-8 text-center max-w-4xl mx-auto w-full">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="flex flex-col items-center gap-4 md:gap-6"
+          style={{ fontFamily: 'var(--font-orbitron)' }}
         >
-          Hackathon is Live
-        </motion.p>
+          <div className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white uppercase tracking-tighter leading-tight">
+            Thank You For Joining<br className="hidden sm:block" /> VibeForge 1.0
+          </div>
+          <div className="space-y-2">
+            <p className="text-lg sm:text-xl md:text-2xl font-bold text-white px-2">
+              We hope you had an amazing time! Stay tuned for more exciting events.
+            </p>
+            <p className="text-base sm:text-lg md:text-xl text-white font-semibold italic">
+              We will be back next year with something new and exciting.
+            </p>
+          </div>
+        </motion.div>
       </div>
     );
   }

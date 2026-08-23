@@ -76,7 +76,7 @@ const WinnersPage = () => {
       </div>
 
       <div className="relative z-20 pt-32 pb-24 px-6 md:px-12 max-w-7xl mx-auto min-h-screen flex flex-col items-center justify-center">
-        
+
         {/* Header Section */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -89,14 +89,14 @@ const WinnersPage = () => {
             <span className="uppercase tracking-widest text-sm font-bold text-neutral-300 font-sans">VibeForge 1.0 Hall of Fame</span>
             <Star className="w-5 h-5 text-yellow-300" />
           </div>
-          <h1 
+          <h1
             className="text-5xl sm:text-6xl md:text-8xl lg:text-9xl text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-yellow-400 to-orange-500 mb-6 drop-shadow-2xl"
             style={{ fontFamily: 'var(--font-casual-passion), sans-serif' }}
           >
             THE CHAMPIONS
           </h1>
           <p className="max-w-2xl mx-auto text-lg md:text-xl text-neutral-400 leading-relaxed font-sans">
-            A massive congratulations to the brilliant minds who conquered the ultimate quest! 
+            A massive congratulations to the brilliant minds who conquered the ultimate quest!
           </p>
         </motion.div>
 
@@ -134,9 +134,9 @@ const WinnersPage = () => {
 
                   {/* Image Frame */}
                   <div className="relative w-full aspect-video rounded-xl overflow-hidden mb-8 border border-white/5 bg-black/50">
-                    <img 
-                      src={winner.imageUrl} 
-                      alt={winner.teamName} 
+                    <img
+                      src={winner.imageUrl}
+                      alt={winner.teamName}
                       className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
                     />
                   </div>
@@ -147,7 +147,7 @@ const WinnersPage = () => {
                       <h3 className="text-xl font-bold text-white tracking-wide font-sans">{winner.teamName}</h3>
                       <p className="text-sm text-cyan-400 mt-1 font-sans">{winner.college}</p>
                     </div>
-                    
+
                     <div className="pt-4 border-t border-white/10">
                       <p className="text-xs uppercase tracking-widest text-neutral-500 mb-2 font-sans">Team Roster</p>
                       <div className="flex flex-wrap gap-2">
@@ -165,7 +165,7 @@ const WinnersPage = () => {
             ))}
           </div>
         ) : (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             className="w-full max-w-3xl mx-auto p-12 text-center border border-white/10 rounded-[2rem] bg-white/5 backdrop-blur-md"
@@ -175,7 +175,7 @@ const WinnersPage = () => {
               Results Pending!
             </h2>
             <p className="text-lg text-neutral-400 leading-relaxed font-sans">
-              The epic hackathon concludes soon, and the legendary champions are yet to be crowned. 
+              The epic hackathon concludes soon, and the legendary champions are yet to be crowned.
               Keep grinding, keep coding, and stay tuned!
             </p>
           </motion.div>
